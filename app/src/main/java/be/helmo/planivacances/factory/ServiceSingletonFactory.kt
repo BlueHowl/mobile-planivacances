@@ -1,7 +1,7 @@
-package be.helmo.planivancances.factory
+package be.helmo.planivacances.factory
 
-import be.helmo.planivancances.presenter.AuthService
-import be.helmo.planivancances.view.auth.interfaces.IAuthService
+import be.helmo.planivacances.presenter.AuthService
+import be.helmo.planivacances.view.auth.interfaces.IAuthService
 
 class ServiceSingletonFactory() {
 

@@ -1,4 +1,4 @@
-package be.helmo.planivancances
+package be.helmo.planivacances
 
 import org.junit.Test
 
