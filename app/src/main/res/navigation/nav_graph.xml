@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="be.helmo.planivancances.FirstFragment"
+        android:name="be.helmo.planivancances.AuthFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        tools:layout="@layout/auth_fragment">
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
