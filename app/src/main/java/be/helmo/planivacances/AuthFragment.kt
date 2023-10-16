@@ -1,5 +1,6 @@
 package be.helmo.planivacances
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +11,8 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import be.helmo.planivacances.factory.ServiceSingletonFactory
 import be.helmo.planivacances.view.auth.interfaces.IAuthService
@@ -30,6 +33,8 @@ class AuthFragment : Fragment() {
     lateinit var authService: IAuthService
 
     lateinit var mAuth: FirebaseAuth
+
+    lateinit var signInLauncher: ActivityResultLauncher<Intent>
 
     lateinit var registerPanel : LinearLayout
     lateinit var loginPanel : LinearLayout
@@ -53,8 +58,8 @@ class AuthFragment : Fragment() {
 
         val googleAuthButton = view.findViewById<Button>(R.id.btnAuthGoogle)
 
-        registerPanel = view.findViewById<LinearLayout>(R.id.registerPanel)
-        loginPanel = view.findViewById<LinearLayout>(R.id.loginPanel)
+        registerPanel = view.findViewById(R.id.registerPanel)
+        loginPanel = view.findViewById(R.id.loginPanel)
 
         val registerLink = view.findViewById<TextView>(R.id.tvRegisterHelper)
         val loginLink = view.findViewById<TextView>(R.id.tvLoginHelper)
@@ -91,21 +96,23 @@ class AuthFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d("AuthFragment", "onViewCreated called")
 
-        //findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                firebaseAuthWithGoogle(account)
-            } catch (e: ApiException) {
-                // Handle sign-in failure (e.getStatusCode(), e.getStatusMessage())
+        signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // Handle the result here if needed
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                try {
+                    val account = task.getResult(ApiException::class.java)
+                    firebaseAuthWithGoogle(account)
+                } catch (e: ApiException) {
+                    // Handle sign-in failure (e.getStatusCode(), e.getStatusMessage())
+                    Log.w("Google Auth", "Auth Failure " + e.getStatusCode() + " : " + e.getStatusMessage())
+                }
+            } else {
+                Log.w("Google Auth", "Failed to auth")
             }
         }
+
+        //findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
     }
 
     fun startGoogleAuth() {
@@ -117,23 +124,34 @@ class AuthFragment : Fragment() {
         val mGoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
 
         val signInIntent = mGoogleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+        signInLauncher.launch(signInIntent)
     }
 
     fun firebaseAuthWithGoogle(acct: GoogleSignInAccount?) {
         if (acct != null) {
             val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
-            mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(requireActivity()) { task ->
+            mAuth.signInWithCredential(credential).addOnCompleteListener {
+                task ->
+                if (task.isSuccessful) {
+                    // Sign in success
+                    Log.i("Tag", "Succefuly signed in")
+                } else {
+                    // Sign in failed
+                    Log.w("Tag", "Failed signed in")
+                }
+            }
+                /*.addOnCompleteListener(requireActivity()) { task ->
                     if (task.isSuccessful) {
                         // Sign in success
-                        Log.d("Tag", "Succefuly signed in")
+                        Log.i("Tag", "Succefuly signed in")
                     } else {
                         // Sign in failed
+                        Log.w("Tag", "Failed signed in")
                     }
-                }
+                }*/
         } else {
             // Handle the case where acct is null
+            Log.w("Tag", "Account is null")
         }
     }
 
@@ -151,7 +169,7 @@ class AuthFragment : Fragment() {
 
     companion object {
         const val TAG = "AuthFragment"
-        const val RC_SIGN_IN = 9999
+
         fun newInstance(): AuthFragment {
             return AuthFragment()
         }
