@@ -1,4 +1,4 @@
-package be.helmo.planivacances.presenter
+package be.helmo.planivacances.service
 
 import be.helmo.planivacances.view.auth.interfaces.IAuthService
 

@@ -1,6 +1,6 @@
 package be.helmo.planivacances
 
-import be.helmo.planivacances.presenter.AuthService
+import be.helmo.planivacances.service.AuthService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient

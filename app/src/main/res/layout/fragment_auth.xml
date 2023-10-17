@@ -5,7 +5,7 @@
     android:id="@+id/auth"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AuthFragment">
+    tools:context=".view.auth.AuthFragment">
 
     <ImageView
         android:id="@+id/authSun"

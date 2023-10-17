@@ -1,6 +1,6 @@
 package be.helmo.planivacances.factory
 
-import be.helmo.planivacances.presenter.AuthService
+import be.helmo.planivacances.service.AuthService
 import be.helmo.planivacances.view.auth.interfaces.IAuthService
 
 class ServiceSingletonFactory() {

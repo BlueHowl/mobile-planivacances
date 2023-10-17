@@ -3,6 +3,6 @@
     <size
         android:width="16dp"
         android:height="16dp" />
-    <solid android:color="#FF0000" /> <!-- Red color (hexadecimal) -->
+    <solid android:color="#E81818" /> <!-- Red color (hexadecimal) -->
     <corners android:radius="8dp" /> <!-- Half the size for a circle effect -->
 </shape>

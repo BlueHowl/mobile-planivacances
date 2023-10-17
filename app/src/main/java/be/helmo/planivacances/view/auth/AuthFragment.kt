@@ -1,4 +1,4 @@
-package be.helmo.planivacances
+package be.helmo.planivacances.view.auth
 
 import android.app.Activity
 import android.content.Intent
@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import be.helmo.planivacances.R
 import be.helmo.planivacances.factory.ServiceSingletonFactory
 import be.helmo.planivacances.view.auth.interfaces.IAuthService
 import com.bumptech.glide.Glide
@@ -51,7 +52,7 @@ class AuthFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.auth_fragment, container, false)
+        val view = inflater.inflate(R.layout.fragment_auth, container, false)
 
         val sun = view.findViewById<ImageView>(R.id.authSun)
         val sea = view.findViewById<ImageView>(R.id.authSea)
