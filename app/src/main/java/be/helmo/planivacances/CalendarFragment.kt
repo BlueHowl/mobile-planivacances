@@ -8,13 +8,14 @@ import android.view.ViewGroup
 
 /**
  * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
+ * Use the [CalendarFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomeFragment : Fragment() {
+class CalendarFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(
@@ -22,14 +23,16 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        val view = inflater.inflate(R.layout.fragment_calendar, container, false)
+
+        return view
     }
 
     companion object {
-        const val TAG = "HomeFragment"
+        const val TAG = "CalendarFragment"
 
-        fun newInstance(): HomeFragment {
-            return HomeFragment()
+        fun newInstance(): CalendarFragment {
+            return CalendarFragment()
         }
     }
 }

@@ -26,10 +26,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:id="@+id/addGroupBtn"
+            android:id="@+id/exportBtn"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="12dp"
             android:adjustViewBounds="true"
             android:background="@color/transparent"
             android:contentDescription="add group"

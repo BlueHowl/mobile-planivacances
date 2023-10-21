@@ -8,10 +8,10 @@ import android.view.ViewGroup
 
 /**
  * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
+ * Use the [CreateGroupFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomeFragment : Fragment() {
+class CreateGroupFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,14 +22,14 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        return inflater.inflate(R.layout.fragment_create_group, container, false)
     }
 
     companion object {
-        const val TAG = "HomeFragment"
+        const val TAG = "CreateGroupFragment"
 
-        fun newInstance(): HomeFragment {
-            return HomeFragment()
+        fun newInstance(): CreateGroupFragment {
+            return CreateGroupFragment()
         }
     }
 }

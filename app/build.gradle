@@ -48,40 +48,34 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.7.4'
     implementation 'androidx.navigation:navigation-ui-ktx:2.7.4'
 
-    //Firebase
-    implementation platform('com.google.firebase:firebase-bom:32.3.1')
-
-    // Add the dependency for the Firebase Authentication library
-    // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation("com.google.firebase:firebase-auth-ktx")
-
-    // Also add the dependency for the Google Play services library and specify its version
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
-
-    //Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-
     //Coroutine
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
+
+    //Firebase
+    implementation platform("com.google.firebase:firebase-bom:$rootProject.firebaseBomVersion")
+    implementation("com.google.firebase:firebase-auth-ktx")
+
+    //Google play auth
+    implementation("com.google.android.gms:play-services-auth:$rootProject.googlePlayServicesAuth")
+    //google play maps
+    implementation "com.google.android.gms:play-services-maps:$rootProject.googlePlayServicesMaps"
+
+    //Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
+
     //Glide
-    implementation 'com.github.bumptech.glide:glide:4.12.0'
-    kapt 'com.github.bumptech.glide:compiler:4.12.0'
-    implementation 'jp.wasabeef:glide-transformations:4.3.0'
+    implementation "com.github.bumptech.glide:glide:$rootProject.glideVersion"
+    kapt "com.github.bumptech.glide:compiler:$rootProject.glideVersion"
+    implementation "jp.wasabeef:glide-transformations:$rootProject.glideTransformVersion"
 
     //Gson
     implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
 
     //Easy Location Picker
     implementation "com.adevinta.android:leku:$rootProject.locationPickerVersion"
-
-    //google maps services
-    implementation "com.google.android.gms:play-services-maps:$rootProject.googlePlayServices"
-
-    //iCal4j
-    implementation "org.mnode.ical4j:ical4j:$rootProject.iCal4j"
 
 
     testImplementation "junit:junit:$rootProject.junitVersion"

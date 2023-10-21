@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TchatFragment">
+
+
+    <ImageView
+        android:id="@+id/tchatSun"
+        android:layout_width="268dp"
+        android:layout_height="290dp"
+        android:layout_marginTop="-4dp"
+        android:layout_marginEnd="-4dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="sun"
+        android:src="@drawable/sun"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/clHeader" />
+
+    <ImageView
+        android:id="@+id/tchatPalmTree"
+        android:layout_width="292dp"
+        android:layout_height="490dp"
+        android:layout_marginStart="-40dp"
+        android:layout_marginBottom="-60dp"
+        android:adjustViewBounds="true"
+        android:rotation="10"
+        android:src="@drawable/palmtree"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clHeader"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="@color/primary_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Messages"
+            android:textColor="@color/black"
+            android:textSize="28sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/exportBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="12dp"
+            android:adjustViewBounds="true"
+            android:background="@color/transparent"
+            android:contentDescription="add group"
+            android:scaleType="fitCenter"
+            android:src="@drawable/done_check"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/tvBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Retour"
+            android:textColor="@color/secondary_blue"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/llMessagesContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/etTchatSendText"
+        app:layout_constraintTop_toBottomOf="@+id/clHeader"></LinearLayout>
+
+    <EditText
+        android:id="@+id/etTchatSendText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/rounded_input_corners"
+        android:ems="10"
+        android:hint="Ecrire un message ..."
+        android:inputType="textShortMessage|textMultiLine"
+        android:maxLines="6"
+        android:minLines="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/ibSendTchat"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/blue_dot"
+        android:contentDescription="Send Message"
+        android:paddingStart="4dp"
+        android:scaleType="center"
+        android:src="@drawable/send_logo"
+        app:layout_constraintBottom_toBottomOf="@+id/etTchatSendText"
+        app:layout_constraintEnd_toEndOf="@+id/etTchatSendText"
+        app:layout_constraintTop_toTopOf="@+id/etTchatSendText"
+        app:tint="@color/white" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
