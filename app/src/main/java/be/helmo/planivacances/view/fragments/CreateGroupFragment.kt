@@ -1,18 +1,18 @@
-package be.helmo.planivacances
+package be.helmo.planivacances.view.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import be.helmo.planivacances.view.auth.AuthFragment
+import be.helmo.planivacances.R
 
 /**
  * A simple [Fragment] subclass.
- * Use the [GroupFragment.newInstance] factory method to
+ * Use the [CreateGroupFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class GroupFragment : Fragment() {
+class CreateGroupFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,14 +23,14 @@ class GroupFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_group, container, false)
+        return inflater.inflate(R.layout.fragment_create_group, container, false)
     }
 
     companion object {
-        const val TAG = "GroupFragment"
+        const val TAG = "CreateGroupFragment"
 
-        fun newInstance(): GroupFragment {
-            return GroupFragment()
+        fun newInstance(): CreateGroupFragment {
+            return CreateGroupFragment()
         }
     }
 }

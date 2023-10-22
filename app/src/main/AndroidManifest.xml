@@ -12,7 +12,7 @@
         android:theme="@style/Theme.PlaniVancances"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".view.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.PlaniVancances.NoActionBar">
@@ -24,8 +24,9 @@
         </activity>
     </application>
 
-    <!--TODO autre endroit?-->
+    <!--TODO demander perms à un autre endroit/autre moment?-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
 </manifest>

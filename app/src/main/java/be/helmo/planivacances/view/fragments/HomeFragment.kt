@@ -1,21 +1,22 @@
-package be.helmo.planivacances
+package be.helmo.planivacances.view.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import be.helmo.planivacances.R
 
 /**
  * A simple [Fragment] subclass.
- * Use the [CalendarFragment.newInstance] factory method to
+ * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CalendarFragment : Fragment() {
+class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -23,16 +24,20 @@ class CalendarFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_calendar, container, false)
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+        val groupInviteRV = view.findViewById<RecyclerView>(R.id.rvGroupInvites)
+        //set group invite recyclerView to gone by default
+        //groupInviteRV.visibility = View.GONE
 
         return view
     }
 
     companion object {
-        const val TAG = "CalendarFragment"
+        const val TAG = "HomeFragment"
 
-        fun newInstance(): CalendarFragment {
-            return CalendarFragment()
+        fun newInstance(): HomeFragment {
+            return HomeFragment()
         }
     }
 }

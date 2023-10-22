@@ -5,7 +5,7 @@
     android:id="@+id/auth"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.auth.AuthFragment">
+    tools:context=".view.fragments.AuthFragment">
 
     <ImageView
         android:id="@+id/authSun"
@@ -151,6 +151,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="64dp"
         android:orientation="vertical"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -272,5 +273,18 @@
             app:layout_constraintTop_toTopOf="@+id/btnAuthGoogle" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/pbAuth"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/authSea"
+        app:layout_constraintEnd_toEndOf="@+id/loginPanel"
+        app:layout_constraintStart_toStartOf="@+id/loginPanel"
+        app:layout_constraintTop_toTopOf="@+id/topColorBar"
+        app:layout_constraintVertical_bias="0.75"
+        tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
