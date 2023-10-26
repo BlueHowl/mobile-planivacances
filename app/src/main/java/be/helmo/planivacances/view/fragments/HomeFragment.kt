@@ -5,8 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.recyclerview.widget.RecyclerView
 import be.helmo.planivacances.R
+import be.helmo.planivacances.factory.AppSingletonFactory
+import be.helmo.planivacances.view.interfaces.IGroupPresenter
 
 /**
  * A simple [Fragment] subclass.
@@ -15,8 +20,15 @@ import be.helmo.planivacances.R
  */
 class HomeFragment : Fragment() {
 
+    lateinit var groupPresenter: IGroupPresenter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //prevent back button
+        requireActivity().onBackPressedDispatcher.addCallback(this) {}
+
+        groupPresenter = AppSingletonFactory.instance!!.getGroupPresenter()
     }
 
     override fun onCreateView(
@@ -29,6 +41,23 @@ class HomeFragment : Fragment() {
         val groupInviteRV = view.findViewById<RecyclerView>(R.id.rvGroupInvites)
         //set group invite recyclerView to gone by default
         //groupInviteRV.visibility = View.GONE
+
+        val btnAddGroup = view.findViewById<ImageButton>(R.id.addGroupBtn)
+
+        val btnNotification = view.findViewById<ImageButton>(R.id.notificationBtn)
+
+        btnAddGroup.setOnClickListener {
+            groupPresenter.createGroupClick()
+        }
+
+        btnNotification.setOnClickListener {
+            if(groupInviteRV.visibility == View.GONE) {
+                //todo verify if there are notification to show before showing list
+                groupInviteRV.visibility = View.VISIBLE
+            } else {
+                groupInviteRV.visibility = View.GONE
+            }
+        }
 
         return view
     }

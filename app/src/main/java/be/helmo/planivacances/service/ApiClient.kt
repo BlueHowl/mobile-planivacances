@@ -1,6 +1,5 @@
-package be.helmo.planivacances
+package be.helmo.planivacances.service
 
-import be.helmo.planivacances.view.interfaces.IAuthService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -8,10 +7,13 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiClient {
-    const val BASE_URL: String = "http://192.168.0.118:8080/"  //addr ipv4 local
+    const val BASE_URL: String = "http://192.168.0.118:8080/";//"http://192.168.191.1:8080/";  //addr ipv4 local
 
     val gson : Gson by lazy {
-        GsonBuilder().setLenient().create()
+        GsonBuilder()
+            .setDateFormat("dd/MM/yyyy HH:mm:ss")
+            .setLenient()
+            .create()
     }
 
     val httpClient : OkHttpClient by lazy {
@@ -28,5 +30,9 @@ object ApiClient {
 
     val authService : IAuthService by lazy{
         retrofit.create(IAuthService::class.java)
+    }
+
+    val groupService : IGroupService by lazy{
+        retrofit.create(IGroupService::class.java)
     }
 }

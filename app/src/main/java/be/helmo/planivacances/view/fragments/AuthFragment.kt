@@ -15,23 +15,19 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import be.helmo.planivacances.ApiClient
+import be.helmo.planivacances.service.ApiClient
 import be.helmo.planivacances.R
-import be.helmo.planivacances.domain.LoginUser
-import be.helmo.planivacances.domain.RegisterUser
+import be.helmo.planivacances.service.dto.LoginUserDTO
+import be.helmo.planivacances.service.dto.RegisterUserDTO
 import be.helmo.planivacances.factory.AppSingletonFactory
-import be.helmo.planivacances.factory.interfaces.IAuthCallback
 import be.helmo.planivacances.view.interfaces.IAuthPresenter
-import be.helmo.planivacances.view.interfaces.IAuthSucceededCallback
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -62,11 +58,9 @@ class AuthFragment : Fragment() {
         authPresenter = AppSingletonFactory.instance!!.getAuthPresenter()
 
         sharedPreferences = requireContext().getSharedPreferences("PlanivacancesPreferences", Context.MODE_PRIVATE)
+        authPresenter.setSharedPreference(sharedPreferences)
 
-        val authToken = sharedPreferences.getString("Auth_Token", null)
-        if(authToken != null) {
-            auth(authToken)
-        }
+        autoAuth()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -126,12 +120,12 @@ class AuthFragment : Fragment() {
         }
 
         loginButton.setOnClickListener {
-            val loginUser = LoginUser(loginMail.text.toString(), loginPassword.text.toString())
+            val loginUser = LoginUserDTO(loginMail.text.toString(), loginPassword.text.toString())
             login(loginUser)
         }
 
         registerButton.setOnClickListener {
-            val registerUser = RegisterUser(registerUsername.text.toString(), registerMail.text.toString(), registerPassword.text.toString())
+            val registerUser = RegisterUserDTO(registerUsername.text.toString(), registerMail.text.toString(), registerPassword.text.toString())
             register(registerUser)
         }
 
@@ -149,7 +143,10 @@ class AuthFragment : Fragment() {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 try {
                     val account = task.getResult(ApiException::class.java)
-                    firebaseAuthWithGoogle(account)
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        authPresenter.authWithToken(account.idToken!!, false)
+                    }
+                    //firebaseAuthWithGoogle(account)
                 } catch (e: ApiException) {
                     // Handle sign-in failure (e.getStatusCode(), e.getStatusMessage())
                     Log.w(TAG, "Google Auth Failure " + e.getStatusCode() + " : " + e.getStatusMessage())
@@ -159,7 +156,6 @@ class AuthFragment : Fragment() {
             }
         }
 
-        //findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
     }
 
     fun startGoogleAuth() {
@@ -174,25 +170,43 @@ class AuthFragment : Fragment() {
         signInLauncher.launch(signInIntent)
     }
 
-    fun firebaseAuthWithGoogle(account: GoogleSignInAccount?) {
+    /*fun firebaseAuthWithGoogle(account: GoogleSignInAccount?) {
         if (account != null) {
+            //auth(account.idToken)
             val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-            mAuth.signInWithCredential(credential).addOnCompleteListener {
+            mAuth.signInWithCredential(credential).addOnCompleteListener { //todo faire coté serveur
                 task ->
                 if (task.isSuccessful) {
+                    val user = task.result.user
+
+                    user?.getIdToken(true)?.addOnCompleteListener { tokenTask ->
+                        if (tokenTask.isSuccessful) {
+                            val token = tokenTask.result?.token
+                            auth(token)
+                            Log.i(TAG, "Successfully signed in (account token: $token)")
+                        } else {
+                            // Handle the error in getting the ID token
+                            val errorMessage = "Erreur lors de l'identification google"
+                            showToast(errorMessage)
+                            authProgressBar.visibility = View.GONE
+                            Log.w(TAG, errorMessage)
+                        }
+                    }
+
+                    /*val token = task.result.user?.getIdToken(true).result.token
                     // Sign in success
-                    auth(account.idToken)
-                    Log.i(TAG, "Succefuly signed in (account token : ${account.idToken})")
+                    auth(token) //auth(account.idToken)
+                    Log.i(TAG, "Succefuly signed in (account token : ${account.idToken})")*/
                 } else {
                     // Sign in failed
-                    Log.w(TAG, "Failed signed in")
+                    Log.w(TAG, "Failed google signed in")
                 }
             }
         } else {
             // Handle the case where acct is null
             Log.w(TAG, "Account is null")
         }
-    }
+    }*/
 
     fun switchAuthPanel() {
         panelId = ++panelId % 2;
@@ -207,18 +221,27 @@ class AuthFragment : Fragment() {
     }
 
     //todo put elsewhere than in view
-    fun register(registerUser: RegisterUser) {
+    fun register(registerUser: RegisterUserDTO) {
         hideKeyboard()
         authProgressBar.visibility = View.VISIBLE
 
         lifecycleScope.launch(Dispatchers.Main) {
+            val result = authPresenter.register(registerUser)
+
+            if(!result.success) {
+                authProgressBar.visibility = View.GONE
+                showToast(result.message!!)
+            }
+        }
+
+        /*lifecycleScope.launch(Dispatchers.Main) {
             try {
                 val response = ApiClient.authService.register(registerUser)
 
                 if (response.isSuccessful && response.body() != null) {
                     val token = response.body()
                     auth(token)
-                    Log.d(TAG, "Register Respone : ${token.toString()}")
+                    Log.d(TAG, "Register Response : ${token.toString()}")
                 } else {
                     authProgressBar.visibility = View.GONE
                     showToast("Une erreur est survenue : ${response.message()}")
@@ -228,11 +251,11 @@ class AuthFragment : Fragment() {
                 authProgressBar.visibility = View.GONE
                 showToast("Une erreur est survenue : ${e.message}")
             }
-        }
+        }*/
     }
 
-    //todo put elsewhere than in view
-    fun login(loginUser: LoginUser) {
+
+    /*fun login(loginUser: LoginUserDTO) {
         hideKeyboard()
         authProgressBar.visibility = View.VISIBLE
 
@@ -257,29 +280,109 @@ class AuthFragment : Fragment() {
                 } else {
                     // Handle the error in signing in
                     val errorMessage = "Erreur lors de la connexion"
-                    showToast("Erreur lors de la connexion")
+                    task.exception?.printStackTrace() //todo debug
+                    showToast(errorMessage)
                     authProgressBar.visibility = View.GONE
                     Log.w(TAG, errorMessage)
                 }
             }
+    }*/
+    /*fun login(loginUser: LoginUserDTO) {
+        hideKeyboard()
+        authProgressBar.visibility = View.VISIBLE
+
+        lifecycleScope.launch(Dispatchers.Main) {//todo déplacer
+            try {
+                val response = ApiClient.authService.login(loginUser)
+
+                if (response.isSuccessful && response.body() != null) {
+                    val idToken = response.body()
+                    //auth(token)//gérer réponse si positive ou pas ? todo
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        authPresenter.authWithToken(idToken!!)
+                    }
+                    Log.d(TAG, "Login Response : ${idToken.toString()}")
+                } else {
+                    authProgressBar.visibility = View.GONE
+                    showToast("Erreur lors de la connexion : ${response.message()}")
+                }
+
+            } catch (e: Exception) {
+                authProgressBar.visibility = View.GONE
+                showToast("Une erreur est survenue lors de la connexion : ${e.message}")
+                Log.w("Connexion", "${e.message}")
+            }
+        }
+    }*/
+
+    fun login(loginUser: LoginUserDTO) {
+        hideKeyboard()
+        authProgressBar.visibility = View.VISIBLE
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            val result = authPresenter.login(loginUser, keepConnected!!.isChecked)
+
+            if(!result.success) {
+                authProgressBar.visibility = View.GONE
+                showToast(result.message!!)
+            }
+        }
+
     }
 
-    fun auth(token: String?) {
+    fun autoAuth() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            val result = authPresenter.autoAuth()
+
+            if(!result.success && result.message != null) {
+                authProgressBar.visibility = View.GONE
+                showToast(result.message)
+            }
+        }
+    }
+
+
+    /*fun auth(token: String?) {
+        var formattedToken = token
+        if(token?.substring(0, 6) != "Bearer") {
+            formattedToken = "Bearer $token"
+        }
         if(keepConnected != null && keepConnected!!.isChecked) {
             val editor = sharedPreferences.edit()
-            editor.putString("Auth_Token", token)
+            editor.putString("Auth_Token", formattedToken)
             editor.apply()
         }
 
-        AppSingletonFactory.instance?.setAuthToken(token)
+        AppSingletonFactory.instance?.setAuthToken(formattedToken)
         authPresenter.authSucceded() //appel à un évenement qui change de fragment
-    }
+    }*/
+
+    /*fun autoAuth() { //todo déplacer
+        val authToken = sharedPreferences.getString("Auth_Token", null)
+        if(authToken != null) {
+            lifecycleScope.launch(Dispatchers.Main) {
+                try {
+                    val response = ApiClient.authService.validateToken(authToken)
+
+                    if (response.isSuccessful && response.body() == true) {
+                        auth(authToken)
+                        Log.d(TAG, "Token local valide : $authToken")
+                    } else {
+                        showToast("Erreur lors de la connexion automatique ${response.message()}")
+                        Log.d(TAG, "Token local invalide : $authToken")
+                    }
+
+                } catch (e: Exception) {
+                    showToast("Erreur lors de la connexion automatique : ${e.message}")
+                }
+            }
+        }
+    }*/
 
     fun showToast(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
-    //vraiment utile ?
     fun hideKeyboard() {
         val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         val currentFocus = requireActivity().currentFocus

@@ -1,8 +1,11 @@
 package be.helmo.planivacances.factory
 
 import be.helmo.planivacances.presenter.AuthPresenter
+import be.helmo.planivacances.presenter.GroupPresenter
 import be.helmo.planivacances.view.interfaces.IAuthPresenter
 import be.helmo.planivacances.view.interfaces.IAuthSucceededCallback
+import be.helmo.planivacances.view.interfaces.ICreateGroupClickCallback
+import be.helmo.planivacances.view.interfaces.IGroupPresenter
 
 class AppSingletonFactory() {
 
@@ -10,6 +13,9 @@ class AppSingletonFactory() {
 
     val authPresenter: AuthPresenter = AuthPresenter()
 
+    val groupPresenter: GroupPresenter = GroupPresenter()
+
+    //auth token
     fun getAuthToken(): String? {
         return token
     }
@@ -18,12 +24,22 @@ class AppSingletonFactory() {
         this.token = token
     }
 
+    //auth presenter
     fun getAuthPresenter(): IAuthPresenter {
         return authPresenter
     }
 
     fun getAuthSucceededCallback(): IAuthSucceededCallback {
         return authPresenter
+    }
+
+    //group presenter
+    fun getGroupPresenter(): IGroupPresenter {
+        return groupPresenter
+    }
+
+    fun getCreateGroupClickCallback(): ICreateGroupClickCallback {
+        return groupPresenter
     }
 
     companion object {

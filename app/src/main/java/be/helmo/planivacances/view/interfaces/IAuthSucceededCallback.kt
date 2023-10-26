@@ -4,6 +4,6 @@ import be.helmo.planivacances.factory.interfaces.IAuthCallback
 
 interface IAuthSucceededCallback {
 
-    fun setAuthCallback(iAuthCallback: IAuthCallback?)
+    fun setAuthCallback(authCallback: IAuthCallback?)
 
 }

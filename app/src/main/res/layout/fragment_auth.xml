@@ -280,10 +280,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/authSea"
-        app:layout_constraintEnd_toEndOf="@+id/loginPanel"
-        app:layout_constraintStart_toStartOf="@+id/loginPanel"
-        app:layout_constraintTop_toTopOf="@+id/topColorBar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.75"
         tools:visibility="gone" />
 
