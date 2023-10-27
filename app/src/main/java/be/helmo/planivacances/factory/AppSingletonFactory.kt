@@ -5,6 +5,9 @@ import be.helmo.planivacances.presenter.GroupPresenter
 import be.helmo.planivacances.view.interfaces.IAuthPresenter
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
 
+/**
+ * Factory de singleton + stockage du token
+ */
 class AppSingletonFactory() {
 
     var token: String? = null

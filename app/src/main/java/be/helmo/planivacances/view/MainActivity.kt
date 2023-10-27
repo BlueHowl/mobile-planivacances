@@ -28,6 +28,9 @@ class MainActivity : AppCompatActivity() {
         )[AuthViewModel::class.java]
     }
 
+    /**
+     * Fonction qui cache le clavier
+     */
     fun hideKeyboard() {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         val currentFocus = currentFocus

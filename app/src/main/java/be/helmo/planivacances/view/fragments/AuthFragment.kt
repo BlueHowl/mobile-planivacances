@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,6 +20,7 @@ import be.helmo.planivacances.R
 import be.helmo.planivacances.service.dto.LoginUserDTO
 import be.helmo.planivacances.service.dto.RegisterUserDTO
 import be.helmo.planivacances.factory.AppSingletonFactory
+import be.helmo.planivacances.view.MainActivity
 import be.helmo.planivacances.view.interfaces.IAuthPresenter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
@@ -34,6 +34,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
+/**
+ * Fragment d'authentification (login et register)
+ */
 class AuthFragment : Fragment() {
 
     lateinit var mAuth: FirebaseAuth
@@ -95,12 +98,17 @@ class AuthFragment : Fragment() {
         }
 
         binding.btnLogin.setOnClickListener {
-            val loginUser = LoginUserDTO(binding.etLoginMail.text.toString(), binding.etLoginPassword.text.toString())
+            val loginUser = LoginUserDTO(
+                binding.etLoginMail.text.toString(),
+                binding.etLoginPassword.text.toString())
             login(loginUser)
         }
 
         binding.btnRegister.setOnClickListener {
-            val registerUser = RegisterUserDTO(binding.etRegisterName.text.toString(), binding.etRegisterMail.text.toString(), binding.etRegisterPassword.text.toString())
+            val registerUser = RegisterUserDTO(
+                binding.etRegisterName.text.toString(),
+                binding.etRegisterMail.text.toString(),
+                binding.etRegisterPassword.text.toString())
             register(registerUser)
         }
 
@@ -121,6 +129,8 @@ class AuthFragment : Fragment() {
 
                         if(authResult.success) {
                             goToHome()
+                        } else {
+                            showToast(authResult.message!!)
                         }
                     }
                 } catch (e: ApiException) {
@@ -133,6 +143,9 @@ class AuthFragment : Fragment() {
 
     }
 
+    /**
+     * lance l'activité d'authentification google
+     */
     fun startGoogleAuth() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.web_client_id))
@@ -145,6 +158,9 @@ class AuthFragment : Fragment() {
         signInLauncher.launch(signInIntent)
     }
 
+    /**
+     * Change le panneau d'authentification (login ou register)
+     */
     fun switchAuthPanel() {
         panelId = ++panelId % 2;
 
@@ -157,6 +173,10 @@ class AuthFragment : Fragment() {
         }
     }
 
+    /**
+     * Appel la fonction d'enregistrement asynchrone
+     * @param registerUser (RegisterUserDTO)
+     */
     fun register(registerUser: RegisterUserDTO) {
         hideKeyboard()
         binding.pbAuth.visibility = View.VISIBLE
@@ -174,6 +194,10 @@ class AuthFragment : Fragment() {
 
     }
 
+    /**
+     * Appel la fonction de connexion asynchrone
+     * @param loginUser (LoginUserDTO)
+     */
     fun login(loginUser: LoginUserDTO) {
         hideKeyboard()
         binding.pbAuth.visibility = View.VISIBLE
@@ -191,6 +215,9 @@ class AuthFragment : Fragment() {
 
     }
 
+    /**
+     * Appel la fonction d'authentification automatique asynchrone
+     */
     fun autoAuth() {
         lifecycleScope.launch(Dispatchers.Main) {
             val result = authPresenter.autoAuth()
@@ -204,19 +231,27 @@ class AuthFragment : Fragment() {
         }
     }
 
+    /**
+     * navigue vers le fragment home
+     */
     fun goToHome() {
         findNavController().navigate(R.id.action_authFragment_to_homeFragment)
     }
 
+    /**
+     * Affiche un message à l'écran
+     */
     fun showToast(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
+    /**
+     * Appel la fonction qui cache le clavier
+     */
     fun hideKeyboard() {
-        val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        val currentFocus = requireActivity().currentFocus
-        if (currentFocus != null) {
-            inputMethodManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+        val activity: Activity? = activity
+        if (activity is MainActivity) {
+            activity.hideKeyboard()
         }
     }
 

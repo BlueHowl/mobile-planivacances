@@ -18,22 +18,25 @@ import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.service.ApiClient
 import be.helmo.planivacances.service.dto.CreateGroupDTO
 import be.helmo.planivacances.view.MainActivity
+import be.helmo.planivacances.view.interfaces.IGroupPresenter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
 
 /**
- * A simple [Fragment] subclass.
- * Use the [CreateGroupFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * Fragment de création de groupe
  */
 class CreateGroupFragment : Fragment() {
 
     lateinit var binding : FragmentCreateGroupBinding
 
+    lateinit var groupPresenter : IGroupPresenter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        groupPresenter = AppSingletonFactory.instance!!.getGroupPresenter()
     }
 
     override fun onCreateView(
@@ -65,35 +68,38 @@ class CreateGroupFragment : Fragment() {
         return binding.root
     }
 
+    /**
+     * Crée un groupe
+     * @param group (CreateGroupDTO) contient les informations du groupe
+     */
     fun createGroup(group: CreateGroupDTO) {
         hideKeyboard()
         binding.pbCreateGroup.visibility = View.VISIBLE
 
         lifecycleScope.launch(Dispatchers.Main) {
-            try {
-                val response = ApiClient.groupService.create(AppSingletonFactory.instance?.getAuthToken()!!, group)
+            val result = groupPresenter.createGroup(group)
 
-                if (response.isSuccessful && response.body() != null) {
-                    val delay = response.body()
-                    Log.d(TAG, "Group created : $delay")
-                    findNavController().navigate(R.id.action_createGroupFragment_to_homeFragment)
-                } else {
-                    binding.pbCreateGroup.visibility = View.GONE
-                    showToast("Erreur lors de la création du groupe ${response.message()}")
-                    Log.d(TAG, "${response.message()}, ${response.isSuccessful()}, ${AppSingletonFactory.instance?.getAuthToken()!!}")
-                }
-
-            } catch (e: Exception) {
+            if (result.success) {
+                showToast(result.message!!)
+                findNavController().navigate(R.id.action_createGroupFragment_to_homeFragment)
+            } else {
                 binding.pbCreateGroup.visibility = View.GONE
-                showToast("Erreur durant la création du groupe : ${e.message}")
+                showToast(result.message!!)
             }
         }
+
     }
 
+    /**
+     * Affiche un message à l'écran
+     */
     fun showToast(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
+    /**
+     * Appel la fonction qui cache le clavier
+     */
     fun hideKeyboard() {
         val activity: Activity? = activity
         if (activity is MainActivity) {

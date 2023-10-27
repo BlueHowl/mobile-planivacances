@@ -14,21 +14,31 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.await
 
+/**
+ * Authentification Presenter
+ */
 class AuthPresenter() : IAuthPresenter {
 
-    val mAuth: FirebaseAuth
+    val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
     lateinit var sharedPreferences : SharedPreferences
 
 
-    init {
-        mAuth = FirebaseAuth.getInstance()
-    }
-
+    /**
+     * assigne le sharedPreferences à la variable locale du presenter
+     * @param sharedPreferences (SharedPreferences)
+     */
     override fun setSharedPreference(sharedPreferences: SharedPreferences) {
         this.sharedPreferences = sharedPreferences
     }
 
+    /**
+     * Authentification asynchrone par token, récupère le token d'identification
+     * sur base d'un customToken
+     * @param idToken (String) customToken
+     * @param keepConnected (Boolean) stocker le token en local ?
+     * @return (ResultMessage) Message de résultat
+     */
     override suspend fun authWithToken(idToken: String, keepConnected: Boolean): ResultMessage {
         val authResult = mAuth.signInWithCustomToken(idToken).await()
         return if (authResult != null) {
@@ -51,6 +61,12 @@ class AuthPresenter() : IAuthPresenter {
         }
     }
 
+    /**
+     * Enregistrement asycnhrone d'un profil utilisateur
+     * @param registerUser (RegisterUserDTO) Objet contenant le nom,
+     * mail et mot de passe utilisateur
+     * @return (ResultMessage) Message de résultat
+     */
     override suspend fun register(registerUser: RegisterUserDTO): ResultMessage {
         return coroutineScope {
             try {
@@ -58,24 +74,29 @@ class AuthPresenter() : IAuthPresenter {
 
                 if (response.await().isSuccessful && response.await().body() != null) {
                     val idToken = response.await().body()
-                    //auth(token, keepConnected)
                     val resultMessage = authWithToken(idToken!!, false)
 
                     Log.d(AuthFragment.TAG, "Register Response: $idToken")
-                    return@coroutineScope ResultMessage(resultMessage.success, resultMessage.message) //ResultType.Success(token)
+                    return@coroutineScope ResultMessage(
+                        resultMessage.success,
+                        resultMessage.message)
                 } else {
-                    //authProgressBar.visibility = View.GONE
-                    return@coroutineScope ResultMessage(false, "Une erreur est survenue: ${response.await().message()}")
+                    return@coroutineScope ResultMessage(false,
+                        "Une erreur est survenue: ${response.await().message()}")
                 }
             } catch (e: Exception) {
-                //authProgressBar.visibility = View.GONE
-                return@coroutineScope ResultMessage(false, "Une erreur est survenue: ${e.message}")
+                return@coroutineScope ResultMessage(false,
+                    "Une erreur est survenue: ${e.message}")
             }
         }
-
-        //return CoroutineResult(false, "Une erreur est survenue lors de l'enregistrement")
     }
 
+    /**
+     * Connexion asycnhrone à un profil utilisateur
+     * @param loginUser (LoginUserDTO) Objet contenant le mail et mot de passe utilisateur
+     * @param keepConnected (Boolean) stocker le token en local ?
+     * @return (ResultMessage) Message de résultat
+     */
     override suspend fun login(loginUser: LoginUserDTO, keepConnected: Boolean): ResultMessage {
 
         return coroutineScope {
@@ -88,18 +109,26 @@ class AuthPresenter() : IAuthPresenter {
                     val resultMessage = authWithToken(idToken!!, keepConnected)
 
                     Log.d(AuthFragment.TAG, "Login Response : $idToken")
-                    return@coroutineScope ResultMessage(resultMessage.success, resultMessage.message) //ResultType.Success(token)
+                    return@coroutineScope ResultMessage(
+                        resultMessage.success,
+                        resultMessage.message)
                 } else {
-                    return@coroutineScope ResultMessage(false, "Erreur lors de la connexion : ${response.await().message()}")
+                    return@coroutineScope ResultMessage(false,
+                        "Erreur lors de la connexion : ${response.await().message()}")
                 }
 
             } catch (e: Exception) {
                 Log.w("Connexion", "${e.message}")
-                return@coroutineScope ResultMessage(false, "Une erreur est survenue lors de la connexion: ${e.message}")
+                return@coroutineScope ResultMessage(false,
+                    "Une erreur est survenue lors de la connexion: ${e.message}")
             }
         }
     }
 
+    /**
+     * Connexion asynchrone automatique sur base du potentiel token d'identification sauvegardé
+     * @return (ResultMessage) Message de résultat
+     */
     override suspend fun autoAuth(): ResultMessage {
         return coroutineScope {
             val authToken = sharedPreferences.getString("Auth_Token", null)
@@ -131,6 +160,11 @@ class AuthPresenter() : IAuthPresenter {
         }
     }
 
+    /**
+     * Sauvegarde le token si demandé et précise le token à l'AppSingletonFactory
+     * @param token (String) token d'identification
+     * @param keepConnected (Boolean) stocker le token en local ?
+     */
     fun auth(token: String?, keepConnected: Boolean) {
         var formattedToken = token
         if(token?.substring(0, 6) != "Bearer") {
