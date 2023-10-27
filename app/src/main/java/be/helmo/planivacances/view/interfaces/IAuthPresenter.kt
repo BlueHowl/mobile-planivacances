@@ -5,9 +5,7 @@ import be.helmo.planivacances.service.dto.LoginUserDTO
 import be.helmo.planivacances.service.dto.RegisterUserDTO
 import be.helmo.planivacances.util.ResultMessage
 
-interface IAuthPresenter : IAuthSucceededCallback {
-
-    fun authSucceded()
+interface IAuthPresenter {
 
     fun setSharedPreference(sharedPreferences: SharedPreferences)
 

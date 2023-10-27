@@ -3,8 +3,6 @@ package be.helmo.planivacances.factory
 import be.helmo.planivacances.presenter.AuthPresenter
 import be.helmo.planivacances.presenter.GroupPresenter
 import be.helmo.planivacances.view.interfaces.IAuthPresenter
-import be.helmo.planivacances.view.interfaces.IAuthSucceededCallback
-import be.helmo.planivacances.view.interfaces.ICreateGroupClickCallback
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
 
 class AppSingletonFactory() {
@@ -29,16 +27,8 @@ class AppSingletonFactory() {
         return authPresenter
     }
 
-    fun getAuthSucceededCallback(): IAuthSucceededCallback {
-        return authPresenter
-    }
-
     //group presenter
     fun getGroupPresenter(): IGroupPresenter {
-        return groupPresenter
-    }
-
-    fun getCreateGroupClickCallback(): ICreateGroupClickCallback {
         return groupPresenter
     }
 

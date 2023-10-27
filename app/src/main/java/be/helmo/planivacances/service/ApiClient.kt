@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiClient {
-    const val BASE_URL: String = "http://192.168.0.118:8080/";//"http://192.168.191.1:8080/";  //addr ipv4 local
+    const val BASE_URL: String = "http://192.168.159.13:8080/"//"http://192.168.0.118:8080/"  //addr ipv4 local
 
     val gson : Gson by lazy {
         GsonBuilder()

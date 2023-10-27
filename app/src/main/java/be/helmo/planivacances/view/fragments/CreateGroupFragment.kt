@@ -1,22 +1,27 @@
 package be.helmo.planivacances.view.fragments
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import be.helmo.planivacances.R
+import be.helmo.planivacances.databinding.FragmentCreateGroupBinding
 import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.service.ApiClient
 import be.helmo.planivacances.service.dto.CreateGroupDTO
+import be.helmo.planivacances.view.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
+
 
 /**
  * A simple [Fragment] subclass.
@@ -25,7 +30,7 @@ import java.util.*
  */
 class CreateGroupFragment : Fragment() {
 
-    lateinit var createGroupProgressBar : ProgressBar
+    lateinit var binding : FragmentCreateGroupBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,26 +39,14 @@ class CreateGroupFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_create_group, container, false)
+        binding = FragmentCreateGroupBinding.inflate(inflater, container,false)
 
-        val addGroupBtn = view.findViewById<ImageButton>(R.id.addGroupBtn)
-        val groupName = view.findViewById<EditText>(R.id.etGroupName)
-        val startDate = view.findViewById<TextView>(R.id.tvGroupStartDate)
-        val endDate = view.findViewById<TextView>(R.id.tvGroupEndDate)
-        val groupPlace = view.findViewById<Spinner>(R.id.groupPlaceSpinner)
-        val groupDescription = view.findViewById<EditText>(R.id.etGroupDescription)
-
-        val backButton = view.findViewById<TextView>(R.id.tvBack)
-
-        createGroupProgressBar = view.findViewById(R.id.pbCreateGroup)
-
-
-        addGroupBtn.setOnClickListener {
+        binding.addGroupBtn.setOnClickListener {
             val group = CreateGroupDTO(
-                groupName.text.toString(),
-                groupDescription.text.toString(),
+                binding.etGroupName.text.toString(),
+                binding.etGroupDescription.text.toString(),
                 Date("22/01/2024 12:12:12"),
                 Date("22/01/2024 12:12:12"),
                 //Date(startDate.text.toString()),
@@ -64,16 +57,17 @@ class CreateGroupFragment : Fragment() {
         }
 
         //back when backText is Clicked
-        backButton.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+        binding.tvBack.setOnClickListener {
+            //requireActivity().onBackPressedDispatcher.onBackPressed()
+            findNavController().navigate(R.id.action_createGroupFragment_to_homeFragment)
         }
 
-        return view
+        return binding.root
     }
 
     fun createGroup(group: CreateGroupDTO) {
         hideKeyboard()
-        createGroupProgressBar.visibility = View.VISIBLE
+        binding.pbCreateGroup.visibility = View.VISIBLE
 
         lifecycleScope.launch(Dispatchers.Main) {
             try {
@@ -82,15 +76,15 @@ class CreateGroupFragment : Fragment() {
                 if (response.isSuccessful && response.body() != null) {
                     val delay = response.body()
                     Log.d(TAG, "Group created : $delay")
-                    createGroupProgressBar.visibility = View.GONE //todo enlever si transition vers une autre vue
+                    findNavController().navigate(R.id.action_createGroupFragment_to_homeFragment)
                 } else {
-                    createGroupProgressBar.visibility = View.GONE
+                    binding.pbCreateGroup.visibility = View.GONE
                     showToast("Erreur lors de la création du groupe ${response.message()}")
                     Log.d(TAG, "${response.message()}, ${response.isSuccessful()}, ${AppSingletonFactory.instance?.getAuthToken()!!}")
                 }
 
             } catch (e: Exception) {
-                createGroupProgressBar.visibility = View.GONE
+                binding.pbCreateGroup.visibility = View.GONE
                 showToast("Erreur durant la création du groupe : ${e.message}")
             }
         }
@@ -100,12 +94,10 @@ class CreateGroupFragment : Fragment() {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
-    //todo vraiment utile ?
     fun hideKeyboard() {
-        val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        val currentFocus = requireActivity().currentFocus
-        if (currentFocus != null) {
-            inputMethodManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+        val activity: Activity? = activity
+        if (activity is MainActivity) {
+            activity.hideKeyboard()
         }
     }
 

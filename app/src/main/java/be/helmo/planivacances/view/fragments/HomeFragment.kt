@@ -8,8 +8,11 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.addCallback
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import be.helmo.planivacances.R
+import be.helmo.planivacances.databinding.FragmentCreateGroupBinding
+import be.helmo.planivacances.databinding.FragmentHomeBinding
 import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
 
@@ -21,6 +24,8 @@ import be.helmo.planivacances.view.interfaces.IGroupPresenter
 class HomeFragment : Fragment() {
 
     lateinit var groupPresenter: IGroupPresenter
+
+    lateinit var binding: FragmentHomeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,32 +39,24 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
+        binding = FragmentHomeBinding.inflate(inflater, container,false)
 
-        val groupInviteRV = view.findViewById<RecyclerView>(R.id.rvGroupInvites)
-        //set group invite recyclerView to gone by default
-        //groupInviteRV.visibility = View.GONE
-
-        val btnAddGroup = view.findViewById<ImageButton>(R.id.addGroupBtn)
-
-        val btnNotification = view.findViewById<ImageButton>(R.id.notificationBtn)
-
-        btnAddGroup.setOnClickListener {
-            groupPresenter.createGroupClick()
+        binding.addGroupBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_createGroupFragment)
         }
 
-        btnNotification.setOnClickListener {
-            if(groupInviteRV.visibility == View.GONE) {
+        binding.notificationBtn.setOnClickListener {
+            if(binding.rvGroupInvites.visibility == View.GONE) {
                 //todo verify if there are notification to show before showing list
-                groupInviteRV.visibility = View.VISIBLE
+                binding.rvGroupInvites.visibility = View.VISIBLE
             } else {
-                groupInviteRV.visibility = View.GONE
+                binding.rvGroupInvites.visibility = View.GONE
             }
         }
 
-        return view
+        return binding.root
     }
 
     companion object {

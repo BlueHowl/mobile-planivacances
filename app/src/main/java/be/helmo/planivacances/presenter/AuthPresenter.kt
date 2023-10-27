@@ -2,10 +2,7 @@ package be.helmo.planivacances.presenter
 
 import android.content.SharedPreferences
 import android.util.Log
-import android.view.View
-import androidx.lifecycle.lifecycleScope
 import be.helmo.planivacances.factory.AppSingletonFactory
-import be.helmo.planivacances.factory.interfaces.IAuthCallback
 import be.helmo.planivacances.service.ApiClient
 import be.helmo.planivacances.service.dto.LoginUserDTO
 import be.helmo.planivacances.service.dto.RegisterUserDTO
@@ -19,14 +16,9 @@ import kotlinx.coroutines.tasks.await
 
 class AuthPresenter() : IAuthPresenter {
 
-    var acb: IAuthCallback? = null
-
     val mAuth: FirebaseAuth
 
     lateinit var sharedPreferences : SharedPreferences
-
-    /*val job = Job()
-    val coroutineScope = CoroutineScope(job + Dispatchers.Default)*/
 
 
     init {
@@ -36,48 +28,6 @@ class AuthPresenter() : IAuthPresenter {
     override fun setSharedPreference(sharedPreferences: SharedPreferences) {
         this.sharedPreferences = sharedPreferences
     }
-
-    /*override suspend fun authWithToken(idToken: String?, callback: (ResultMessage) -> Unit) {
-        if (idToken != null) {
-            //auth(account.idToken)
-            //val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-
-            //mAuth.signInWithCredential(credential).addOnCompleteListener {
-            mAuth.signInWithCustomToken(idToken).addOnCompleteListener {
-                    task ->
-                if (task.isSuccessful) {
-                    val user = task.result.user
-
-                    user?.getIdToken(true)?.addOnCompleteListener { tokenTask ->
-                        if (tokenTask.isSuccessful) {
-                            val token = tokenTask.result?.token
-                            auth(token, false)
-                            Log.i("AuthFragment.TAG", "Successfully signed in (account token: $token)")
-                            callback(ResultMessage(true, "$token"))
-                        } else {
-                            // Handle the error in getting the ID token
-                            val errorMessage = "Erreur lors de l'identification google"
-                            Log.w("AuthFragment.TAG", errorMessage)
-                            callback(ResultMessage(false, errorMessage))
-                        }
-                    }
-
-                    /*val token = task.result.user?.getIdToken(true).result.token
-                    // Sign in success
-                    auth(token) //auth(account.idToken)
-                    Log.i(TAG, "Succefuly signed in (account token : ${account.idToken})")*/
-                } else {
-                    // Sign in failed
-                    Log.w("AuthFragment.TAG", "Failed google signed in")
-                    callback(ResultMessage(false, "Failed google signed in"))
-                }
-            }
-        } else {
-            // Handle the case where acct is null
-            Log.w("AuthFragment.TAG", "idToken is null")
-            callback(ResultMessage(false, "idToken is null"))
-        }
-    }*/
 
     override suspend fun authWithToken(idToken: String, keepConnected: Boolean): ResultMessage {
         val authResult = mAuth.signInWithCustomToken(idToken).await()
@@ -193,15 +143,6 @@ class AuthPresenter() : IAuthPresenter {
         }
 
         AppSingletonFactory.instance?.setAuthToken(formattedToken)
-        authSucceded() //appel à un évenement qui change de fragment
     }
 
-    //events
-    override fun authSucceded() {
-        acb?.onAuthSucceeded()
-    }
-
-    override fun setAuthCallback(acb: IAuthCallback?) {
-        this.acb = acb
-    }
 }

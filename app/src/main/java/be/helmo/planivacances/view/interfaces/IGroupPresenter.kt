@@ -1,8 +1,6 @@
 package be.helmo.planivacances.view.interfaces
 
-interface IGroupPresenter : ICreateGroupClickCallback {
-
-    fun createGroupClick()
+interface IGroupPresenter {
 
     fun createGroup()
 
