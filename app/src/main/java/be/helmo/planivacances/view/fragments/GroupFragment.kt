@@ -35,7 +35,7 @@ class GroupFragment : Fragment() {
         }
 
         binding.ibCalendar.setOnClickListener {
-
+            findNavController().navigate(R.id.action_groupFragment_to_calendarFragment)
         }
 
         binding.ibItinerary.setOnClickListener {
@@ -43,7 +43,7 @@ class GroupFragment : Fragment() {
         }
 
         binding.ibTchat.setOnClickListener {
-
+            findNavController().navigate(R.id.action_groupFragment_to_tchatFragment)
         }
 
         return binding.root

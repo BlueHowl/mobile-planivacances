@@ -49,6 +49,12 @@
         <action
             android:id="@+id/action_groupFragment_to_weatherFragment"
             app:destination="@id/weatherFragment" />
+        <action
+            android:id="@+id/action_groupFragment_to_calendarFragment"
+            app:destination="@id/CalendarFragment" />
+        <action
+            android:id="@+id/action_groupFragment_to_tchatFragment"
+            app:destination="@id/TchatFragment" />
     </fragment>
     <fragment
         android:id="@+id/weatherFragment"
@@ -57,6 +63,24 @@
         tools:layout="@layout/fragment_weather">
         <action
             android:id="@+id/action_weatherFragment_to_groupFragment"
+            app:destination="@id/groupFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/CalendarFragment"
+        android:name="be.helmo.planivacances.view.fragments.CalendarFragment"
+        android:label="fragment_calendar"
+        tools:layout="@layout/fragment_calendar">
+        <action
+            android:id="@+id/action_CalendarFragment_to_groupFragment"
+            app:destination="@id/groupFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/TchatFragment"
+        android:name="be.helmo.planivacances.view.fragments.TchatFragment"
+        android:label="fragment_tchat"
+        tools:layout="@layout/fragment_tchat">
+        <action
+            android:id="@+id/action_TchatFragment_to_groupFragment"
             app:destination="@id/groupFragment" />
     </fragment>
 </navigation>
