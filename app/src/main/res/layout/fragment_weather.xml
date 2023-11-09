@@ -7,7 +7,7 @@ android:layout_height="match_parent"
 tools:context=".view.fragments.weather.WeatherFragment">
 
 
-    <!--<ImageView
+    <ImageView
         android:id="@+id/weatherSun"
         android:layout_width="268dp"
         android:layout_height="290dp"
@@ -26,10 +26,11 @@ tools:context=".view.fragments.weather.WeatherFragment">
         android:layout_marginStart="-40dp"
         android:layout_marginBottom="-60dp"
         android:adjustViewBounds="true"
+        android:contentDescription="palmtree"
         android:rotation="10"
         android:src="@drawable/palmtree"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />-->
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/clHeader"

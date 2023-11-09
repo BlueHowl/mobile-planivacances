@@ -14,6 +14,10 @@ import be.helmo.planivacances.databinding.FragmentWeatherBinding
 import be.helmo.planivacances.domain.WeatherForecast
 import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.view.interfaces.IWeatherPresenter
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -42,7 +46,7 @@ class WeatherFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentWeatherBinding.inflate(inflater, container,false)
 
-        /*Glide.with(this)
+        Glide.with(this)
             .load(R.drawable.sun)
             .transform(MultiTransformation(RoundedCorners(25), BlurTransformation(20)))
             .into(binding.weatherSun)
@@ -50,7 +54,7 @@ class WeatherFragment : Fragment() {
         Glide.with(this)
             .load(R.drawable.palmtree)
             .transform(MultiTransformation(RoundedCorners(25), BlurTransformation(20)))
-            .into(binding.weatherPalmTree)*/
+            .into(binding.weatherPalmTree)
 
         binding.tvBack.setOnClickListener {
             findNavController().navigate(R.id.action_weatherFragment_to_groupFragment)

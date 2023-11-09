@@ -71,7 +71,6 @@ class CreateGroupFragment : Fragment() {
 
         //back when backText is Clicked
         binding.tvBack.setOnClickListener {
-            //requireActivity().onBackPressedDispatcher.onBackPressed()
             findNavController().navigate(R.id.action_createGroupFragment_to_homeFragment)
         }
 
