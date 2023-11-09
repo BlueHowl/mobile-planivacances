@@ -2,8 +2,10 @@ package be.helmo.planivacances.factory
 
 import be.helmo.planivacances.presenter.AuthPresenter
 import be.helmo.planivacances.presenter.GroupPresenter
+import be.helmo.planivacances.presenter.WeatherPresenter
 import be.helmo.planivacances.view.interfaces.IAuthPresenter
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
+import be.helmo.planivacances.view.interfaces.IWeatherPresenter
 
 /**
  * Factory de singleton + stockage du token
@@ -15,6 +17,8 @@ class AppSingletonFactory() {
     val authPresenter: AuthPresenter = AuthPresenter()
 
     val groupPresenter: GroupPresenter = GroupPresenter()
+
+    val weatherPresenter: WeatherPresenter = WeatherPresenter(groupPresenter)
 
     //auth token
     fun getAuthToken(): String? {
@@ -33,6 +37,11 @@ class AppSingletonFactory() {
     //group presenter
     fun getGroupPresenter(): IGroupPresenter {
         return groupPresenter
+    }
+
+    //weather presenter
+    fun getWeatherPresenter(): IWeatherPresenter {
+        return weatherPresenter;
     }
 
     companion object {

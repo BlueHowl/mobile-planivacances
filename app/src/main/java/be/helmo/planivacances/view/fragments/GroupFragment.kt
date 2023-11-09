@@ -5,7 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import be.helmo.planivacances.R
+import be.helmo.planivacances.databinding.FragmentGroupBinding
 
 /**
  * A simple [Fragment] subclass.
@@ -14,6 +16,8 @@ import be.helmo.planivacances.R
  */
 class GroupFragment : Fragment() {
 
+    lateinit var binding : FragmentGroupBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -21,9 +25,28 @@ class GroupFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_group, container, false)
+        binding = FragmentGroupBinding.inflate(inflater, container,false)
+
+
+        binding.ibWeather.setOnClickListener {
+            findNavController().navigate(R.id.action_groupFragment_to_weatherFragment)
+        }
+
+        binding.ibCalendar.setOnClickListener {
+
+        }
+
+        binding.ibItinerary.setOnClickListener {
+
+        }
+
+        binding.ibTchat.setOnClickListener {
+
+        }
+
+        return binding.root
     }
 
     companion object {

@@ -6,8 +6,9 @@
 
     <ImageView
         android:id="@+id/ivWeather"
-        android:layout_width="84dp"
-        android:layout_height="108dp"
+        android:layout_width="76dp"
+        android:layout_height="100dp"
+        android:adjustViewBounds="true"
         android:paddingStart="8dp"
         android:paddingTop="20dp"
         android:paddingEnd="8dp"
@@ -21,8 +22,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:paddingStart="12dp"
-        android:paddingTop="12dp"
-        android:paddingEnd="12dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivWeather"
@@ -32,7 +33,9 @@
             android:id="@+id/tvWeatherInfos"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Description Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec fringilla quam eu faci lisis mollis. "
+            android:text="Humidité: 25% Pluie: 3% Vent: 17kmh"
+            android:textAlignment="textEnd"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -42,9 +45,9 @@
             android:id="@+id/tvWeatherTemperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="&quot;group_name&quot;"
-            android:textColor="@color/black"
-            android:textSize="16sp"
+            android:text="20° C"
+            android:textColor="@color/grey4"
+            android:textSize="34sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,7 +55,7 @@
             android:id="@+id/tvWeatherDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="29/05/23 - 5M"
+            android:text="Jeudi - 29/05/23"
             android:textColor="@color/grey3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -62,6 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/grey3"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

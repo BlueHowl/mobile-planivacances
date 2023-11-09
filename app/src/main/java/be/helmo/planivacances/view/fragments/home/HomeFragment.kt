@@ -1,17 +1,13 @@
-package be.helmo.planivacances.view.fragments
+package be.helmo.planivacances.view.fragments.home
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import be.helmo.planivacances.R
-import be.helmo.planivacances.databinding.FragmentCreateGroupBinding
 import be.helmo.planivacances.databinding.FragmentHomeBinding
 import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.view.interfaces.IGroupPresenter

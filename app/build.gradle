@@ -22,9 +22,19 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField "String", "GOOGLE_API_KEY", "\"${GOOGLE_API_KEY}\""
+            buildConfigField "String", "WEATHER_API_KEY", "\"${WEATHER_API_KEY}\""
+            buildConfigField "String", "OAUTH_CLIENT_ID", "\"${OAUTH_CLIENT_ID}\""
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            buildConfigField "String", "GOOGLE_API_KEY", "\"${GOOGLE_API_KEY}\""
+            buildConfigField "String", "WEATHER_API_KEY", "\"${WEATHER_API_KEY}\""
+            buildConfigField "String", "OAUTH_CLIENT_ID", "\"${OAUTH_CLIENT_ID}\""
         }
     }
     compileOptions {
@@ -36,6 +46,7 @@ android {
     }
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 
 }
@@ -46,8 +57,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.10.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.4'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.7.4'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.5'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.7.5'
 
 
     //Coroutine

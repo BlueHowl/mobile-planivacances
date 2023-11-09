@@ -7,11 +7,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiClient {
-    const val BASE_URL: String = "http://192.168.159.13:8080/"//"http://192.168.0.118:8080/"  //addr ipv4 local
+    const val BASE_API_URL: String = "http://192.168.1.19:8080/"//"http://192.168.133.11:8080/"  //addr ipv4 local
+    const val WEATHER_API_URL: String = "https://api.weatherapi.com/v1/"
 
     val gson : Gson by lazy {
         GsonBuilder()
-            .setDateFormat("dd/MM/yyyy HH:mm:ss")
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
             .setLenient()
             .create()
     }
@@ -22,7 +23,15 @@ object ApiClient {
 
     val retrofit : Retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(BASE_API_URL)
+            .client(httpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+    }
+
+    val weatherRetrofit : Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(WEATHER_API_URL)
             .client(httpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
@@ -34,5 +43,9 @@ object ApiClient {
 
     val groupService : IGroupService by lazy{
         retrofit.create(IGroupService::class.java)
+    }
+
+    val weatherService : IWeatherService by lazy{
+        weatherRetrofit.create(IWeatherService::class.java)
     }
 }

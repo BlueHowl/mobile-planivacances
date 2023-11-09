@@ -5,8 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import be.helmo.planivacances.R
+import be.helmo.planivacances.databinding.FragmentTchatBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -19,6 +19,8 @@ import jp.wasabeef.glide.transformations.BlurTransformation
  */
 class TchatFragment : Fragment() {
 
+    lateinit var binding : FragmentTchatBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -27,20 +29,17 @@ class TchatFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_tchat, container, false)
-
-        val sun = view.findViewById<ImageView>(R.id.tchatSun)
-        val palmTree = view.findViewById<ImageView>(R.id.tchatPalmTree)
+        binding = FragmentTchatBinding.inflate(inflater, container,false)
 
         Glide.with(this)
-            .load(R.drawable.sun) // Replace with your image resource
+            .load(R.drawable.sun)
             .transform(MultiTransformation(RoundedCorners(25), BlurTransformation(20)))
-            .into(sun)
+            .into(binding.tchatSun)
 
         Glide.with(this)
-            .load(R.drawable.palmtree) // Replace with your image resource
+            .load(R.drawable.palmtree)
             .transform(MultiTransformation(RoundedCorners(25), BlurTransformation(20)))
-            .into(palmTree)
+            .into(binding.tchatPalmTree)
 
 
         return view

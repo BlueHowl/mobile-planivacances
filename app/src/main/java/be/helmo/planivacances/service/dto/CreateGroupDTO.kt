@@ -7,6 +7,6 @@ data class CreateGroupDTO(
     val description: String,
     val startDate: Date,
     val endDate: Date,
-    val placeId: String,
+    val placeId: String = "null",
     val isPublished: Boolean = false,
     val owner: String = "null")

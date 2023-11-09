@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import be.helmo.planivacances.BuildConfig
 import be.helmo.planivacances.databinding.FragmentAuthBinding
 import be.helmo.planivacances.R
 import be.helmo.planivacances.service.dto.LoginUserDTO
@@ -130,7 +131,7 @@ class AuthFragment : Fragment() {
                         if(authResult.success) {
                             goToHome()
                         } else {
-                            showToast(authResult.message!!)
+                            showToast(authResult.message!! as String)
                         }
                     }
                 } catch (e: ApiException) {
@@ -148,7 +149,7 @@ class AuthFragment : Fragment() {
      */
     fun startGoogleAuth() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.web_client_id))
+            .requestIdToken(BuildConfig.OAUTH_CLIENT_ID)
             .requestEmail()
             .build()
 
@@ -188,7 +189,7 @@ class AuthFragment : Fragment() {
                 goToHome()
             } else {
                 binding.pbAuth.visibility = View.GONE
-                showToast(result.message!!)
+                showToast(result.message!! as String)
             }
         }
 
@@ -209,7 +210,7 @@ class AuthFragment : Fragment() {
                 goToHome()
             } else {
                 binding.pbAuth.visibility = View.GONE
-                showToast(result.message!!)
+                showToast(result.message!! as String)
             }
         }
 
@@ -226,7 +227,7 @@ class AuthFragment : Fragment() {
                 goToHome()
             } else if(result.message != null) {
                 binding.pbAuth.visibility = View.GONE
-                showToast(result.message)
+                showToast(result.message as String)
             }
         }
     }

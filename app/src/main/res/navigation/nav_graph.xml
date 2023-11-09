@@ -16,12 +16,15 @@
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
-        android:name="be.helmo.planivacances.view.fragments.HomeFragment"
+        android:name="be.helmo.planivacances.view.fragments.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_createGroupFragment"
             app:destination="@id/createGroupFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_groupFragment"
+            app:destination="@id/groupFragment" />
     </fragment>
     <fragment
         android:id="@+id/createGroupFragment"
@@ -29,7 +32,31 @@
         android:label="fragment_create_group"
         tools:layout="@layout/fragment_create_group">
         <action
+            android:id="@+id/action_createGroupFragment_to_groupFragment"
+            app:destination="@id/groupFragment" />
+        <action
             android:id="@+id/action_createGroupFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/groupFragment"
+        android:name="be.helmo.planivacances.view.fragments.GroupFragment"
+        android:label="fragment_group"
+        tools:layout="@layout/fragment_group">
+        <action
+            android:id="@+id/action_groupFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_groupFragment_to_weatherFragment"
+            app:destination="@id/weatherFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/weatherFragment"
+        android:name="be.helmo.planivacances.view.fragments.weather.WeatherFragment"
+        android:label="fragment_weather"
+        tools:layout="@layout/fragment_weather">
+        <action
+            android:id="@+id/action_weatherFragment_to_groupFragment"
+            app:destination="@id/groupFragment" />
     </fragment>
 </navigation>

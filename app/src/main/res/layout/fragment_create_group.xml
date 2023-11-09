@@ -83,7 +83,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
             android:fontFamily="sans-serif-medium"
             android:text="Sélectionner une date de départ"
             android:textColor="@color/black" />
@@ -92,18 +91,19 @@
             android:id="@+id/tvGroupEndDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
             android:fontFamily="sans-serif-medium"
             android:text="Sélectionner une date de fin"
             android:textColor="@color/black" />
 
-        <Spinner
-            android:id="@+id/groupPlaceSpinner"
+        <TextView
+            android:id="@+id/tvGroupPlace"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/edit_text_style"
-            android:contentDescription="Choisir un lieu" />
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="Sélectionner un lieu"
+            android:textColor="@color/black" />
 
         <EditText
             android:id="@+id/etGroupDescription"

@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">PlaniVancances</string>
 
-    <string name="web_client_id">389100630019-0h1nv65s89le7tjjk7a6cmsrtjddjlp1.apps.googleusercontent.com</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="date_format">dd/MM/yyyy HH:mm</string>
 
 </resources>

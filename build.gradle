@@ -15,7 +15,7 @@ ext {
     fragmentVersion = '1.5.5'
     gsonVersion = '2.10.1'
     locationPickerVersion = '10.1.0'
-    googlePlayServicesMaps = '18.1.0'
+    googlePlayServicesMaps = '18.2.0'
     googlePlayServicesAuth = '20.7.0'
     glideVersion = '4.12.0'
     glideTransformVersion = '4.3.0'
