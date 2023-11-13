@@ -16,6 +16,6 @@ interface IAuthService {
     @POST("api/auth/login")
     suspend fun login(@Body user: LoginUserDTO): Response<String>
 
-    @GET("api/auth/token")
+    @POST("api/auth/token")
     suspend fun validateToken(@Header("Authorization") token: String): Response<Boolean>
 }
