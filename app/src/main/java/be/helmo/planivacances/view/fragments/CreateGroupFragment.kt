@@ -125,7 +125,7 @@ class CreateGroupFragment : Fragment() {
     fun addGroup() {
         if(binding.etGroupName.text.isNotEmpty() && binding.etGroupDescription.text.isNotEmpty()) {
             try {
-                val formatter = SimpleDateFormat(getString(R.string.date_format))
+                val formatter = SimpleDateFormat(getString(R.string.date_time_format))
                 val startDate = formatter.parse(binding.tvGroupStartDate.text.toString())!!
                 val endDate = formatter.parse(binding.tvGroupEndDate.text.toString())!!
 

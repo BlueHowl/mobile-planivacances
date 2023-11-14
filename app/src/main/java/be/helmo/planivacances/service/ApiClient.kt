@@ -1,13 +1,18 @@
 package be.helmo.planivacances.service
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 object ApiClient {
-    const val BASE_API_URL: String = "http://192.168.190.1:8080/"//"http://192.168.1.19:8080/"  //addr ipv4 local
+    const val BASE_API_URL: String = "http://192.168.0.25:8080/api/"//"http://192.168.147.75:8080/"  //addr ipv4 local
     const val WEATHER_API_URL: String = "https://api.weatherapi.com/v1/"
 
     val gson : Gson by lazy {
@@ -18,7 +23,9 @@ object ApiClient {
     }
 
     val httpClient : OkHttpClient by lazy {
-        OkHttpClient.Builder().build()
+        OkHttpClient.Builder()
+            .authenticator(TokenAuthenticator.instance!!)
+            .build()
     }
 
     val retrofit : Retrofit by lazy {

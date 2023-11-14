@@ -2,6 +2,7 @@ package be.helmo.planivacances.service
 
 import be.helmo.planivacances.domain.Group
 import be.helmo.planivacances.service.dto.GroupAndPlaceDTO
+import be.helmo.planivacances.service.dto.GroupDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -13,29 +14,20 @@ import retrofit2.http.Path
 
 interface IGroupService {
 
-    @POST("api/group")
-    suspend fun create(
-        @Header("Authorization") token: String,
-        @Body gp: GroupAndPlaceDTO): Response<String>
+    @POST("group")
+    suspend fun create(@Body gp: GroupAndPlaceDTO): Response<String>
 
-    @GET("api/group/{gid}")
-    suspend fun get(
-        @Header("Authorization") token: String,
-        @Path("gid") gid: String): Response<Group>
+    @GET("group/{gid}")
+    suspend fun get(@Path("gid") gid: String): Response<Group>
 
-    @GET("api/group/list")
-    suspend fun getList(
-        @Header("Authorization") token: String,
-        @Path("gid") gid: String): Response<List<Group>>
+    @GET("group/{gid}/list")
+    suspend fun getList(@Path("gid") gid: String): Response<List<GroupDTO>>
 
-    @PUT("api/group/{gid}")
+    @PUT("group/{gid}")
     suspend fun update(
-        @Header("Authorization") token: String,
         @Path("gid") gid: String,
         @Body group: Group): Response<Group>
 
-    @DELETE("api/group/{gid}")
-    suspend fun update(
-        @Header("Authorization") token: String,
-        @Path("gid") gid: String): Response<Group>
+    @DELETE("group/{gid}")
+    suspend fun update(@Path("gid") gid: String): Response<Group>
 }

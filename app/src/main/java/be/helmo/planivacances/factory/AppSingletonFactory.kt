@@ -12,7 +12,7 @@ import be.helmo.planivacances.view.interfaces.IWeatherPresenter
  */
 class AppSingletonFactory() {
 
-    var token: String? = null
+    //var token: String? = null
 
     val authPresenter: AuthPresenter = AuthPresenter()
 
@@ -21,13 +21,13 @@ class AppSingletonFactory() {
     val weatherPresenter: WeatherPresenter = WeatherPresenter(groupPresenter)
 
     //auth token
-    fun getAuthToken(): String? {
+    /*fun getAuthToken(): String? {
         return token
     }
 
     fun setAuthToken(token: String?) {
         this.token = token
-    }
+    }*/
 
     //auth presenter
     fun getAuthPresenter(): IAuthPresenter {

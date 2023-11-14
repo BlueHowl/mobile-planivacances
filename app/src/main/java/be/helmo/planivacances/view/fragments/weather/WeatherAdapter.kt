@@ -55,9 +55,9 @@ class WeatherAdapter(weatherList: List<WeatherForecast>, context: Context) :
 
         init {
             ivWeather = itemView.findViewById(R.id.ivWeather)
-            tvWeatherTemperature = itemView.findViewById(R.id.tvWeatherTemperature)
-            tvWeatherDate = itemView.findViewById(R.id.tvWeatherDate)
-            tvWeatherInfos = itemView.findViewById(R.id.tvWeatherInfos)
+            tvWeatherTemperature = itemView.findViewById(R.id.tvGroupItemName)
+            tvWeatherDate = itemView.findViewById(R.id.tvGroupItemPeriod)
+            tvWeatherInfos = itemView.findViewById(R.id.tvGroupItemDescription)
         }
     }
 }

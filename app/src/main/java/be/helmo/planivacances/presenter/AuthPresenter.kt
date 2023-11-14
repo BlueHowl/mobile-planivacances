@@ -2,8 +2,8 @@ package be.helmo.planivacances.presenter
 
 import android.content.SharedPreferences
 import android.util.Log
-import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.service.ApiClient
+import be.helmo.planivacances.service.TokenAuthenticator
 import be.helmo.planivacances.service.dto.LoginUserDTO
 import be.helmo.planivacances.service.dto.RegisterUserDTO
 import be.helmo.planivacances.util.ResultMessage
@@ -40,7 +40,7 @@ class AuthPresenter() : IAuthPresenter {
      * @return (ResultMessage) Message de résultat
      */
     override suspend fun authWithToken(idToken: String, keepConnected: Boolean): ResultMessage {
-        val authResult = mAuth.signInWithCustomToken(idToken).await()
+        val authResult = mAuth.signInWithCustomToken(idToken).await() //TODO appel api ?
         return if (authResult != null) {
             val user = authResult.user
             val tokenTask = user?.getIdToken(true)?.await()
@@ -48,9 +48,9 @@ class AuthPresenter() : IAuthPresenter {
                 val token = tokenTask.token
                 auth(token, keepConnected)
                 Log.i("AuthFragment.TAG", "Successfully signed in (account token: $token)")
-                ResultMessage(true, "Successfully signed in (account token: $token)")
+                ResultMessage(true, "Authentification réussie")
             } else {
-                val errorMessage = "Erreur lors de l'identification google"
+                val errorMessage = "Erreur lors de création d'une session"
                 Log.w("AuthFragment.TAG", errorMessage)
                 ResultMessage(false, errorMessage)
             }
@@ -119,6 +119,7 @@ class AuthPresenter() : IAuthPresenter {
 
             } catch (e: Exception) {
                 Log.w("Connexion", "${e.message}")
+                e.printStackTrace()
                 return@coroutineScope ResultMessage(false,
                     "Une erreur est survenue lors de la connexion: ${e.message}")
             }
@@ -160,6 +161,10 @@ class AuthPresenter() : IAuthPresenter {
         }
     }
 
+    override fun getUid(): String {
+        return mAuth.uid!!
+    }
+
     /**
      * Sauvegarde le token si demandé et précise le token à l'AppSingletonFactory
      * @param token (String) token d'identification
@@ -176,7 +181,8 @@ class AuthPresenter() : IAuthPresenter {
             editor.apply()
         }
 
-        AppSingletonFactory.instance?.setAuthToken(formattedToken)
+        //AppSingletonFactory.instance?.setAuthToken(formattedToken)
+        TokenAuthenticator.instance!!.token = formattedToken
     }
 
 }

@@ -10,12 +10,12 @@ import retrofit2.http.POST
 
 interface IAuthService {
 
-    @POST("api/auth/register")
+    @POST("auth/register")
     suspend fun register(@Body user: RegisterUserDTO): Response<String>
 
-    @POST("api/auth/login")
+    @POST("auth/login")
     suspend fun login(@Body user: LoginUserDTO): Response<String>
 
-    @POST("api/auth/token")
+    @POST("auth/token")
     suspend fun validateToken(@Header("Authorization") token: String): Response<Boolean>
 }

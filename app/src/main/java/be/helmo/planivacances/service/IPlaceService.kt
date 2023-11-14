@@ -12,26 +12,21 @@ import retrofit2.http.Path
 
 interface IPlaceService {
 
-    @POST("api/place/{gid}")
+    @POST("place/{gid}")
     suspend fun create(
-        @Header("Authorization") token: String,
         @Body place: PlaceDTO,
         @Path("gid") gid: String): Response<String>
 
-    @GET("api/place/{gid}/{pid}")
+    @GET("place/{gid}/{pid}")
     suspend fun getGroupPlace(
-        @Header("Authorization") token: String,
         @Path("gid") gid: String,
         @Path("pid") pid: String): Response<Place>
 
-    @GET("api/place/{gid}")
-    suspend fun getPlaces(
-        @Header("Authorization") token: String,
-        @Path("gid") gid: String): Response<List<Place>>
+    @GET("place/{gid}")
+    suspend fun getPlaces(@Path("gid") gid: String): Response<List<Place>>
 
-    @DELETE("api/place/{gid}/{pid}")
+    @DELETE("place/{gid}/{pid}")
     suspend fun deletePlace(
-        @Header("Authorization") token: String,
         @Path("gid") gid: String,
         @Path("pid") pid: String): Response<String>
 

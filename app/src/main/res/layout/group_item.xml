@@ -5,7 +5,7 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/ivWeather"
+        android:id="@+id/ivGroup"
         android:layout_width="84dp"
         android:layout_height="108dp"
         android:paddingStart="8dp"
@@ -25,21 +25,21 @@
         android:paddingEnd="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ivWeather"
+        app:layout_constraintStart_toEndOf="@+id/ivGroup"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/tvWeatherInfos"
+            android:id="@+id/tvGroupItemDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Description Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec fringilla quam eu faci lisis mollis. "
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvWeatherTemperature" />
+            app:layout_constraintTop_toBottomOf="@+id/tvGroupItemName" />
 
         <TextView
-            android:id="@+id/tvWeatherTemperature"
+            android:id="@+id/tvGroupItemName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="&quot;group_name&quot;"
@@ -49,7 +49,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvWeatherDate"
+            android:id="@+id/tvGroupItemPeriod"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="29/05/23 - 5M"

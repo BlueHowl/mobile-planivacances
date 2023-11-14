@@ -60,6 +60,7 @@ class WeatherFragment : Fragment() {
             findNavController().navigate(R.id.action_weatherFragment_to_groupFragment)
         }
 
+        binding.pbWeatherList.visibility = View.VISIBLE
         lifecycleScope.launch(Dispatchers.Main) {
             val result = weatherPresenter.getForecast()
 
@@ -69,6 +70,8 @@ class WeatherFragment : Fragment() {
 
                 binding.rvWeatherContainer.layoutManager = LinearLayoutManager(requireContext())
                 binding.rvWeatherContainer.adapter = adapter
+
+                binding.pbWeatherList.visibility = View.GONE
             } else {
                 showToast(result.message!! as String)
             }

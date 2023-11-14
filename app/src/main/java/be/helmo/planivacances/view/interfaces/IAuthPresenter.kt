@@ -9,6 +9,8 @@ interface IAuthPresenter {
 
     fun setSharedPreference(sharedPreferences: SharedPreferences)
 
+    fun getUid(): String
+
     //suspend fun authWithToken(idToken: String?, callback: (ResultMessage) -> Unit)
     suspend fun authWithToken(idToken: String, keepConnected: Boolean): ResultMessage
 
@@ -17,4 +19,5 @@ interface IAuthPresenter {
     suspend fun login(loginUser: LoginUserDTO, keepConnected: Boolean): ResultMessage
 
     suspend fun autoAuth(): ResultMessage
+
 }
