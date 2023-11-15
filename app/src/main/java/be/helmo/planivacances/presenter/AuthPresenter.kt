@@ -17,12 +17,13 @@ import kotlinx.coroutines.tasks.await
 /**
  * Authentification Presenter
  */
-class AuthPresenter() : IAuthPresenter {
+class AuthPresenter : IAuthPresenter {
 
     val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
     lateinit var sharedPreferences : SharedPreferences
 
+    val tokenAuthenticator: TokenAuthenticator = TokenAuthenticator.instance!!
 
     /**
      * assigne le sharedPreferences à la variable locale du presenter
@@ -35,29 +36,32 @@ class AuthPresenter() : IAuthPresenter {
     /**
      * Authentification asynchrone par token, récupère le token d'identification
      * sur base d'un customToken
-     * @param idToken (String) customToken
-     * @param keepConnected (Boolean) stocker le token en local ?
+     * @param customToken (String) customToken
      * @return (ResultMessage) Message de résultat
      */
-    override suspend fun authWithToken(idToken: String, keepConnected: Boolean): ResultMessage {
-        val authResult = mAuth.signInWithCustomToken(idToken).await() //TODO appel api ?
+    override suspend fun signInWithCustomToken(customToken: String): ResultMessage {
+        val authResult = mAuth.signInWithCustomToken(customToken).await()
         return if (authResult != null) {
-            val user = authResult.user
+            /*val user = authResult.user
             val tokenTask = user?.getIdToken(true)?.await()
+
             if (tokenTask != null) {
-                val token = tokenTask.token
-                auth(token, keepConnected)
-                Log.i("AuthFragment.TAG", "Successfully signed in (account token: $token)")
+                val token = "Bearer ${tokenTask.token}"
+                tokenAuthenticator.idToken = token
+
+                Log.i("AuthFragment.TAG", "Successfully retrieved new account token: $token")
                 ResultMessage(true, "Authentification réussie")
             } else {
-                val errorMessage = "Erreur lors de création d'une session"
+                val errorMessage = "Erreur lors de récupération d'un nouveau jeton d'identification"
                 Log.w("AuthFragment.TAG", errorMessage)
                 ResultMessage(false, errorMessage)
-            }
+            }*/
+            Log.i("AuthFragment.TAG", "Successfully signed in")
+            ResultMessage(true, "Authentification réussie")
         } else {
             // Sign-in failed
-            Log.w("AuthFragment.TAG", "Failed google sign-in")
-            ResultMessage(false, "Failed google sign-in")
+            Log.w("AuthFragment.TAG", "Failed to retrieve new id token")
+            ResultMessage(false, "Failed to retrieve new id token")
         }
     }
 
@@ -73,13 +77,10 @@ class AuthPresenter() : IAuthPresenter {
                 val response = async { ApiClient.authService.register(registerUser) }
 
                 if (response.await().isSuccessful && response.await().body() != null) {
-                    val idToken = response.await().body()
-                    val resultMessage = authWithToken(idToken!!, false)
+                    val customToken = response.await().body()
 
-                    Log.d(AuthFragment.TAG, "Register Response: $idToken")
-                    return@coroutineScope ResultMessage(
-                        resultMessage.success,
-                        resultMessage.message)
+                    Log.d(AuthFragment.TAG, "Register Response: $customToken")
+                    return@coroutineScope auth(customToken, false)
                 } else {
                     return@coroutineScope ResultMessage(false,
                         "Une erreur est survenue: ${response.await().message()}")
@@ -104,22 +105,17 @@ class AuthPresenter() : IAuthPresenter {
                 val response = async { ApiClient.authService.login(loginUser) }
 
                 if (response.await().isSuccessful && response.await().body() != null) {
-                    val idToken = response.await().body()
+                    val customToken = response.await().body()
 
-                    val resultMessage = authWithToken(idToken!!, keepConnected)
-
-                    Log.d(AuthFragment.TAG, "Login Response : $idToken")
-                    return@coroutineScope ResultMessage(
-                        resultMessage.success,
-                        resultMessage.message)
+                    Log.d(AuthFragment.TAG, "Login Response : $customToken")
+                    return@coroutineScope auth(customToken, keepConnected)
                 } else {
                     return@coroutineScope ResultMessage(false,
                         "Erreur lors de la connexion : ${response.await().message()}")
                 }
 
             } catch (e: Exception) {
-                Log.w("Connexion", "${e.message}")
-                e.printStackTrace()
+                Log.w("Erreur lors de la connexion", "${e.message}")
                 return@coroutineScope ResultMessage(false,
                     "Une erreur est survenue lors de la connexion: ${e.message}")
             }
@@ -131,33 +127,24 @@ class AuthPresenter() : IAuthPresenter {
      * @return (ResultMessage) Message de résultat
      */
     override suspend fun autoAuth(): ResultMessage {
-        return coroutineScope {
-            val authToken = sharedPreferences.getString("Auth_Token", null)
-            if(authToken != null) {
-                try {
-                    val response = ApiClient.authService.validateToken(authToken)
+        val customToken = sharedPreferences.getString("RefreshToken", null)
+            ?: return ResultMessage(false, null)
 
-                    if (response.isSuccessful && response.body() == true) {
-                        auth(authToken, true)
-                        Log.d(AuthFragment.TAG, "Token local valide : $authToken")
-                        return@coroutineScope ResultMessage(true, authToken)
-                    } else {
-                        Log.d(AuthFragment.TAG, "Token local invalide : $authToken")
-                        return@coroutineScope ResultMessage(
-                            false,
-                            "Erreur lors de la connexion automatique ${response.message()}"
-                        )
-                    }
+        return auth(customToken, true)
+    }
 
-                } catch (e: Exception) {
-                    return@coroutineScope ResultMessage(
-                        false,
-                        "Erreur lors de la connexion automatique : ${e.message}"
-                    )
-                }
-            } else {
-                return@coroutineScope ResultMessage(false, null)
-            }
+    override suspend fun loadIdToken(): Boolean {
+        val tokenTask = mAuth.currentUser?.getIdToken(true)?.await()
+
+        return if (tokenTask != null) {
+            val token = "Bearer ${tokenTask.token}"
+            tokenAuthenticator.idToken = token
+            Log.i("AuthFragment.TAG", "Successfully retrieved new account token: $token")
+            true
+        } else {
+            val errorMessage = "Erreur lors de récupération d'un nouveau jeton d'identification"
+            Log.w("AuthFragment.TAG", errorMessage)
+            false
         }
     }
 
@@ -166,23 +153,33 @@ class AuthPresenter() : IAuthPresenter {
     }
 
     /**
-     * Sauvegarde le token si demandé et précise le token à l'AppSingletonFactory
-     * @param token (String) token d'identification
+     * Sauvegarde le resfresh token si demandé et précise le token au TokenAuthenticator
+     * @param token (String) refreshToken
      * @param keepConnected (Boolean) stocker le token en local ?
      */
-    fun auth(token: String?, keepConnected: Boolean) {
-        var formattedToken = token
-        if(token?.substring(0, 6) != "Bearer") {
-            formattedToken = "Bearer $token"
-        }
+    override suspend fun auth(customToken: String?, keepConnected: Boolean): ResultMessage {
         if(keepConnected) {
             val editor = sharedPreferences.edit()
-            editor.putString("Auth_Token", formattedToken)
+            editor.putString("RefreshToken", customToken)
             editor.apply()
         }
 
-        //AppSingletonFactory.instance?.setAuthToken(formattedToken)
-        TokenAuthenticator.instance!!.token = formattedToken
+        val result = signInWithCustomToken(customToken!!)
+
+        if(result.success) {
+            //tokenAuthenticator.refreshToken = customToken
+            initAuthenticator()
+
+            return ResultMessage(true, result.message)
+        }
+
+        return ResultMessage(false, result.message)
+
+    }
+
+    override suspend fun initAuthenticator(): Boolean {
+        tokenAuthenticator.authPresenter = this //todo setters ou pas en kotlin ?
+        return loadIdToken()
     }
 
 }

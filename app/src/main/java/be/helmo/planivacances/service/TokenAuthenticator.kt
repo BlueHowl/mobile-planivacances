@@ -1,6 +1,10 @@
 package be.helmo.planivacances.service
 
 import android.util.Log
+import be.helmo.planivacances.view.interfaces.IAuthPresenter
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
@@ -10,8 +14,13 @@ import java.util.concurrent.atomic.AtomicLong
 
 class TokenAuthenticator : Authenticator {
 
-    var token: String? = null // Initialize with your actual initial token
-    val requestLimit = 5 // Maximum allowed requests within a specified period
+    //var refreshToken: String? = null
+    var idToken: String? = null
+
+    lateinit var authPresenter: IAuthPresenter
+
+    //var token: String? = null // Initialize with your actual initial token
+    val requestLimit = 6 // Maximum allowed requests within a specified period
     val requestLimitPeriodMillis = TimeUnit.SECONDS.toMillis(10) // 10 seconds
     val requestCounter = AtomicLong(0)
     var lastRequestTime = 0L
@@ -28,10 +37,20 @@ class TokenAuthenticator : Authenticator {
                 // Allow the request and increment the counter
                 requestCounter.incrementAndGet()
                 lastRequestTime = currentTime
-                //todo recup un nouveau token id sur base d'un custom token en faisant un appel à une nouvelle classe qui contient le refreshtoken?!
-                return if (token != null) {
-                    response.request().newBuilder()
-                        .header("Authorization", token!!)
+                /*if (refreshToken != null) {
+                    //todo runBlocking ?
+                    GlobalScope.launch {
+                        authPresenter.signInWithCustomToken(refreshToken!!)
+                    }
+                }*/
+                runBlocking {
+                    authPresenter.loadIdToken()
+                }
+
+                return if(idToken != null) {
+                    Log.d("test", idToken!!)
+                    return response.request().newBuilder()
+                        .header("Authorization", idToken!!)
                         .build()
                 } else {
                     Log.d("TokenAuthenticator", "Token is null, not adding Authorization header to the request")

@@ -4,6 +4,7 @@ import android.util.Log
 import be.helmo.planivacances.domain.Group
 import be.helmo.planivacances.domain.Place
 import be.helmo.planivacances.service.ApiClient
+import be.helmo.planivacances.service.TokenAuthenticator
 import be.helmo.planivacances.service.dto.CreateGroupDTO
 import be.helmo.planivacances.service.dto.GroupAndPlaceDTO
 import be.helmo.planivacances.service.dto.GroupDTO
@@ -56,6 +57,7 @@ class GroupPresenter : IGroupPresenter {
     }
 
     override suspend fun loadUserGroups(uid: String): ResultMessage {
+
         return coroutineScope {
             try {
                 val response = ApiClient.groupService.getList(uid)

@@ -30,6 +30,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,6 +74,9 @@ class AuthFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentAuthBinding.inflate(inflater, container,false)
+
+        //Chargement du début : autoAuth
+        binding.pbAuth.visibility = View.VISIBLE
 
         //background blur
         Glide.with(this)
@@ -125,15 +129,39 @@ class AuthFragment : Fragment() {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 try {
                     val account = task.getResult(ApiException::class.java)
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        val authResult = authPresenter.authWithToken(account.idToken!!, false)
 
-                        if(authResult.success) {
-                            goToHome()
-                        } else {
-                            showToast(authResult.message!! as String)
+                    val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+                    mAuth.signInWithCredential(credential)
+                        .addOnCompleteListener(requireActivity()) { t ->
+                            if (t.isSuccessful) {
+                                // Sign in success
+                                Log.d(TAG, "signInWithCredential:success")
+
+                                lifecycleScope.launch(Dispatchers.Main) {
+                                    val r = authPresenter.initAuthenticator()
+
+                                    if(r) { goToHome() }
+                                }
+                                // Handle the signed-in user, you may navigate to the main activity or perform other actions.
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w(TAG, "signInWithCredential:failure", t.exception)
+                                // Handle sign-in failure here.
+                            }
                         }
-                    }
+                    /*lifecycleScope.launch(Dispatchers.Main) {
+                        //val authResult = authPresenter.auth(account.idToken, binding.cbKeepConnected.isChecked)
+                        //val authResult = authPresenter.setIdToken(account:m.idToken!!)
+
+                        Log.d("test2", "${account.idToken}")
+                        authPresenter.setGoogleIdToken(account.idToken!!)
+
+                        //if(authResult.success) {
+                        goToHome()
+                        /*} else {
+                            showToast(authResult.message!! as String)
+                        }*/
+                    }*/
                 } catch (e: ApiException) {
                     Log.w(TAG, "Google Auth Failure " + e.getStatusCode() + " : " + e.getStatusMessage())
                 }
@@ -226,9 +254,10 @@ class AuthFragment : Fragment() {
             if(result.success) {
                 goToHome()
             } else if(result.message != null) {
-                binding.pbAuth.visibility = View.GONE
                 showToast(result.message as String)
             }
+
+            binding.pbAuth.visibility = View.GONE
         }
     }
 
