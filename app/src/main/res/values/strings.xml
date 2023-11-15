@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PlaniVancances</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="date_time_format">dd/MM/yyyy HH:mm</string>
+    <string name="date_format">dd/MM/yyyy</string>
+
+</resources>
