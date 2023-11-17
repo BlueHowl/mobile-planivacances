@@ -1,11 +1,8 @@
 package be.helmo.planivacances.presenter
 
 import android.util.Log
-import be.helmo.planivacances.domain.Group
 import be.helmo.planivacances.domain.Place
 import be.helmo.planivacances.service.ApiClient
-import be.helmo.planivacances.service.TokenAuthenticator
-import be.helmo.planivacances.service.dto.CreateGroupDTO
 import be.helmo.planivacances.service.dto.GroupAndPlaceDTO
 import be.helmo.planivacances.service.dto.GroupDTO
 import be.helmo.planivacances.service.dto.PlaceDTO
@@ -23,17 +20,19 @@ class GroupPresenter : IGroupPresenter {
 
     lateinit var currentGid : String
 
-    override suspend fun createGroup(createGroup: CreateGroupDTO, placeDTO: PlaceDTO): ResultMessage {
+    override suspend fun createGroup(group: GroupDTO): ResultMessage {
         return coroutineScope {
             try {
-                val response = ApiClient.groupService.create(GroupAndPlaceDTO(createGroup, placeDTO))//AppSingletonFactory.instance?.getAuthToken()!!,
+                val response = ApiClient.groupService.create(group)//AppSingletonFactory.instance?.getAuthToken()!!,
 
                 if (response.isSuccessful && response.body() != null) {
                     val gid = response.body()!!
 
                     currentGid = gid
 
-                    groups[gid] = GroupDTO(gid,
+                    group.gid = gid
+                    group.owner = FirebaseAuth.getInstance().uid!!
+                    groups[gid] = group/*GroupDTO(gid,
                         createGroup.groupName,
                         createGroup.description,
                         createGroup.startDate,
@@ -41,7 +40,7 @@ class GroupPresenter : IGroupPresenter {
                         PlaceDTO(placeDTO.address, placeDTO.lat, placeDTO.lon),
                         //Place(placeDTO.address, LatLng(placeDTO.lat, placeDTO.lon)),
                         createGroup.isPublished,
-                        FirebaseAuth.getInstance().uid!!)
+                        FirebaseAuth.getInstance().uid!!)*/
 
                     Log.d(CreateGroupFragment.TAG, "Group created : $gid")
                     return@coroutineScope ResultMessage(true, "Groupe créé")
@@ -66,7 +65,7 @@ class GroupPresenter : IGroupPresenter {
                     val groupsDto = response.body()!!
 
                     for(groupDto in groupsDto) {
-                        groups[groupDto.gid] = groupDto
+                        groups[groupDto.gid!!] = groupDto
                     }
 
                     Log.d(GroupFragment.TAG, "Groups retrieved : ${groups.size}")
@@ -91,8 +90,13 @@ class GroupPresenter : IGroupPresenter {
     }
 
     override fun getCurrentGroupPlace(): Place {
-        val pDto = groups[currentGid]?.place //TODO diretly get LAtLng object from api
-        return Place(pDto!!.address, LatLng(pDto.lat, pDto.lon))
+        val pDto = groups[currentGid]?.place!! //TODO diretly get LAtLng object from api
+        return Place(pDto.country,
+            pDto.city,
+            pDto.street,
+            pDto.number,
+            pDto.postalCode,
+            LatLng(pDto.lat, pDto.lon))
     }
 
     override fun setCurrentGroupId(gid: String) {

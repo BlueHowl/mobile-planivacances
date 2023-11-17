@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 object ApiClient {
-    const val BASE_API_URL: String = "http://192.168.1.19:8080/api/"//"http://192.168.147.75:8080/"  //addr ipv4 local
+    const val BASE_API_URL: String = "http://192.168.157.98:8080/api/"//"http://192.168.147.75:8080/"  //addr ipv4 local
     const val WEATHER_API_URL: String = "https://api.weatherapi.com/v1/"
 
     val gson : Gson by lazy {
