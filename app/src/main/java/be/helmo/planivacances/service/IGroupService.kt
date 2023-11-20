@@ -18,7 +18,7 @@ interface IGroupService {
     @GET("group/{gid}")
     suspend fun get(@Path("gid") gid: String): Response<GroupDTO>
 
-    @GET("group/{gid}/list")
+    @GET("group/list")
     suspend fun getList(@Path("gid") gid: String): Response<List<GroupDTO>>
 
     @PUT("group/{gid}")
