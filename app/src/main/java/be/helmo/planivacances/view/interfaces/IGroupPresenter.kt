@@ -8,7 +8,7 @@ interface IGroupPresenter {
 
     suspend fun createGroup(group: GroupDTO): ResultMessage
 
-    suspend fun loadUserGroups(uid: String): ResultMessage
+    suspend fun loadUserGroups(): ResultMessage
 
     fun getGroups(): List<GroupDTO>
 

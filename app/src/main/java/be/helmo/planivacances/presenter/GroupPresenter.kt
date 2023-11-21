@@ -55,11 +55,11 @@ class GroupPresenter : IGroupPresenter {
         }
     }
 
-    override suspend fun loadUserGroups(uid: String): ResultMessage {
+    override suspend fun loadUserGroups(): ResultMessage {
 
         return coroutineScope {
             try {
-                val response = ApiClient.groupService.getList(uid)
+                val response = ApiClient.groupService.getList()
 
                 if (response.isSuccessful && response.body() != null) {
                     val groupsDto = response.body()!!

@@ -4,8 +4,7 @@
 
     <!--TODO remove usesCleartextTraffic-->
     <application
-        android:usesCleartextTraffic="true"
-
+        android:usesCleartextTraffic="false"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
