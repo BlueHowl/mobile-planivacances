@@ -48,7 +48,6 @@ class TokenAuthenticator : Authenticator {
                 }
 
                 return if(idToken != null) {
-                    Log.d("test", idToken!!)
                     return response.request().newBuilder()
                         .header("Authorization", idToken!!)
                         .build()

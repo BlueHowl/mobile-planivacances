@@ -29,7 +29,6 @@ class HomeFragment : Fragment() {
     lateinit var binding: FragmentHomeBinding
 
     lateinit var groupPresenter: IGroupPresenter
-    lateinit var authPresenter: IAuthPresenter
 
     lateinit var groupAdapter: GroupAdapter
 
@@ -40,7 +39,6 @@ class HomeFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(this) {}
 
         groupPresenter = AppSingletonFactory.instance!!.getGroupPresenter()
-        authPresenter = AppSingletonFactory.instance!!.getAuthPresenter()
     }
 
     override fun onCreateView(
@@ -70,7 +68,7 @@ class HomeFragment : Fragment() {
 
             //charge une seule fois
             if(groups.isEmpty()) {
-                result = groupPresenter.loadUserGroups(authPresenter.getUid())
+                result = groupPresenter.loadUserGroups()
             }
 
             if (result.success) {

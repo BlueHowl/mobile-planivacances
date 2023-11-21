@@ -149,19 +149,7 @@ class AuthFragment : Fragment() {
                                 // Handle sign-in failure here.
                             }
                         }
-                    /*lifecycleScope.launch(Dispatchers.Main) {
-                        //val authResult = authPresenter.auth(account.idToken, binding.cbKeepConnected.isChecked)
-                        //val authResult = authPresenter.setIdToken(account:m.idToken!!)
 
-                        Log.d("test2", "${account.idToken}")
-                        authPresenter.setGoogleIdToken(account.idToken!!)
-
-                        //if(authResult.success) {
-                        goToHome()
-                        /*} else {
-                            showToast(authResult.message!! as String)
-                        }*/
-                    }*/
                 } catch (e: ApiException) {
                     Log.w(TAG, "Google Auth Failure " + e.getStatusCode() + " : " + e.getStatusMessage())
                 }

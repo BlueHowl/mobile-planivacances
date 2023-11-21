@@ -2,10 +2,11 @@ package be.helmo.planivacances.view.fragments
 
 import android.app.Activity
 import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
-import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ import be.helmo.planivacances.R
 import be.helmo.planivacances.databinding.FragmentCreateGroupBinding
 import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.service.dto.CreateGroupDTO
+import be.helmo.planivacances.service.dto.GroupDTO
 import be.helmo.planivacances.service.dto.PlaceDTO
 import be.helmo.planivacances.view.MainActivity
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
@@ -28,9 +30,11 @@ import com.adevinta.leku.*
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.IOException
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.Matcher
 
 
 /**
@@ -44,13 +48,17 @@ class CreateGroupFragment : Fragment() {
 
     lateinit var lekuActivityResultLauncher: ActivityResultLauncher<Intent>
 
-    var address: String? = null
+    var country: String? = null
+    var city: String? = null
+    var street: String? = null
+    var number: String? = null
+    var postalCode: String? = null
     var location: LatLng? = null
 
     var dateField: Int = 0
     var tempDate: String? = null
-    var startDateHour: String? = null
-    var endDateHour: String? = null
+    var startDate: String? = null
+    var endDate: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,18 +105,14 @@ class CreateGroupFragment : Fragment() {
                     Log.d("LATITUDE", latitude.toString())
                     val longitude = data?.getDoubleExtra(LONGITUDE, 0.0)
                     Log.d("LONGITUDE", longitude.toString())
+                    val postalCode = data?.getStringExtra(ZIPCODE)
+                    Log.d("POSTALCODE", postalCode.toString())
 
-                    val address = data?.getStringExtra(LOCATION_ADDRESS)
-                    Log.d("ADDRESS", address.toString())
-                    val postalcode = data?.getStringExtra(ZIPCODE)
-                    Log.d("POSTALCODE", postalcode.toString())
+                    val addressFormated =  getAddressFromLatLng(requireContext(), latitude!!, longitude!!)
 
-                    val addressFormated = String.format("%s %s", address.toString(), postalcode.toString())
-
-                    val location = LatLng(latitude!!, longitude!!)
-
+                    val location = LatLng(latitude, longitude)
                     this.location = location
-                    this.address = addressFormated
+                    this.postalCode = postalCode
                     binding.tvGroupPlace.text = addressFormated
 
                 } else {
@@ -119,40 +123,79 @@ class CreateGroupFragment : Fragment() {
         return binding.root
     }
 
+    fun getAddressFromLatLng(context: Context, lat: Double, lng: Double): String? {
+        val geocoder = Geocoder(context, Locale.getDefault())
+
+        try {
+            val addresses: List<Address> = geocoder.getFromLocation(lat, lng, 1) as List<Address>
+
+            if (addresses.isNotEmpty()) {
+                val address: Address = addresses[0]
+
+                country = address.countryName.trim()
+                city = address.locality.trim()
+                street = address.thoroughfare
+                number = address.subThoroughfare
+
+                return "$street, $number $city $country"
+            }
+        } catch (e: IOException) {
+            Log.e("Geocoder", "Error getting address from location", e)
+        }
+
+        return null
+    }
+
     /**
      * Prépare et vérifie les inputs et appel la création de groupe
      */
     fun addGroup() {
-        if(binding.etGroupName.text.isNotEmpty() && binding.etGroupDescription.text.isNotEmpty()) {
-            try {
-                val formatter = SimpleDateFormat(getString(R.string.date_time_format))
-                val startDate = formatter.parse(binding.tvGroupStartDate.text.toString())!!
-                val endDate = formatter.parse(binding.tvGroupEndDate.text.toString())!!
+        if(binding.etGroupName.text.isEmpty()) {
+            showToast("Le titre n'a pas été remplis")
+            Log.w(TAG, "Le titre n'a pas été remplis")
+            return
+        }
 
-                if(startDate.before(endDate)) {
-                    val group = CreateGroupDTO(
-                        binding.etGroupName.text.toString(),
-                        binding.etGroupDescription.text.toString(),
-                        startDate,
-                        endDate
-                    )
+        try {
+            val formatter = SimpleDateFormat(getString(R.string.date_format))
+            val startDate = formatter.parse(binding.tvGroupStartDate.text.toString())!!
+            val endDate = formatter.parse(binding.tvGroupEndDate.text.toString())!!
 
-                    createGroup(
-                        group,
-                        PlaceDTO(address!!, location!!.latitude, location!!.longitude)
-                    )
-                } else {
-                    showToast("La date de fin ne peut pas être antérieur à la date de début")
-                    Log.w(TAG, "La date de fin ne peut pas être antérieur à la date de début")
-                }
+            if(startDate.after(endDate)) {
+                showToast("La date de fin ne peut pas être antérieur à la date de début")
+                Log.w(TAG, "La date de fin ne peut pas être antérieur à la date de début")
+                return
             }
-            catch (e: ParseException) {
-                showToast("Une des dates est mal encodée")
-                Log.e(TAG, "Parse error : " + e.message)
+
+            if(country == null || city == null || street == null || postalCode == null) {
+                showToast("Addresse invalide")
+                Log.w(TAG, "Addresse invalide")
+                return
             }
-        } else {
-            showToast("Le titre ou la description n'ont pas été remplis")
-            Log.w(TAG, "Le titre ou la description n'ont pas été remplis")
+
+            val place = PlaceDTO(country!!,
+                city!!,
+                street!!,
+                number!!,
+                postalCode!!,
+                location!!.latitude,
+                location!!.longitude)
+
+            val group = GroupDTO(
+                null,
+                binding.etGroupName.text.toString(),
+                binding.etGroupDescription.text.toString(),
+                startDate,
+                endDate,
+                place
+            )
+
+            createGroup(group)
+
+        }
+        catch (e: ParseException) {
+            showToast("Une des dates est mal encodée")
+            Log.e(TAG, "Parse error : " + e.message)
         }
     }
 
@@ -160,12 +203,12 @@ class CreateGroupFragment : Fragment() {
      * Crée un groupe
      * @param group (CreateGroupDTO) contient les informations du groupe
      */
-    fun createGroup(group: CreateGroupDTO, place: PlaceDTO) {
+    fun createGroup(group: GroupDTO) {
         hideKeyboard()
         binding.pbCreateGroup.visibility = View.VISIBLE
 
         lifecycleScope.launch(Dispatchers.Main) {
-            val result = groupPresenter.createGroup(group, place)
+            val result = groupPresenter.createGroup(group)
 
             if (result.success) {
                 showToast(result.message!! as String)
@@ -210,16 +253,23 @@ class CreateGroupFragment : Fragment() {
     fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
         tempDate = String.format("%02d/%02d/%d", dayOfMonth, month, year)
 
-        val calendar: Calendar = Calendar.getInstance()
-        val hour = calendar.get(Calendar.HOUR)
-        val minute = calendar.get(Calendar.MINUTE)
-        val timePickerDialog = TimePickerDialog(
+        if(dateField == 0) {
+            startDate = tempDate
+            binding.tvGroupStartDate.text = startDate
+            Log.d("startDate", startDate!!)
+        } else if (dateField == 1) {
+            endDate = tempDate
+            binding.tvGroupEndDate.text = endDate
+            Log.d("endDate", endDate!!)
+        }
+
+        /*val timePickerDialog = TimePickerDialog(
             requireView().context, TimePickerDialog.OnTimeSetListener(::onTimeSet), hour, minute,
             DateFormat.is24HourFormat(requireView().context)
         )
-        timePickerDialog.show()
+        timePickerDialog.show()*/
     }
-    fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
+    /*fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
         if(dateField == 0) {
             startDateHour = String.format("%s %02d:%02d", tempDate, hourOfDay, minute)
             binding.tvGroupStartDate.text = startDateHour
@@ -229,7 +279,7 @@ class CreateGroupFragment : Fragment() {
             binding.tvGroupEndDate.text = endDateHour
             Log.d("startDateHour", endDateHour!!)
         }
-    }
+    }*/
 
     /**
      * Affiche un message à l'écran

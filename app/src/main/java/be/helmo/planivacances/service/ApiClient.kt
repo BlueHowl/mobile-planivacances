@@ -5,10 +5,16 @@ import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.security.SecureRandom
+import java.security.cert.CertificateException
+import java.security.cert.X509Certificate
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 
 object ApiClient {
-    const val BASE_API_URL: String = "http://192.168.1.19:8080/api/"//"http://192.168.147.75:8080/"  //addr ipv4 local
+    const val BASE_API_URL: String = "https://studapps.cg.helmo.be:5011/REST_CAO_BART/api/"//"http://192.168.150.73:8080/api/"//"http://192.168.147.75:8080/"  //addr ipv4 local
     const val WEATHER_API_URL: String = "https://api.weatherapi.com/v1/"
 
     val gson : Gson by lazy {
@@ -19,8 +25,30 @@ object ApiClient {
     }
 
     val httpClient : OkHttpClient by lazy {
+        // Create a trust manager that does not validate certificate chains
+        val trustAllCerts = arrayOf<TrustManager>(
+            object : X509TrustManager {
+                @Throws(CertificateException::class)
+                override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
+                }
+
+                @Throws(CertificateException::class)
+                override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
+                }
+
+                override fun getAcceptedIssuers(): Array<X509Certificate> {
+                    return arrayOf()
+                }
+            }
+        )
+
+        // Install the all-trusting trust manager
+        val sslContext = SSLContext.getInstance("SSL")
+        sslContext.init(null, trustAllCerts, SecureRandom())
+
         OkHttpClient.Builder()
             .authenticator(TokenAuthenticator.instance!!)
+            .sslSocketFactory(sslContext.socketFactory, trustAllCerts[0] as X509TrustManager)
             .build()
     }
 

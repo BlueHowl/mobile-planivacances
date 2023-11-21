@@ -42,20 +42,6 @@ class AuthPresenter : IAuthPresenter {
     override suspend fun signInWithCustomToken(customToken: String): ResultMessage {
         val authResult = mAuth.signInWithCustomToken(customToken).await()
         return if (authResult != null) {
-            /*val user = authResult.user
-            val tokenTask = user?.getIdToken(true)?.await()
-
-            if (tokenTask != null) {
-                val token = "Bearer ${tokenTask.token}"
-                tokenAuthenticator.idToken = token
-
-                Log.i("AuthFragment.TAG", "Successfully retrieved new account token: $token")
-                ResultMessage(true, "Authentification réussie")
-            } else {
-                val errorMessage = "Erreur lors de récupération d'un nouveau jeton d'identification"
-                Log.w("AuthFragment.TAG", errorMessage)
-                ResultMessage(false, errorMessage)
-            }*/
             Log.i("AuthFragment.TAG", "Successfully signed in")
             ResultMessage(true, "Authentification réussie")
         } else {
@@ -134,7 +120,7 @@ class AuthPresenter : IAuthPresenter {
     }
 
     override suspend fun loadIdToken(): Boolean {
-        val tokenTask = mAuth.currentUser?.getIdToken(true)?.await()
+        val tokenTask = mAuth.currentUser?.getIdToken(false)?.await()
 
         return if (tokenTask != null) {
             val token = "Bearer ${tokenTask.token}"

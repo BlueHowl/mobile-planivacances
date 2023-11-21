@@ -32,7 +32,7 @@ class GroupAdapter(val context: Context,
         holder.tvPeriod.text = "$startDate - $endDate"
 
         // Set click listener to handle item clicks
-        holder.itemView.setOnClickListener { clickListener(group.gid) }
+        holder.itemView.setOnClickListener { clickListener(group.gid!!) }
     }
 
     override fun getItemCount(): Int {
