@@ -1,7 +1,12 @@
 package be.helmo.planivacances.service
 
+import be.helmo.planivacances.BuildConfig
+import be.helmo.planivacances.service.dto.MessageDTO
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.pusher.client.Pusher
+import com.pusher.client.PusherOptions
+import com.pusher.client.util.HttpChannelAuthorizer
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -14,17 +19,18 @@ import javax.net.ssl.X509TrustManager
 
 
 object ApiClient {
-    const val BASE_API_URL: String = "https://studapps.cg.helmo.be:5011/REST_CAO_BART/api/"//"http://192.168.150.73:8080/api/"//"http://192.168.147.75:8080/"  //addr ipv4 local
-    const val WEATHER_API_URL: String = "https://api.weatherapi.com/v1/"
+    private const val BASE_API_URL: String = "http://192.168.1.11:8080/api/"                                 //"http://192.168.150.73:8080/api/"//"http://192.168.147.75:8080/"  "https://studapps.cg.helmo.be:5011/REST_CAO_BART/api/" //addr ipv4 local
+    private const val WEATHER_API_URL: String = "https://api.weatherapi.com/v1/"
+    private const val TCHAT_AUTH_URL: String = "http://192.168.1.11:8080/api/chat/" //"wss://studapps.cg.helmo.be:5011/REST_CAO_BART/websocket-groupMessages"
 
-    val gson : Gson by lazy {
+    private val gson : Gson by lazy {
         GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
             .setLenient()
             .create()
     }
 
-    val httpClient : OkHttpClient by lazy {
+    private val httpClient : OkHttpClient by lazy {
         // Create a trust manager that does not validate certificate chains
         val trustAllCerts = arrayOf<TrustManager>(
             object : X509TrustManager {
@@ -52,7 +58,7 @@ object ApiClient {
             .build()
     }
 
-    val retrofit : Retrofit by lazy {
+    private val retrofit : Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_API_URL)
             .client(httpClient)
@@ -60,7 +66,7 @@ object ApiClient {
             .build()
     }
 
-    val weatherRetrofit : Retrofit by lazy {
+    private val weatherRetrofit : Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(WEATHER_API_URL)
             .client(httpClient)
@@ -78,5 +84,26 @@ object ApiClient {
 
     val weatherService : IWeatherService by lazy{
         weatherRetrofit.create(IWeatherService::class.java)
+    }
+
+    val tchatService : ITchatService by lazy {
+        retrofit.create(ITchatService::class.java)
+    }
+
+    fun getTchatInstance(): Pusher {
+        val headers = HashMap<String,String>()
+        TokenAuthenticator!!.instance!!.idToken?.let { headers.put("Authorization", it) }
+        val authorizer = HttpChannelAuthorizer(TCHAT_AUTH_URL)
+        authorizer.setHeaders(headers)
+
+        val options = PusherOptions()
+        options.setCluster(BuildConfig.PUSHER_CLUSTER)
+        options.channelAuthorizer = authorizer
+
+        return Pusher(BuildConfig.PUSHER_KEY,options)
+    }
+
+    fun formatMessageToDisplay(message : String): MessageDTO? {
+        return gson.fromJson(message,MessageDTO::class.java)
     }
 }

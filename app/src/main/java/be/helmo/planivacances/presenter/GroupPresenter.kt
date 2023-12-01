@@ -3,9 +3,7 @@ package be.helmo.planivacances.presenter
 import android.util.Log
 import be.helmo.planivacances.domain.Place
 import be.helmo.planivacances.service.ApiClient
-import be.helmo.planivacances.service.dto.GroupAndPlaceDTO
 import be.helmo.planivacances.service.dto.GroupDTO
-import be.helmo.planivacances.service.dto.PlaceDTO
 import be.helmo.planivacances.util.ResultMessage
 import be.helmo.planivacances.view.fragments.CreateGroupFragment
 import be.helmo.planivacances.view.fragments.GroupFragment
@@ -23,7 +21,7 @@ class GroupPresenter : IGroupPresenter {
     override suspend fun createGroup(group: GroupDTO): ResultMessage {
         return coroutineScope {
             try {
-                val response = ApiClient.groupService.create(group)//AppSingletonFactory.instance?.getAuthToken()!!,
+                val response = ApiClient.groupService.create(group)//AppSingletonFactory.instance?.getAuthToken()!!
 
                 if (response.isSuccessful && response.body() != null) {
                     val gid = response.body()!!
@@ -56,7 +54,6 @@ class GroupPresenter : IGroupPresenter {
     }
 
     override suspend fun loadUserGroups(): ResultMessage {
-
         return coroutineScope {
             try {
                 val response = ApiClient.groupService.getList()
@@ -97,6 +94,10 @@ class GroupPresenter : IGroupPresenter {
             pDto.number,
             pDto.postalCode,
             LatLng(pDto.lat, pDto.lon))
+    }
+
+    override fun getCurrentGroupId(): String {
+        return currentGid
     }
 
     override fun setCurrentGroupId(gid: String) {

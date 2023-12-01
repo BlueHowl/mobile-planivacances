@@ -76,11 +76,11 @@
     </fragment>
     <fragment
         android:id="@+id/TchatFragment"
-        android:name="be.helmo.planivacances.view.fragments.TchatFragment"
+        android:name="be.helmo.planivacances.view.fragments.tchat.TchatFragment"
         android:label="fragment_tchat"
         tools:layout="@layout/fragment_tchat">
         <action
-            android:id="@+id/action_TchatFragment_to_groupFragment"
+            android:id="@+id/action_tchatFragment_to_groupFragment"
             app:destination="@id/groupFragment" />
     </fragment>
 </navigation>

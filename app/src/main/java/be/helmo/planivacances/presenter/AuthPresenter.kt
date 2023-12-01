@@ -138,6 +138,10 @@ class AuthPresenter : IAuthPresenter {
         return mAuth.uid!!
     }
 
+    override fun getDisplayName(): String {
+        return mAuth.currentUser!!.displayName!!;
+    }
+
     /**
      * Sauvegarde le resfresh token si demandé et précise le token au TokenAuthenticator
      * @param token (String) refreshToken

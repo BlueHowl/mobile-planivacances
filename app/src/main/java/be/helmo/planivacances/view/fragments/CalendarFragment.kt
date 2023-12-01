@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import be.helmo.planivacances.R
+import be.helmo.planivacances.databinding.FragmentCalendarBinding
 
 /**
  * A simple [Fragment] subclass.
@@ -13,6 +14,8 @@ import be.helmo.planivacances.R
  * create an instance of this fragment.
  */
 class CalendarFragment : Fragment() {
+
+    lateinit var binding : FragmentCalendarBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,9 +27,9 @@ class CalendarFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_calendar, container, false)
+        binding = FragmentCalendarBinding.inflate(inflater,container,false)
 
-        return view
+        return binding.root
     }
 
     companion object {

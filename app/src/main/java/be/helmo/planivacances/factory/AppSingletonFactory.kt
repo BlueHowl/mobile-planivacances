@@ -2,9 +2,12 @@ package be.helmo.planivacances.factory
 
 import be.helmo.planivacances.presenter.AuthPresenter
 import be.helmo.planivacances.presenter.GroupPresenter
+import be.helmo.planivacances.presenter.TchatPresenter
 import be.helmo.planivacances.presenter.WeatherPresenter
+import be.helmo.planivacances.presenter.interfaces.ITchatView
 import be.helmo.planivacances.view.interfaces.IAuthPresenter
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
+import be.helmo.planivacances.view.interfaces.ITchatPresenter
 import be.helmo.planivacances.view.interfaces.IWeatherPresenter
 
 /**
@@ -20,16 +23,8 @@ class AppSingletonFactory() {
 
     val weatherPresenter: WeatherPresenter = WeatherPresenter(groupPresenter)
 
-    //auth token
-    /*fun getAuthToken(): String? {
-        return token
-    }
+    val tchatPresenter : TchatPresenter = TchatPresenter(groupPresenter, authPresenter)
 
-    fun setAuthToken(token: String?) {
-        this.token = token
-    }*/
-
-    //auth presenter
     fun getAuthPresenter(): IAuthPresenter {
         return authPresenter
     }
@@ -41,7 +36,12 @@ class AppSingletonFactory() {
 
     //weather presenter
     fun getWeatherPresenter(): IWeatherPresenter {
-        return weatherPresenter;
+        return weatherPresenter
+    }
+
+    fun getTchatPresenter(tchatView : ITchatView) : ITchatPresenter {
+        tchatPresenter.setTchatView(tchatView)
+        return tchatPresenter
     }
 
     companion object {

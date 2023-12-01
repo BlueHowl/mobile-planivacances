@@ -25,6 +25,10 @@ class TokenAuthenticator : Authenticator {
     val requestCounter = AtomicLong(0)
     var lastRequestTime = 0L
 
+    fun getToken(): String? {
+        return idToken
+    }
+
     override fun authenticate(route: Route?, response: Response): Request? {
         synchronized(this) {
             val currentTime = System.currentTimeMillis()

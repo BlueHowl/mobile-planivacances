@@ -27,4 +27,6 @@ ext {
     mockitoVersion = '2.25.1'//'5.1.1'
     androidxJunitVersion = '1.1.5'
     espressoVersion = '3.5.1'
+    stompProtocolAndroidVersion = '1.6.6'
+    pusherVersion = '2.4.4'
 }

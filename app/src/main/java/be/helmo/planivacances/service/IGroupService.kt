@@ -1,6 +1,5 @@
 package be.helmo.planivacances.service
 
-import be.helmo.planivacances.domain.Group
 import be.helmo.planivacances.service.dto.GroupDTO
 import retrofit2.Response
 import retrofit2.http.Body

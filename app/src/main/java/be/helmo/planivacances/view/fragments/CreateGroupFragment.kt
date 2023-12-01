@@ -21,7 +21,6 @@ import androidx.navigation.fragment.findNavController
 import be.helmo.planivacances.R
 import be.helmo.planivacances.databinding.FragmentCreateGroupBinding
 import be.helmo.planivacances.factory.AppSingletonFactory
-import be.helmo.planivacances.service.dto.CreateGroupDTO
 import be.helmo.planivacances.service.dto.GroupDTO
 import be.helmo.planivacances.service.dto.PlaceDTO
 import be.helmo.planivacances.view.MainActivity

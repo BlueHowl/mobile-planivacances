@@ -12,6 +12,8 @@ interface IAuthPresenter {
 
     fun getUid(): String
 
+    fun getDisplayName() : String
+
     suspend fun loadIdToken(): Boolean
 
     suspend fun signInWithCustomToken(customToken: String): ResultMessage

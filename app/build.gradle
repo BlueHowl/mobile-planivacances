@@ -18,7 +18,6 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -26,6 +25,8 @@ android {
             buildConfigField "String", "GOOGLE_API_KEY", "\"${GOOGLE_API_KEY}\""
             buildConfigField "String", "WEATHER_API_KEY", "\"${WEATHER_API_KEY}\""
             buildConfigField "String", "OAUTH_CLIENT_ID", "\"${OAUTH_CLIENT_ID}\""
+            buildConfigField "String", "PUSHER_KEY", "\"${PUSHER_KEY}\""
+            buildConfigField "String", "PUSHER_CLUSTER", "\"${PUSHER_CLUSTER}\""
         }
 
         release {
@@ -35,6 +36,8 @@ android {
             buildConfigField "String", "GOOGLE_API_KEY", "\"${GOOGLE_API_KEY}\""
             buildConfigField "String", "WEATHER_API_KEY", "\"${WEATHER_API_KEY}\""
             buildConfigField "String", "OAUTH_CLIENT_ID", "\"${OAUTH_CLIENT_ID}\""
+            buildConfigField "String", "PUSHER_KEY", "\"${PUSHER_KEY}\""
+            buildConfigField "String", "PUSHER_CLUSTER", "\"${PUSHER_CLUSTER}\""
         }
     }
     compileOptions {
@@ -90,6 +93,12 @@ dependencies {
     //Easy Location Picker
     implementation "com.adevinta.android:leku:$rootProject.locationPickerVersion"
 
+    // Pusher
+    implementation "com.pusher:pusher-java-client:$rootProject.pusherVersion"
+
+
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.8'
 
     testImplementation "junit:junit:$rootProject.junitVersion"
 

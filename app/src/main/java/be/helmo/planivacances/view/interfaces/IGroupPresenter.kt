@@ -16,6 +16,8 @@ interface IGroupPresenter {
 
     fun getCurrentGroupPlace(): Place?
 
+    fun getCurrentGroupId() : String
+
     fun setCurrentGroupId(gid: String)
 
 }
