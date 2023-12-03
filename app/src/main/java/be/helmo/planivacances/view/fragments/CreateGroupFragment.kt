@@ -21,6 +21,7 @@ import androidx.navigation.fragment.findNavController
 import be.helmo.planivacances.R
 import be.helmo.planivacances.databinding.FragmentCreateGroupBinding
 import be.helmo.planivacances.factory.AppSingletonFactory
+import be.helmo.planivacances.presenter.interfaces.ICreateGroupView
 import be.helmo.planivacances.service.dto.GroupDTO
 import be.helmo.planivacances.service.dto.PlaceDTO
 import be.helmo.planivacances.view.MainActivity
@@ -39,7 +40,7 @@ import java.util.regex.Matcher
 /**
  * Fragment de création de groupe
  */
-class CreateGroupFragment : Fragment() {
+class CreateGroupFragment : Fragment(), ICreateGroupView {
 
     lateinit var binding : FragmentCreateGroupBinding
 
@@ -62,7 +63,7 @@ class CreateGroupFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        groupPresenter = AppSingletonFactory.instance!!.getGroupPresenter()
+        groupPresenter = AppSingletonFactory.instance!!.getGroupPresenter(this)
     }
 
     override fun onCreateView(

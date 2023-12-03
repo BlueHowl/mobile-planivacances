@@ -1,14 +1,18 @@
 package be.helmo.planivacances.view.fragments
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import be.helmo.planivacances.R
 import be.helmo.planivacances.databinding.FragmentGroupBinding
 import be.helmo.planivacances.factory.AppSingletonFactory
+import be.helmo.planivacances.presenter.interfaces.IGroupView
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
 import java.text.SimpleDateFormat
 
@@ -17,7 +21,7 @@ import java.text.SimpleDateFormat
  * Use the [GroupFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class GroupFragment : Fragment() {
+class GroupFragment : Fragment(), IGroupView {
 
     lateinit var binding : FragmentGroupBinding
 
@@ -26,7 +30,7 @@ class GroupFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        groupPresenter = AppSingletonFactory.instance!!.getGroupPresenter()
+        groupPresenter = AppSingletonFactory.instance!!.getGroupPresenter(this)
     }
 
     override fun onCreateView(
@@ -57,7 +61,7 @@ class GroupFragment : Fragment() {
         }
 
         binding.ibItinerary.setOnClickListener {
-
+            groupPresenter.loadItinerary()
         }
 
         binding.ibTchat.setOnClickListener {
@@ -76,6 +80,21 @@ class GroupFragment : Fragment() {
 
         fun newInstance(): GroupFragment {
             return GroupFragment()
+        }
+    }
+
+    override fun buildItinerary(latitude: String, longitude: String) {
+        val mapsUri: Uri = Uri.parse("https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude")
+
+        val mapIntent = Intent(Intent.ACTION_VIEW,mapsUri)
+
+        mapIntent.setPackage("com.google.android.apps.maps")
+
+        if(mapIntent.resolveActivity(requireActivity().packageManager) != null)
+        {
+            startActivity(mapIntent)
+        } else {
+            Toast.makeText(requireContext(),"L'application Google Maps doit être installée pour pouvoir utiliser cette fonctionnalité !",Toast.LENGTH_SHORT).show()
         }
     }
 }

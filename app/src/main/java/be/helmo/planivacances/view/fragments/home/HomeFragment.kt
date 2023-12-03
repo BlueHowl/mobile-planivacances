@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import be.helmo.planivacances.R
 import be.helmo.planivacances.databinding.FragmentHomeBinding
 import be.helmo.planivacances.factory.AppSingletonFactory
+import be.helmo.planivacances.presenter.interfaces.IHomeView
 import be.helmo.planivacances.util.ResultMessage
 import be.helmo.planivacances.view.interfaces.IAuthPresenter
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
@@ -24,7 +25,7 @@ import kotlinx.coroutines.launch
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), IHomeView {
 
     lateinit var binding: FragmentHomeBinding
 
@@ -38,7 +39,7 @@ class HomeFragment : Fragment() {
         //prevent back button
         requireActivity().onBackPressedDispatcher.addCallback(this) {}
 
-        groupPresenter = AppSingletonFactory.instance!!.getGroupPresenter()
+        groupPresenter = AppSingletonFactory.instance!!.getGroupPresenter(this)
     }
 
     override fun onCreateView(

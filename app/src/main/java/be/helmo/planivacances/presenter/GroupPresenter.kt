@@ -2,6 +2,9 @@ package be.helmo.planivacances.presenter
 
 import android.util.Log
 import be.helmo.planivacances.domain.Place
+import be.helmo.planivacances.presenter.interfaces.ICreateGroupView
+import be.helmo.planivacances.presenter.interfaces.IGroupView
+import be.helmo.planivacances.presenter.interfaces.IHomeView
 import be.helmo.planivacances.service.ApiClient
 import be.helmo.planivacances.service.dto.GroupDTO
 import be.helmo.planivacances.util.ResultMessage
@@ -13,8 +16,10 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.coroutineScope
 
 class GroupPresenter : IGroupPresenter {
-
-    var groups : HashMap<String, GroupDTO> = HashMap()
+    private var groupView: IGroupView? = null
+    private var createGroupView: ICreateGroupView? = null
+    private var homeView: IHomeView? = null
+    private var groups : HashMap<String, GroupDTO> = HashMap()
 
     lateinit var currentGid : String
 
@@ -102,5 +107,27 @@ class GroupPresenter : IGroupPresenter {
 
     override fun setCurrentGroupId(gid: String) {
         currentGid = gid
+    }
+
+    override fun loadItinerary() {
+        val place = groups[currentGid]?.place
+        val latitude = place?.lat?.toString()
+        val longitude = place?.lon?.toString()
+
+        if(latitude != null && longitude != null) {
+            groupView?.buildItinerary(latitude,longitude)
+        }
+    }
+
+    override fun setGroupView(groupView: IGroupView) {
+        this.groupView = groupView
+    }
+
+    override fun setCreateGroupView(createGroupView: ICreateGroupView) {
+        this.createGroupView = createGroupView
+    }
+
+    override fun setHomeView(homeView: IHomeView) {
+        this.homeView = homeView
     }
 }
