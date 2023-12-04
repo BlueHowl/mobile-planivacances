@@ -1,4 +1,7 @@
 package be.helmo.planivacances.presenter.interfaces
 
-interface ICreateGroupView {
+interface ICreateGroupView : IShowToast {
+
+    fun onGroupCreated()
+
 }

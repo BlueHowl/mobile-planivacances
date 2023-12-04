@@ -18,8 +18,6 @@ import be.helmo.planivacances.view.interfaces.IWeatherPresenter
  */
 class AppSingletonFactory() {
 
-    //var token: String? = null
-
     val authPresenter: AuthPresenter = AuthPresenter()
 
     val groupPresenter: GroupPresenter = GroupPresenter()
@@ -34,17 +32,17 @@ class AppSingletonFactory() {
 
     //group presenter
     fun getGroupPresenter(groupView:IGroupView): IGroupPresenter {
-        groupPresenter.setGroupView(groupView)
+        groupPresenter.setIGroupView(groupView)
         return groupPresenter
     }
 
     fun getGroupPresenter(createGroupView:ICreateGroupView): IGroupPresenter {
-        groupPresenter.setCreateGroupView(createGroupView)
+        groupPresenter.setICreateGroupView(createGroupView)
         return groupPresenter
     }
 
     fun getGroupPresenter(homeView:IHomeView): IGroupPresenter {
-        groupPresenter.setHomeView(homeView)
+        groupPresenter.setIHomeView(homeView)
         return groupPresenter
     }
 

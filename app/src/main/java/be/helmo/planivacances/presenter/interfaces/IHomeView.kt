@@ -1,4 +1,7 @@
 package be.helmo.planivacances.presenter.interfaces
 
-interface IHomeView {
+interface IHomeView : IShowToast {
+
+    fun onGroupsLoaded()
+
 }

@@ -7,80 +7,67 @@ import be.helmo.planivacances.presenter.interfaces.IGroupView
 import be.helmo.planivacances.presenter.interfaces.IHomeView
 import be.helmo.planivacances.service.ApiClient
 import be.helmo.planivacances.service.dto.GroupDTO
-import be.helmo.planivacances.util.ResultMessage
-import be.helmo.planivacances.view.fragments.CreateGroupFragment
-import be.helmo.planivacances.view.fragments.GroupFragment
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.coroutineScope
 
 class GroupPresenter : IGroupPresenter {
-    private var groupView: IGroupView? = null
-    private var createGroupView: ICreateGroupView? = null
-    private var homeView: IHomeView? = null
-    private var groups : HashMap<String, GroupDTO> = HashMap()
+    lateinit var groupView: IGroupView
+    lateinit var createGroupView: ICreateGroupView
+    lateinit var homeView: IHomeView
+    var groups : HashMap<String, GroupDTO> = HashMap()
 
     lateinit var currentGid : String
 
-    override suspend fun createGroup(group: GroupDTO): ResultMessage {
-        return coroutineScope {
-            try {
-                val response = ApiClient.groupService.create(group)//AppSingletonFactory.instance?.getAuthToken()!!
+    override suspend fun createGroup(group: GroupDTO) {
 
-                if (response.isSuccessful && response.body() != null) {
-                    val gid = response.body()!!
+        try {
+            val response = ApiClient.groupService.create(group)
 
-                    currentGid = gid
+            if (response.isSuccessful && response.body() != null) {
+                val gid = response.body()!!
 
-                    group.gid = gid
-                    group.owner = FirebaseAuth.getInstance().uid!!
-                    groups[gid] = group/*GroupDTO(gid,
-                        createGroup.groupName,
-                        createGroup.description,
-                        createGroup.startDate,
-                        createGroup.endDate,
-                        PlaceDTO(placeDTO.address, placeDTO.lat, placeDTO.lon),
-                        //Place(placeDTO.address, LatLng(placeDTO.lat, placeDTO.lon)),
-                        createGroup.isPublished,
-                        FirebaseAuth.getInstance().uid!!)*/
+                currentGid = gid
 
-                    Log.d(CreateGroupFragment.TAG, "Group created : $gid")
-                    return@coroutineScope ResultMessage(true, "Groupe créé")
-                } else {
-                    Log.d(CreateGroupFragment.TAG, "${response.message()}, ${response.isSuccessful}")
-                    return@coroutineScope ResultMessage(false, "Erreur lors de la création du groupe ${response.message()}")
-                }
+                group.gid = gid
+                group.owner = FirebaseAuth.getInstance().uid!!
+                groups[gid] = group
 
-            } catch (e: Exception) {
-                return@coroutineScope ResultMessage(false, "Erreur durant la création du groupe : ${e.message}")
+                Log.d("CreateGroupFragment", "Group created : $gid")
+                createGroupView.onGroupCreated()
+            } else {
+                Log.d("CreateGroupFragment", "${response.message()}, ${response.isSuccessful}")
+                createGroupView.showToast("Erreur lors de la création du groupe ${response.message()}")
             }
+
+        } catch (e: Exception) {
+            createGroupView.showToast("Erreur durant la création du groupe")
         }
+
     }
 
-    override suspend fun loadUserGroups(): ResultMessage {
-        return coroutineScope {
-            try {
-                val response = ApiClient.groupService.getList()
+    override suspend fun loadUserGroups() {
+        try {
+            val response = ApiClient.groupService.getList()
 
-                if (response.isSuccessful && response.body() != null) {
-                    val groupsDto = response.body()!!
+            if (response.isSuccessful && response.body() != null) {
+                val groupsDto = response.body()!!
 
-                    for(groupDto in groupsDto) {
-                        groups[groupDto.gid!!] = groupDto
-                    }
-
-                    Log.d(GroupFragment.TAG, "Groups retrieved : ${groups.size}")
-                    return@coroutineScope ResultMessage(true, "Groupes chargés avec succès")
-                } else {
-                    Log.d(GroupFragment.TAG, "${response.message()}, ${response.isSuccessful}")
-                    return@coroutineScope ResultMessage(false, "Erreur lors de la récupération des groupes ${response.message()}")
+                for(groupDto in groupsDto) {
+                    groups[groupDto.gid!!] = groupDto
                 }
 
-            } catch (e: Exception) {
-                return@coroutineScope ResultMessage(false, "Erreur durant la récupération des groupes : ${e.message}")
+                Log.d("GroupFragment", "Groups retrieved : ${groups.size}")
+                homeView.onGroupsLoaded()
+            } else {
+                Log.d("GroupFragment", "${response.message()}, ${response.isSuccessful}")
+                homeView.showToast("Erreur lors de la récupération des groupes ${response.message()}")
             }
+
+        } catch (e: Exception) {
+            homeView.showToast("Erreur durant la récupération des groupes")
         }
+
     }
 
     override fun getGroups(): List<GroupDTO> {
@@ -92,7 +79,7 @@ class GroupPresenter : IGroupPresenter {
     }
 
     override fun getCurrentGroupPlace(): Place {
-        val pDto = groups[currentGid]?.place!! //TODO diretly get LAtLng object from api
+        val pDto = groups[currentGid]?.place!!
         return Place(pDto.country,
             pDto.city,
             pDto.street,
@@ -115,19 +102,19 @@ class GroupPresenter : IGroupPresenter {
         val longitude = place?.lon?.toString()
 
         if(latitude != null && longitude != null) {
-            groupView?.buildItinerary(latitude,longitude)
+            groupView.buildItinerary(latitude,longitude)
         }
     }
 
-    override fun setGroupView(groupView: IGroupView) {
+    override fun setIGroupView(groupView: IGroupView) {
         this.groupView = groupView
     }
 
-    override fun setCreateGroupView(createGroupView: ICreateGroupView) {
+    override fun setICreateGroupView(createGroupView: ICreateGroupView) {
         this.createGroupView = createGroupView
     }
 
-    override fun setHomeView(homeView: IHomeView) {
+    override fun setIHomeView(homeView: IHomeView) {
         this.homeView = homeView
     }
 }

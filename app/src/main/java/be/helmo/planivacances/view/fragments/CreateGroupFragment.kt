@@ -190,35 +190,17 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
                 place
             )
 
-            createGroup(group)
+            lifecycleScope.launch(Dispatchers.Main) {
+                groupPresenter.createGroup(group)
+            }
+            //createGroup(group)
+
 
         }
         catch (e: ParseException) {
             showToast("Une des dates est mal encodée")
             Log.e(TAG, "Parse error : " + e.message)
         }
-    }
-
-    /**
-     * Crée un groupe
-     * @param group (CreateGroupDTO) contient les informations du groupe
-     */
-    fun createGroup(group: GroupDTO) {
-        hideKeyboard()
-        binding.pbCreateGroup.visibility = View.VISIBLE
-
-        lifecycleScope.launch(Dispatchers.Main) {
-            val result = groupPresenter.createGroup(group)
-
-            if (result.success) {
-                showToast(result.message!! as String)
-                findNavController().navigate(R.id.action_createGroupFragment_to_groupFragment)
-            } else {
-                binding.pbCreateGroup.visibility = View.GONE
-                showToast(result.message!! as String)
-            }
-        }
-
     }
 
     /**
@@ -281,10 +263,16 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
         }
     }*/
 
+    override fun onGroupCreated() {
+        showToast("Groupe créé !")
+        findNavController().navigate(R.id.action_createGroupFragment_to_groupFragment)
+    }
+
     /**
      * Affiche un message à l'écran
      */
-    fun showToast(message: String) {
+    override fun showToast(message: String) {
+        binding.pbCreateGroup.visibility = View.GONE
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 

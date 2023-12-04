@@ -9,9 +9,9 @@ import be.helmo.planivacances.util.ResultMessage
 
 interface IGroupPresenter {
 
-    suspend fun createGroup(group: GroupDTO): ResultMessage
+    suspend fun createGroup(group: GroupDTO)
 
-    suspend fun loadUserGroups(): ResultMessage
+    suspend fun loadUserGroups()
 
     fun getGroups(): List<GroupDTO>
 
@@ -25,9 +25,9 @@ interface IGroupPresenter {
 
     fun loadItinerary()
 
-    fun setGroupView(groupView:IGroupView)
+    fun setIGroupView(groupView:IGroupView)
 
-    fun setCreateGroupView(createGroupView: ICreateGroupView)
+    fun setICreateGroupView(createGroupView: ICreateGroupView)
 
-    fun setHomeView(homeView: IHomeView)
+    fun setIHomeView(homeView: IHomeView)
 }

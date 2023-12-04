@@ -14,8 +14,7 @@ import be.helmo.planivacances.R
 import be.helmo.planivacances.databinding.FragmentHomeBinding
 import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.presenter.interfaces.IHomeView
-import be.helmo.planivacances.util.ResultMessage
-import be.helmo.planivacances.view.interfaces.IAuthPresenter
+import be.helmo.planivacances.service.dto.GroupDTO
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,39 +63,43 @@ class HomeFragment : Fragment(), IHomeView {
 
         binding.pbGroupList.visibility = View.VISIBLE
         lifecycleScope.launch(Dispatchers.Main) {
-            var groups = groupPresenter.getGroups()
-            var result = ResultMessage(true, null)
+            val groups = groupPresenter.getGroups()
 
             //charge une seule fois
             if(groups.isEmpty()) {
-                result = groupPresenter.loadUserGroups()
-            }
-
-            if (result.success) {
-                groups = groupPresenter.getGroups()
-
-                binding.rvGroups.layoutManager = LinearLayoutManager(requireContext())
-                groupAdapter = GroupAdapter(requireContext(), groups) { selectedGroupId ->
-                    //selectionne le groupe
-                    groupPresenter.setCurrentGroupId(selectedGroupId)
-                    findNavController().navigate(R.id.action_homeFragment_to_groupFragment)
-                }
-                binding.rvGroups.adapter = groupAdapter
-
-                binding.pbGroupList.visibility = View.GONE
-
+                groupPresenter.loadUserGroups()
             } else {
-                showToast(result.message!! as String)
+                setGroupsAdapter(groups)
+                binding.pbGroupList.visibility = View.GONE
             }
+
         }
 
         return binding.root
     }
 
+    override fun onGroupsLoaded() {
+        val groups = groupPresenter.getGroups()
+
+        setGroupsAdapter(groups)
+
+        binding.pbGroupList.visibility = View.GONE
+    }
+
+    fun setGroupsAdapter(groups : List<GroupDTO>) {
+        binding.rvGroups.layoutManager = LinearLayoutManager(requireContext())
+        groupAdapter = GroupAdapter(requireContext(), groups) { selectedGroupId ->
+            //selectionne le groupe
+            groupPresenter.setCurrentGroupId(selectedGroupId)
+            findNavController().navigate(R.id.action_homeFragment_to_groupFragment)
+        }
+        binding.rvGroups.adapter = groupAdapter
+    }
+
     /**
      * Affiche un message à l'écran
      */
-    fun showToast(message: String) {
+    override fun showToast(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
