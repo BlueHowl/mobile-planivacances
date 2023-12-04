@@ -13,6 +13,7 @@ import be.helmo.planivacances.R
 import be.helmo.planivacances.databinding.FragmentWeatherBinding
 import be.helmo.planivacances.domain.WeatherForecast
 import be.helmo.planivacances.factory.AppSingletonFactory
+import be.helmo.planivacances.presenter.interfaces.IWeatherView
 import be.helmo.planivacances.view.interfaces.IWeatherPresenter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
@@ -27,7 +28,7 @@ import kotlinx.coroutines.launch
  * Use the [WeatherFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class WeatherFragment : Fragment() {
+class WeatherFragment : Fragment(), IWeatherView {
 
     lateinit var binding : FragmentWeatherBinding
 
@@ -36,7 +37,7 @@ class WeatherFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        weatherPresenter = AppSingletonFactory.instance!!.getWeatherPresenter()
+        weatherPresenter = AppSingletonFactory.instance!!.getWeatherPresenter(this)
     }
 
     override fun onCreateView(
@@ -61,29 +62,28 @@ class WeatherFragment : Fragment() {
         }
 
         binding.pbWeatherList.visibility = View.VISIBLE
-        lifecycleScope.launch(Dispatchers.Main) {
-            val result = weatherPresenter.getForecast()
 
-            if (result.success) {
-                val weatherList: List<WeatherForecast> = result.message as List<WeatherForecast>
-                val adapter = WeatherAdapter(weatherList, requireContext())
-
-                binding.rvWeatherContainer.layoutManager = LinearLayoutManager(requireContext())
-                binding.rvWeatherContainer.adapter = adapter
-
-                binding.pbWeatherList.visibility = View.GONE
-            } else {
-                showToast(result.message!! as String)
-            }
+        lifecycleScope.launch(Dispatchers.Default) {
+            weatherPresenter.getForecast()
         }
 
         return binding.root
     }
 
+    override fun onForecastLoaded(weatherList: List<WeatherForecast>) {
+        val adapter = WeatherAdapter(weatherList, requireContext())
+
+        binding.rvWeatherContainer.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvWeatherContainer.adapter = adapter
+
+        binding.pbWeatherList.visibility = View.GONE
+    }
+
     /**
      * Affiche un message à l'écran
      */
-    fun showToast(message: String) {
+    override fun showToast(message: String) {
+        binding.pbWeatherList.visibility = View.GONE
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 

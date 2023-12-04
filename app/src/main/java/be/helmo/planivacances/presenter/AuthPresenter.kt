@@ -7,7 +7,6 @@ import be.helmo.planivacances.service.ApiClient
 import be.helmo.planivacances.service.TokenAuthenticator
 import be.helmo.planivacances.service.dto.LoginUserDTO
 import be.helmo.planivacances.service.dto.RegisterUserDTO
-import be.helmo.planivacances.view.fragments.AuthFragment
 import be.helmo.planivacances.view.interfaces.IAuthPresenter
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
@@ -42,7 +41,7 @@ class AuthPresenter : IAuthPresenter {
 
             val customToken = response.body()
 
-            Log.d(AuthFragment.TAG, "Register Response: $customToken")
+            Log.d("AuthFragment", "Register Response: $customToken")
             auth(customToken!!, false)
         } catch (e: Exception) {
             Log.w("Erreur lors de l'enregistrement", "${e.message}")
@@ -66,7 +65,7 @@ class AuthPresenter : IAuthPresenter {
 
             val customToken = response.body()
 
-            Log.d(AuthFragment.TAG, "Login Response : $customToken")
+            Log.d("AuthFragment", "Login Response : $customToken")
             auth(customToken!!, keepConnected)
         } catch (e: Exception) {
             Log.w("Erreur lors de la connexion", "${e.message}")

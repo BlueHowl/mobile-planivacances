@@ -45,7 +45,8 @@ class AppSingletonFactory() {
     }
 
     //weather presenter
-    fun getWeatherPresenter(): IWeatherPresenter {
+    fun getWeatherPresenter(weatherView: IWeatherView): IWeatherPresenter {
+        weatherPresenter.setIWeatherView(weatherView)
         return weatherPresenter
     }
 
