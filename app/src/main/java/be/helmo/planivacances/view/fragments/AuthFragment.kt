@@ -21,6 +21,7 @@ import be.helmo.planivacances.R
 import be.helmo.planivacances.service.dto.LoginUserDTO
 import be.helmo.planivacances.service.dto.RegisterUserDTO
 import be.helmo.planivacances.factory.AppSingletonFactory
+import be.helmo.planivacances.presenter.interfaces.IAuthView
 import be.helmo.planivacances.view.MainActivity
 import be.helmo.planivacances.view.interfaces.IAuthPresenter
 import com.bumptech.glide.Glide
@@ -39,7 +40,7 @@ import kotlinx.coroutines.launch
 /**
  * Fragment d'authentification (login et register)
  */
-class AuthFragment : Fragment() {
+class AuthFragment : Fragment(), IAuthView {
 
     lateinit var mAuth: FirebaseAuth
 
@@ -59,7 +60,7 @@ class AuthFragment : Fragment() {
 
         mAuth = FirebaseAuth.getInstance()
 
-        authPresenter = AppSingletonFactory.instance!!.getAuthPresenter()
+        authPresenter = AppSingletonFactory.instance!!.getAuthPresenter(this)
 
         sharedPreferences = requireContext().getSharedPreferences("PlanivacancesPreferences", Context.MODE_PRIVATE)
         authPresenter.setSharedPreference(sharedPreferences)
@@ -129,15 +130,15 @@ class AuthFragment : Fragment() {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 try {
                     val account = task.getResult(ApiException::class.java)
-
                     val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+
                     mAuth.signInWithCredential(credential)
                         .addOnCompleteListener(requireActivity()) { t ->
                             if (t.isSuccessful) {
                                 // Sign in success
                                 Log.d(TAG, "signInWithCredential:success")
 
-                                lifecycleScope.launch(Dispatchers.Main) {
+                                lifecycleScope.launch(Dispatchers.Default) {
                                     val r = authPresenter.initAuthenticator()
 
                                     if(r) { goToHome() }
@@ -198,15 +199,8 @@ class AuthFragment : Fragment() {
         hideKeyboard()
         binding.pbAuth.visibility = View.VISIBLE
 
-        lifecycleScope.launch(Dispatchers.Main) {
-            val result = authPresenter.register(registerUser)
-
-            if(result.success) {
-                goToHome()
-            } else {
-                binding.pbAuth.visibility = View.GONE
-                showToast(result.message!! as String)
-            }
+        lifecycleScope.launch(Dispatchers.Default) {
+            authPresenter.register(registerUser)
         }
 
     }
@@ -219,15 +213,8 @@ class AuthFragment : Fragment() {
         hideKeyboard()
         binding.pbAuth.visibility = View.VISIBLE
 
-        lifecycleScope.launch(Dispatchers.Main) {
-            val result = authPresenter.login(loginUser, binding.cbKeepConnected.isChecked)
-
-            if(result.success) {
-                goToHome()
-            } else {
-                binding.pbAuth.visibility = View.GONE
-                showToast(result.message!! as String)
-            }
+        lifecycleScope.launch(Dispatchers.Default) {
+            authPresenter.login(loginUser, binding.cbKeepConnected.isChecked)
         }
 
     }
@@ -236,30 +223,23 @@ class AuthFragment : Fragment() {
      * Appel la fonction d'authentification automatique asynchrone
      */
     fun autoAuth() {
-        lifecycleScope.launch(Dispatchers.Main) {
-            val result = authPresenter.autoAuth()
-
-            if(result.success) {
-                goToHome()
-            } else if(result.message != null) {
-                showToast(result.message as String)
-            }
-
-            binding.pbAuth.visibility = View.GONE
+        lifecycleScope.launch(Dispatchers.Default) {
+            authPresenter.autoAuth()
         }
     }
 
     /**
      * navigue vers le fragment home
      */
-    fun goToHome() {
+    override fun goToHome() {
         findNavController().navigate(R.id.action_authFragment_to_homeFragment)
     }
 
     /**
      * Affiche un message à l'écran
      */
-    fun showToast(message: String) {
+    override fun showToast(message: String) {
+        binding.pbAuth.visibility = View.GONE
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 

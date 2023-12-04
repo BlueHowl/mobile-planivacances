@@ -62,7 +62,7 @@ class HomeFragment : Fragment(), IHomeView {
         }
 
         binding.pbGroupList.visibility = View.VISIBLE
-        lifecycleScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Default) {
             val groups = groupPresenter.getGroups()
 
             //charge une seule fois

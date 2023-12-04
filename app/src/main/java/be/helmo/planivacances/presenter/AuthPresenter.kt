@@ -2,16 +2,15 @@ package be.helmo.planivacances.presenter
 
 import android.content.SharedPreferences
 import android.util.Log
+import be.helmo.planivacances.presenter.interfaces.IAuthView
 import be.helmo.planivacances.service.ApiClient
 import be.helmo.planivacances.service.TokenAuthenticator
 import be.helmo.planivacances.service.dto.LoginUserDTO
 import be.helmo.planivacances.service.dto.RegisterUserDTO
-import be.helmo.planivacances.util.ResultMessage
 import be.helmo.planivacances.view.fragments.AuthFragment
 import be.helmo.planivacances.view.interfaces.IAuthPresenter
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
-import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.await
 
 /**
@@ -23,58 +22,31 @@ class AuthPresenter : IAuthPresenter {
 
     lateinit var sharedPreferences : SharedPreferences
 
+    lateinit var authView: IAuthView
+
     val tokenAuthenticator: TokenAuthenticator = TokenAuthenticator.instance!!
-
-    /**
-     * assigne le sharedPreferences à la variable locale du presenter
-     * @param sharedPreferences (SharedPreferences)
-     */
-    override fun setSharedPreference(sharedPreferences: SharedPreferences) {
-        this.sharedPreferences = sharedPreferences
-    }
-
-    /**
-     * Authentification asynchrone par token, récupère le token d'identification
-     * sur base d'un customToken
-     * @param customToken (String) customToken
-     * @return (ResultMessage) Message de résultat
-     */
-    override suspend fun signInWithCustomToken(customToken: String): ResultMessage {
-        val authResult = mAuth.signInWithCustomToken(customToken).await()
-        return if (authResult != null) {
-            Log.i("AuthFragment.TAG", "Successfully signed in")
-            ResultMessage(true, "Authentification réussie")
-        } else {
-            // Sign-in failed
-            Log.w("AuthFragment.TAG", "Failed to retrieve new id token")
-            ResultMessage(false, "Failed to retrieve new id token")
-        }
-    }
 
     /**
      * Enregistrement asycnhrone d'un profil utilisateur
      * @param registerUser (RegisterUserDTO) Objet contenant le nom,
      * mail et mot de passe utilisateur
-     * @return (ResultMessage) Message de résultat
      */
-    override suspend fun register(registerUser: RegisterUserDTO): ResultMessage {
-        return coroutineScope {
-            try {
-                val response = async { ApiClient.authService.register(registerUser) }
+    override suspend fun register(registerUser: RegisterUserDTO) {
+        try {
+            val response =  ApiClient.authService.register(registerUser)
 
-                if (response.await().isSuccessful && response.await().body() != null) {
-                    val customToken = response.await().body()
-
-                    Log.d(AuthFragment.TAG, "Register Response: $customToken")
-                    return@coroutineScope auth(customToken, false)
-                } else {
-                    return@coroutineScope ResultMessage(false,
-                        "Une erreur est survenue: ${response.await().message()}")
-                }
-            } catch (e: Exception) {
-                return@coroutineScope ResultMessage(false,
-                    "Une erreur est survenue: ${e.message}")
+            if (!response.isSuccessful || response.body() == null) {
+                authView.showToast("Erreur lors de l'enregistrement : ${response.message()}")
+                return
             }
+
+            val customToken = response.body()
+
+            Log.d(AuthFragment.TAG, "Register Response: $customToken")
+            auth(customToken!!, false)
+        } catch (e: Exception) {
+            Log.w("Erreur lors de l'enregistrement", "${e.message}")
+            authView.showToast("Une erreur est survenue lors de l'enregistrement")
         }
     }
 
@@ -82,43 +54,65 @@ class AuthPresenter : IAuthPresenter {
      * Connexion asycnhrone à un profil utilisateur
      * @param loginUser (LoginUserDTO) Objet contenant le mail et mot de passe utilisateur
      * @param keepConnected (Boolean) stocker le token en local ?
-     * @return (ResultMessage) Message de résultat
      */
-    override suspend fun login(loginUser: LoginUserDTO, keepConnected: Boolean): ResultMessage {
+    override suspend fun login(loginUser: LoginUserDTO, keepConnected: Boolean) {
+        try {
+            val response = ApiClient.authService.login(loginUser)
 
-        return coroutineScope {
-            try {
-                val response = async { ApiClient.authService.login(loginUser) }
-
-                if (response.await().isSuccessful && response.await().body() != null) {
-                    val customToken = response.await().body()
-
-                    Log.d(AuthFragment.TAG, "Login Response : $customToken")
-                    return@coroutineScope auth(customToken, keepConnected)
-                } else {
-                    return@coroutineScope ResultMessage(false,
-                        "Erreur lors de la connexion : ${response.await().message()}")
-                }
-
-            } catch (e: Exception) {
-                Log.w("Erreur lors de la connexion", "${e.message}")
-                return@coroutineScope ResultMessage(false,
-                    "Une erreur est survenue lors de la connexion: ${e.message}")
+            if (!response.isSuccessful || response.body() == null) {
+                authView.showToast("Erreur lors de la connexion : ${response.message()}")
+                return
             }
+
+            val customToken = response.body()
+
+            Log.d(AuthFragment.TAG, "Login Response : $customToken")
+            auth(customToken!!, keepConnected)
+        } catch (e: Exception) {
+            Log.w("Erreur lors de la connexion", "${e.message}")
+            authView.showToast("Une erreur est survenue lors de la connexion")
         }
     }
 
     /**
      * Connexion asynchrone automatique sur base du potentiel token d'identification sauvegardé
-     * @return (ResultMessage) Message de résultat
      */
-    override suspend fun autoAuth(): ResultMessage {
-        val customToken = sharedPreferences.getString("RefreshToken", null)
-            ?: return ResultMessage(false, null)
-
-        return auth(customToken, true)
+    override suspend fun autoAuth() {
+        val customToken = sharedPreferences.getString("CustomToken", null)
+        if(customToken != null) {
+            auth(customToken, true)
+        }
     }
 
+    /**
+     * Sauvegarde le resfresh token si demandé et précise le token au TokenAuthenticator
+     * @param token (String) refreshToken
+     * @param keepConnected (Boolean) stocker le token en local ?
+     */
+    suspend fun auth(customToken: String, keepConnected: Boolean) {
+        if(keepConnected) {
+            val editor = sharedPreferences.edit()
+            editor.putString("CustomToken", customToken)
+            editor.apply()
+        }
+
+        val authResult = mAuth.signInWithCustomToken(customToken).await()
+
+        if (authResult != null) {
+            initAuthenticator()
+
+            authView.goToHome()
+
+            return
+        }
+
+        authView.showToast("Erreur lors de l'authentification")
+    }
+
+    /**
+     * load a new idToken in the TokenAuthenticator
+     * @return (Boolean)
+     */
     override suspend fun loadIdToken(): Boolean {
         val tokenTask = mAuth.currentUser?.getIdToken(false)?.await()
 
@@ -134,42 +128,46 @@ class AuthPresenter : IAuthPresenter {
         }
     }
 
+    /**
+     * initialize the authenticator
+     * @return (Boolean)
+     */
+    override suspend fun initAuthenticator(): Boolean {
+        tokenAuthenticator.authPresenter = this //todo setters ou pas en kotlin ?
+        return loadIdToken()
+    }
+
+
+    /**
+     * Get user id
+     * @return (String)
+     */
     override fun getUid(): String {
         return mAuth.uid!!
     }
 
+    /**
+     * get the name of the user
+     * @return (String)
+     */
     override fun getDisplayName(): String {
         return mAuth.currentUser!!.displayName!!;
     }
 
+
     /**
-     * Sauvegarde le resfresh token si demandé et précise le token au TokenAuthenticator
-     * @param token (String) refreshToken
-     * @param keepConnected (Boolean) stocker le token en local ?
+     * assigne le sharedPreferences à la variable locale du presenter
+     * @param sharedPreferences (SharedPreferences)
      */
-    override suspend fun auth(customToken: String?, keepConnected: Boolean): ResultMessage {
-        if(keepConnected) {
-            val editor = sharedPreferences.edit()
-            editor.putString("RefreshToken", customToken)
-            editor.apply()
-        }
-
-        val result = signInWithCustomToken(customToken!!)
-
-        if(result.success) {
-            //tokenAuthenticator.refreshToken = customToken
-            initAuthenticator()
-
-            return ResultMessage(true, result.message)
-        }
-
-        return ResultMessage(false, result.message)
-
+    override fun setSharedPreference(sharedPreferences: SharedPreferences) {
+        this.sharedPreferences = sharedPreferences
     }
 
-    override suspend fun initAuthenticator(): Boolean {
-        tokenAuthenticator.authPresenter = this //todo setters ou pas en kotlin ?
-        return loadIdToken()
+    /**
+     * Assigne la AuthView Interface
+     */
+    override fun setIAuthView(authView : IAuthView) {
+        this.authView = authView
     }
 
 }

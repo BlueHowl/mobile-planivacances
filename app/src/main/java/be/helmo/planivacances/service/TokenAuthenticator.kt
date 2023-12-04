@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicLong
 
 class TokenAuthenticator : Authenticator {
 
-    //var refreshToken: String? = null
     var idToken: String? = null
 
     lateinit var authPresenter: IAuthPresenter
@@ -24,10 +23,6 @@ class TokenAuthenticator : Authenticator {
     val requestLimitPeriodMillis = TimeUnit.SECONDS.toMillis(10) // 10 seconds
     val requestCounter = AtomicLong(0)
     var lastRequestTime = 0L
-
-    fun getToken(): String? {
-        return idToken
-    }
 
     override fun authenticate(route: Route?, response: Response): Request? {
         synchronized(this) {

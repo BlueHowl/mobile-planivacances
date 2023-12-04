@@ -190,10 +190,9 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
                 place
             )
 
-            lifecycleScope.launch(Dispatchers.Main) {
+            lifecycleScope.launch(Dispatchers.Default) {
                 groupPresenter.createGroup(group)
             }
-            //createGroup(group)
 
 
         }
@@ -274,16 +273,6 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
     override fun showToast(message: String) {
         binding.pbCreateGroup.visibility = View.GONE
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-    }
-
-    /**
-     * Appel la fonction qui cache le clavier
-     */
-    fun hideKeyboard() {
-        val activity: Activity? = activity
-        if (activity is MainActivity) {
-            activity.hideKeyboard()
-        }
     }
 
     companion object {

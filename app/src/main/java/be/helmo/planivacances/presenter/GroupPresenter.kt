@@ -19,6 +19,10 @@ class GroupPresenter : IGroupPresenter {
 
     lateinit var currentGid : String
 
+    /**
+     * Crée un groupe
+     * @param group (GroupDTO)
+     */
     override suspend fun createGroup(group: GroupDTO) {
 
         try {
@@ -46,6 +50,9 @@ class GroupPresenter : IGroupPresenter {
 
     }
 
+    /**
+     * Charge les groupes de l'utilisateur
+     */
     override suspend fun loadUserGroups() {
         try {
             val response = ApiClient.groupService.getList()
@@ -70,14 +77,26 @@ class GroupPresenter : IGroupPresenter {
 
     }
 
+    /**
+     * Récupère la liste des groupes
+     * @return (List<GroupDTO>)
+     */
     override fun getGroups(): List<GroupDTO> {
         return groups.values.toList()
     }
 
+    /**
+     * Récupère le groupe courant
+     * @return (GroupDTO)
+     */
     override fun getCurrentGroup(): GroupDTO? {
         return groups[currentGid]
     }
 
+    /**
+     * Récupère le lieu du groupe courant
+     * @return (Place)
+     */
     override fun getCurrentGroupPlace(): Place {
         val pDto = groups[currentGid]?.place!!
         return Place(pDto.country,
@@ -88,14 +107,25 @@ class GroupPresenter : IGroupPresenter {
             LatLng(pDto.lat, pDto.lon))
     }
 
+    /**
+     * Récupère l'id du groupe courant
+     * @return (String)
+     */
     override fun getCurrentGroupId(): String {
         return currentGid
     }
 
+    /**
+     * Assigne l'id du groupe séléctionné
+     * @param gid (String)
+     */
     override fun setCurrentGroupId(gid: String) {
         currentGid = gid
     }
 
+    /**
+     * Charge les données nécessaires à l'affichage de l'itinéraire
+     */
     override fun loadItinerary() {
         val place = groups[currentGid]?.place
         val latitude = place?.lat?.toString()
@@ -106,14 +136,23 @@ class GroupPresenter : IGroupPresenter {
         }
     }
 
+    /**
+     * Assigne la GroupView Interface
+     */
     override fun setIGroupView(groupView: IGroupView) {
         this.groupView = groupView
     }
 
+    /**
+     * Assigne la CreateGroupView Interface
+     */
     override fun setICreateGroupView(createGroupView: ICreateGroupView) {
         this.createGroupView = createGroupView
     }
 
+    /**
+     * Assigne la HomeView Interface
+     */
     override fun setIHomeView(homeView: IHomeView) {
         this.homeView = homeView
     }
