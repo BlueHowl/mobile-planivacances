@@ -63,7 +63,8 @@ class AuthFragment : Fragment(), IAuthView {
 
         authPresenter = AppSingletonFactory.instance!!.getAuthPresenter(this)
 
-        sharedPreferences = requireContext().getSharedPreferences("PlanivacancesPreferences", Context.MODE_PRIVATE)
+        sharedPreferences = requireContext().getSharedPreferences("PlanivacancesPreferences",
+                                                                  Context.MODE_PRIVATE)
         authPresenter.setSharedPreference(sharedPreferences)
     }
 
@@ -81,12 +82,14 @@ class AuthFragment : Fragment(), IAuthView {
         //background blur
         Glide.with(this)
             .load(R.drawable.sun) // Replace with your image resource
-            .transform(MultiTransformation(RoundedCorners(25), BlurTransformation(20)))
+            .transform(MultiTransformation(RoundedCorners(25),
+                                           BlurTransformation(20)))
             .into(binding.authSun)
 
         Glide.with(this)
             .load(R.drawable.sea) // Replace with your image resource
-            .transform(MultiTransformation(RoundedCorners(30), BlurTransformation(30)))
+            .transform(MultiTransformation(RoundedCorners(30),
+                                           BlurTransformation(30)))
             .into(binding.authSea)
 
         //Click listeners
@@ -124,12 +127,14 @@ class AuthFragment : Fragment(), IAuthView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        signInLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 try {
                     val account = task.getResult(ApiException::class.java)
-                    val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+                    val credential = GoogleAuthProvider.getCredential(account.idToken,null)
 
                     mAuth.signInWithCredential(credential)
                         .addOnCompleteListener(requireActivity()) { t ->
@@ -142,7 +147,6 @@ class AuthFragment : Fragment(), IAuthView {
 
                                     if(r) { goToHome() }
                                 }
-                                // Handle the signed-in user, you may navigate to the main activity or perform other actions.
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithCredential:failure", t.exception)

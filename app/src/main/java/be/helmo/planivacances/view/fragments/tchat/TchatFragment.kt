@@ -43,18 +43,20 @@ class TchatFragment : Fragment(), ITchatView {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         binding = FragmentTchatBinding.inflate(inflater, container, false)
 
         Glide.with(this)
             .load(R.drawable.sun)
-            .transform(MultiTransformation(RoundedCorners(25), BlurTransformation(20)))
+            .transform(MultiTransformation(RoundedCorners(25),
+                       BlurTransformation(20)))
             .into(binding.tchatSun)
 
         Glide.with(this)
             .load(R.drawable.palmtree)
-            .transform(MultiTransformation(RoundedCorners(25), BlurTransformation(20)))
+            .transform(MultiTransformation(RoundedCorners(25),
+                       BlurTransformation(20)))
             .into(binding.tchatPalmTree)
 
         binding.tvBack.setOnClickListener {
@@ -78,7 +80,7 @@ class TchatFragment : Fragment(), ITchatView {
             binding.rvTchatContainer.adapter = tchatAdapter
 
             binding.ibSendTchat.setOnClickListener {
-                var message: String = binding.etTchatSendText.text.toString().trim()
+                val message: String = binding.etTchatSendText.text.toString().trim()
 
                 if (message.isNotEmpty()) {
                     binding.etTchatSendText.text.clear()
@@ -97,7 +99,9 @@ class TchatFragment : Fragment(), ITchatView {
 
     private fun scrollToBottom() {
         val layoutManager = binding.rvTchatContainer.layoutManager as LinearLayoutManager
-        layoutManager.smoothScrollToPosition(binding.rvTchatContainer, null, tchatAdapter.itemCount - 1)
+        layoutManager.smoothScrollToPosition(binding.rvTchatContainer,
+                                       null,
+                                     tchatAdapter.itemCount - 1)
     }
 
     override fun onDestroyView() {

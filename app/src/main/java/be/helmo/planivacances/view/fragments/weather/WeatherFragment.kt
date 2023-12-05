@@ -50,12 +50,14 @@ class WeatherFragment : Fragment(), IWeatherView {
 
         Glide.with(this)
             .load(R.drawable.sun)
-            .transform(MultiTransformation(RoundedCorners(25), BlurTransformation(20)))
+            .transform(MultiTransformation(RoundedCorners(25),
+                                           BlurTransformation(20)))
             .into(binding.weatherSun)
 
         Glide.with(this)
             .load(R.drawable.palmtree)
-            .transform(MultiTransformation(RoundedCorners(25), BlurTransformation(20)))
+            .transform(MultiTransformation(RoundedCorners(25),
+                                           BlurTransformation(20)))
             .into(binding.weatherPalmTree)
 
         binding.tvBack.setOnClickListener {

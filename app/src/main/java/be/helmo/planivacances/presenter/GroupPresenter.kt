@@ -41,8 +41,12 @@ class GroupPresenter : IGroupPresenter {
                 Log.d("CreateGroupFragment", "Group created : $gid")
                 createGroupView.onGroupCreated()
             } else {
-                Log.d("CreateGroupFragment", "${response.message()}, ${response.isSuccessful}")
-                createGroupView.showToast("Erreur lors de la création du groupe ${response.message()}", 1)
+                Log.d("CreateGroupFragment",
+                    "${response.message()}, ${response.isSuccessful}")
+                createGroupView.showToast(
+                    "Erreur lors de la création du groupe ${response.message()}",
+                    1
+                )
             }
 
         } catch (e: Exception) {
@@ -70,11 +74,15 @@ class GroupPresenter : IGroupPresenter {
                 homeView.onGroupsLoaded()
             } else {
                 Log.d("GroupFragment", "${response.message()}, ${response.isSuccessful}")
-                homeView.showToast("Erreur lors de la récupération des groupes ${response.message()}", 1)
+                homeView.showToast(
+                    "Erreur lors de la récupération des groupes ${response.message()}",
+                    1
+                )
             }
 
         } catch (e: Exception) {
-            Log.d("GroupFragment", "Erreur durant la récupération des groupes : ${e.message}")
+            Log.d("GroupFragment",
+                "Erreur durant la récupération des groupes : ${e.message}")
             homeView.showToast("Erreur durant la récupération des groupes", 1)
         }
 

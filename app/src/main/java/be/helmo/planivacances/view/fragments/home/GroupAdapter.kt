@@ -16,14 +16,16 @@ class GroupAdapter(val context: Context,
     RecyclerView.Adapter<GroupAdapter.GroupViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.group_item, parent, false)
+        val view = LayoutInflater
+            .from(parent.context)
+            .inflate(R.layout.group_item, parent, false)
         return GroupViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: GroupViewHolder, position: Int) {
         val group = groups[position]
 
-        val formatter = SimpleDateFormat(context.getString(R.string.date_format))
+        val formatter = SimpleDateFormat(context.getString(R.string.date_short_format))
         val startDate = formatter.format(group.startDate)
         val endDate = formatter.format(group.endDate)
 
