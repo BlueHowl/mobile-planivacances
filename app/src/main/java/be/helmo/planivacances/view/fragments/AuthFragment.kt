@@ -34,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 
@@ -64,9 +65,6 @@ class AuthFragment : Fragment(), IAuthView {
 
         sharedPreferences = requireContext().getSharedPreferences("PlanivacancesPreferences", Context.MODE_PRIVATE)
         authPresenter.setSharedPreference(sharedPreferences)
-
-        autoAuth()
-
     }
 
     override fun onCreateView(
@@ -78,6 +76,7 @@ class AuthFragment : Fragment(), IAuthView {
 
         //Chargement du début : autoAuth
         binding.pbAuth.visibility = View.VISIBLE
+        autoAuth()
 
         //background blur
         Glide.with(this)
@@ -152,7 +151,7 @@ class AuthFragment : Fragment(), IAuthView {
                         }
 
                 } catch (e: ApiException) {
-                    Log.w(TAG, "Google Auth Failure " + e.getStatusCode() + " : " + e.getStatusMessage())
+                    Log.w(TAG, "Google Auth Failure " + e.statusCode + " : " + e.message)
                 }
             } else {
                 Log.w(TAG, "Failed to auth with google")
@@ -180,7 +179,7 @@ class AuthFragment : Fragment(), IAuthView {
      * Change le panneau d'authentification (login ou register)
      */
     fun switchAuthPanel() {
-        panelId = ++panelId % 2;
+        panelId = ++panelId % 2
 
         if(panelId == 0) {
             binding.registerPanel.visibility = View.GONE
@@ -199,7 +198,7 @@ class AuthFragment : Fragment(), IAuthView {
         hideKeyboard()
         binding.pbAuth.visibility = View.VISIBLE
 
-        lifecycleScope.launch(Dispatchers.Default) {
+        lifecycleScope.launch(Dispatchers.Main) {
             authPresenter.register(registerUser)
         }
 
@@ -213,7 +212,7 @@ class AuthFragment : Fragment(), IAuthView {
         hideKeyboard()
         binding.pbAuth.visibility = View.VISIBLE
 
-        lifecycleScope.launch(Dispatchers.Default) {
+        lifecycleScope.launch(Dispatchers.Main) {
             authPresenter.login(loginUser, binding.cbKeepConnected.isChecked)
         }
 
@@ -223,7 +222,7 @@ class AuthFragment : Fragment(), IAuthView {
      * Appel la fonction d'authentification automatique asynchrone
      */
     fun autoAuth() {
-        lifecycleScope.launch(Dispatchers.Default) {
+        lifecycleScope.launch(Dispatchers.Main) {
             authPresenter.autoAuth()
         }
     }
@@ -232,15 +231,21 @@ class AuthFragment : Fragment(), IAuthView {
      * navigue vers le fragment home
      */
     override fun goToHome() {
-        findNavController().navigate(R.id.action_authFragment_to_homeFragment)
+        MainScope().launch {
+            findNavController().navigate(R.id.action_authFragment_to_homeFragment)
+        }
     }
 
     /**
      * Affiche un message à l'écran
+     * @param message (String)
+     * @param length (Int) 0 = short, 1 = long
      */
-    override fun showToast(message: String) {
-        binding.pbAuth.visibility = View.GONE
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    override fun showToast(message: String, length: Int) {
+        MainScope().launch {
+            binding.pbAuth.visibility = View.GONE
+            Toast.makeText(context, message, length).show()
+        }
     }
 
     /**

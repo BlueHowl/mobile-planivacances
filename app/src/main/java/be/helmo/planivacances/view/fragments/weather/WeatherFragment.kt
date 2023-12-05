@@ -20,6 +20,7 @@ import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 
@@ -71,20 +72,26 @@ class WeatherFragment : Fragment(), IWeatherView {
     }
 
     override fun onForecastLoaded(weatherList: List<WeatherForecast>) {
-        val adapter = WeatherAdapter(weatherList, requireContext())
+        MainScope().launch {
+            val adapter = WeatherAdapter(weatherList, requireContext())
 
-        binding.rvWeatherContainer.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvWeatherContainer.adapter = adapter
+            binding.rvWeatherContainer.layoutManager = LinearLayoutManager(requireContext())
+            binding.rvWeatherContainer.adapter = adapter
 
-        binding.pbWeatherList.visibility = View.GONE
+            binding.pbWeatherList.visibility = View.GONE
+        }
     }
 
     /**
      * Affiche un message à l'écran
+     * @param message (String)
+     * @param length (Int) 0 = short, 1 = long
      */
-    override fun showToast(message: String) {
-        binding.pbWeatherList.visibility = View.GONE
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    override fun showToast(message: String, length: Int) {
+        MainScope().launch {
+            binding.pbWeatherList.visibility = View.GONE
+            Toast.makeText(context, message, length).show()
+        }
     }
 
     companion object {

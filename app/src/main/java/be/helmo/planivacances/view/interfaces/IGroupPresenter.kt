@@ -5,7 +5,6 @@ import be.helmo.planivacances.presenter.interfaces.ICreateGroupView
 import be.helmo.planivacances.presenter.interfaces.IGroupView
 import be.helmo.planivacances.presenter.interfaces.IHomeView
 import be.helmo.planivacances.service.dto.GroupDTO
-import be.helmo.planivacances.util.ResultMessage
 
 interface IGroupPresenter {
 

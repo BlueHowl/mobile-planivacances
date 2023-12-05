@@ -2,10 +2,8 @@ package be.helmo.planivacances.view.interfaces
 
 import android.content.SharedPreferences
 import be.helmo.planivacances.presenter.interfaces.IAuthView
-import be.helmo.planivacances.service.IdTokenCallback
 import be.helmo.planivacances.service.dto.LoginUserDTO
 import be.helmo.planivacances.service.dto.RegisterUserDTO
-import be.helmo.planivacances.util.ResultMessage
 
 interface IAuthPresenter {
 

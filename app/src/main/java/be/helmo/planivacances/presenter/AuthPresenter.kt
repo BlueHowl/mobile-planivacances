@@ -35,7 +35,7 @@ class AuthPresenter : IAuthPresenter {
             val response =  ApiClient.authService.register(registerUser)
 
             if (!response.isSuccessful || response.body() == null) {
-                authView.showToast("Erreur lors de l'enregistrement : ${response.message()}")
+                authView.showToast("Erreur lors de l'enregistrement : ${response.message()}", 1)
                 return
             }
 
@@ -45,7 +45,7 @@ class AuthPresenter : IAuthPresenter {
             auth(customToken!!, false)
         } catch (e: Exception) {
             Log.w("Erreur lors de l'enregistrement", "${e.message}")
-            authView.showToast("Une erreur est survenue lors de l'enregistrement")
+            authView.showToast("Une erreur est survenue lors de l'enregistrement", 1)
         }
     }
 
@@ -59,7 +59,8 @@ class AuthPresenter : IAuthPresenter {
             val response = ApiClient.authService.login(loginUser)
 
             if (!response.isSuccessful || response.body() == null) {
-                authView.showToast("Erreur lors de la connexion : ${response.message()}")
+                authView.showToast("Erreur lors de la connexion\n&${response.message()}", 1)
+
                 return
             }
 
@@ -69,7 +70,7 @@ class AuthPresenter : IAuthPresenter {
             auth(customToken!!, keepConnected)
         } catch (e: Exception) {
             Log.w("Erreur lors de la connexion", "${e.message}")
-            authView.showToast("Une erreur est survenue lors de la connexion")
+            authView.showToast("Une erreur est survenue lors de la connexion", 1)
         }
     }
 
@@ -78,9 +79,12 @@ class AuthPresenter : IAuthPresenter {
      */
     override suspend fun autoAuth() {
         val customToken = sharedPreferences.getString("CustomToken", null)
-        if(customToken != null) {
-            auth(customToken, true)
+        if(customToken == null) {
+            authView.showToast("Authentification automatique impossible", 0)
+            return
         }
+        auth(customToken, true)
+
     }
 
     /**
@@ -105,7 +109,7 @@ class AuthPresenter : IAuthPresenter {
             return
         }
 
-        authView.showToast("Erreur lors de l'authentification")
+        authView.showToast("Erreur lors de l'authentification", 1)
     }
 
     /**

@@ -17,6 +17,7 @@ import be.helmo.planivacances.presenter.interfaces.IHomeView
 import be.helmo.planivacances.service.dto.GroupDTO
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 /**
@@ -79,11 +80,13 @@ class HomeFragment : Fragment(), IHomeView {
     }
 
     override fun onGroupsLoaded() {
-        val groups = groupPresenter.getGroups()
+        MainScope().launch {
+            val groups = groupPresenter.getGroups()
 
-        setGroupsAdapter(groups)
+            setGroupsAdapter(groups)
 
-        binding.pbGroupList.visibility = View.GONE
+            binding.pbGroupList.visibility = View.GONE
+        }
     }
 
     fun setGroupsAdapter(groups : List<GroupDTO>) {
@@ -98,9 +101,13 @@ class HomeFragment : Fragment(), IHomeView {
 
     /**
      * Affiche un message à l'écran
+     * @param message (String)
+     * @param length (Int) 0 = short, 1 = long
      */
-    override fun showToast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    override fun showToast(message: String, length: Int) {
+        MainScope().launch {
+            Toast.makeText(context, message, length).show()
+        }
     }
 
     companion object {

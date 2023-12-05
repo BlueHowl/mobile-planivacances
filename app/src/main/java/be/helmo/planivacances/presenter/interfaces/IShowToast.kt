@@ -1,5 +1,5 @@
 package be.helmo.planivacances.presenter.interfaces
 
 interface IShowToast {
-    fun showToast(message : String)
+    fun showToast(message : String, length: Int)
 }
