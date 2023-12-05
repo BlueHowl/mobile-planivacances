@@ -5,8 +5,8 @@ import android.util.Log
 import be.helmo.planivacances.presenter.interfaces.IAuthView
 import be.helmo.planivacances.service.ApiClient
 import be.helmo.planivacances.service.TokenAuthenticator
-import be.helmo.planivacances.service.dto.LoginUserDTO
-import be.helmo.planivacances.service.dto.RegisterUserDTO
+import be.helmo.planivacances.domain.LoginUser
+import be.helmo.planivacances.domain.RegisterUser
 import be.helmo.planivacances.view.interfaces.IAuthPresenter
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
@@ -30,12 +30,12 @@ class AuthPresenter : IAuthPresenter {
      * @param registerUser (RegisterUserDTO) Objet contenant le nom,
      * mail et mot de passe utilisateur
      */
-    override suspend fun register(registerUser: RegisterUserDTO) {
+    override suspend fun register(registerUser: RegisterUser) {
         try {
             val response =  ApiClient.authService.register(registerUser)
 
             if (!response.isSuccessful || response.body() == null) {
-                authView.showToast("Erreur lors de l'enregistrement : ${response.message()}")
+                authView.showToast("Erreur lors de l'enregistrement : ${response.message()}", 1)
                 return
             }
 
@@ -45,7 +45,7 @@ class AuthPresenter : IAuthPresenter {
             auth(customToken!!, false)
         } catch (e: Exception) {
             Log.w("Erreur lors de l'enregistrement", "${e.message}")
-            authView.showToast("Une erreur est survenue lors de l'enregistrement")
+            authView.showToast("Une erreur est survenue lors de l'enregistrement", 1)
         }
     }
 
@@ -54,12 +54,12 @@ class AuthPresenter : IAuthPresenter {
      * @param loginUser (LoginUserDTO) Objet contenant le mail et mot de passe utilisateur
      * @param keepConnected (Boolean) stocker le token en local ?
      */
-    override suspend fun login(loginUser: LoginUserDTO, keepConnected: Boolean) {
+    override suspend fun login(loginUser: LoginUser, keepConnected: Boolean) {
         try {
             val response = ApiClient.authService.login(loginUser)
 
             if (!response.isSuccessful || response.body() == null) {
-                authView.showToast("Erreur lors de la connexion : ${response.message()}")
+                authView.showToast("Erreur lors de la connexion\n&${response.message()}", 1)
                 return
             }
 
@@ -69,7 +69,7 @@ class AuthPresenter : IAuthPresenter {
             auth(customToken!!, keepConnected)
         } catch (e: Exception) {
             Log.w("Erreur lors de la connexion", "${e.message}")
-            authView.showToast("Une erreur est survenue lors de la connexion")
+            authView.showToast("Une erreur est survenue lors de la connexion", 1)
         }
     }
 
@@ -78,9 +78,12 @@ class AuthPresenter : IAuthPresenter {
      */
     override suspend fun autoAuth() {
         val customToken = sharedPreferences.getString("CustomToken", null)
-        if(customToken != null) {
-            auth(customToken, true)
+        if(customToken == null) {
+            authView.showToast("Authentification automatique impossible", 0)
+            return
         }
+        auth(customToken, true)
+
     }
 
     /**
@@ -105,7 +108,7 @@ class AuthPresenter : IAuthPresenter {
             return
         }
 
-        authView.showToast("Erreur lors de l'authentification")
+        authView.showToast("Erreur lors de l'authentification", 1)
     }
 
     /**

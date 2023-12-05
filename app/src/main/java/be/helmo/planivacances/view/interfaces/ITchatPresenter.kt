@@ -1,6 +1,4 @@
-package be.helmo.planivacances.view.interfaces;
-
-import be.helmo.planivacances.util.ResultMessage
+package be.helmo.planivacances.view.interfaces
 
 interface ITchatPresenter {
     suspend fun connectToTchat()

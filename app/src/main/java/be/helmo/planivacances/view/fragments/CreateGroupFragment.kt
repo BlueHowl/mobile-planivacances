@@ -20,21 +20,20 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import be.helmo.planivacances.R
 import be.helmo.planivacances.databinding.FragmentCreateGroupBinding
+import be.helmo.planivacances.domain.Group
+import be.helmo.planivacances.domain.Place
 import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.presenter.interfaces.ICreateGroupView
-import be.helmo.planivacances.service.dto.GroupDTO
-import be.helmo.planivacances.service.dto.PlaceDTO
-import be.helmo.planivacances.view.MainActivity
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
 import com.adevinta.leku.*
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.regex.Matcher
 
 
 /**
@@ -151,7 +150,7 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
      */
     fun addGroup() {
         if(binding.etGroupName.text.isEmpty()) {
-            showToast("Le titre n'a pas été remplis")
+            showToast("Le titre n'a pas été remplis", 1)
             Log.w(TAG, "Le titre n'a pas été remplis")
             return
         }
@@ -163,33 +162,33 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
             val currentDate = Calendar.getInstance().time
 
             if(startDate.before(currentDate) || endDate.before(currentDate)) {
-                showToast("La date de début et de fin doivent être supérieures ou égales à la date du jour")
+                showToast("La date de début et de fin doivent être supérieures ou égales à la date du jour",1)
                 Log.w(TAG, "La date de début et de fin doivent être supérieures ou égales à la date du jour")
                 return
             }
 
             if(startDate.after(endDate)) {
-                showToast("La date de fin ne peut pas être antérieur à la date de début")
+                showToast("La date de fin ne peut pas être antérieur à la date de début", 1)
                 Log.w(TAG, "La date de fin ne peut pas être antérieur à la date de début")
                 return
             }
 
             if(country == null || city == null || street == null || postalCode == null) {
-                showToast("Addresse invalide")
+                showToast("Addresse invalide", 1)
                 Log.w(TAG, "Addresse invalide")
                 return
             }
 
-            val place = PlaceDTO(country!!,
+            val place = Place(
+                country!!,
                 city!!,
                 street!!,
                 number!!,
                 postalCode!!,
-                location!!.latitude,
-                location!!.longitude)
+                location!!
+            )
 
-            val group = GroupDTO(
-                null,
+            val group = Group(
                 binding.etGroupName.text.toString(),
                 binding.etGroupDescription.text.toString(),
                 startDate,
@@ -204,7 +203,7 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
 
         }
         catch (e: ParseException) {
-            showToast("Une des dates est mal encodée")
+            showToast("Une des dates est mal encodée", 1)
             Log.e(TAG, "Parse error : " + e.message)
         }
     }
@@ -270,16 +269,22 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
     }*/
 
     override fun onGroupCreated() {
-        showToast("Groupe créé !")
-        findNavController().navigate(R.id.action_createGroupFragment_to_groupFragment)
+        MainScope().launch {
+            showToast("Groupe créé !", 0)
+            findNavController().navigate(R.id.action_createGroupFragment_to_groupFragment)
+        }
     }
 
     /**
      * Affiche un message à l'écran
+     * @param message (String)
+     * @param length (Int) 0 = short, 1 = long
      */
-    override fun showToast(message: String) {
-        binding.pbCreateGroup.visibility = View.GONE
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    override fun showToast(message: String, length: Int) {
+        MainScope().launch {
+            binding.pbCreateGroup.visibility = View.GONE
+            Toast.makeText(context, message, length).show()
+        }
     }
 
     companion object {

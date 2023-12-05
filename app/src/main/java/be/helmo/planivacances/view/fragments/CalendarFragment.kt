@@ -42,8 +42,10 @@ class CalendarFragment : Fragment(), ICalendarView {
         // Inflate the layout for this fragment
         binding = FragmentCalendarBinding.inflate(inflater,container,false)
 
-        lifecycleScope.launch(Dispatchers.Main) {
-            calendarPresenter.getCalendarFile()
+        binding.exportBtn.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.Main) {
+                calendarPresenter.getCalendarFile()
+            }
         }
 
         return binding.root
@@ -73,12 +75,12 @@ class CalendarFragment : Fragment(), ICalendarView {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context?.startActivity(intent)
             } catch (e: Exception) {
-                showToast("Erreur durant le téléchargement du calendrier")
+                showToast("Erreur durant le téléchargement du calendrier",1)
             }
         }
     }
 
-    override fun showToast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    override fun showToast(message: String,length:Int) {
+        Toast.makeText(context, message,length).show()
     }
 }

@@ -94,11 +94,11 @@ class GroupFragment : Fragment(), IGroupView {
         {
             startActivity(mapIntent)
         } else {
-            showToast("L'application Google Maps doit être installée pour pouvoir utiliser cette fonctionnalité !")
+            showToast("L'application Google Maps doit être installée pour pouvoir utiliser cette fonctionnalité !",1)
         }
     }
 
-    override fun showToast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    override fun showToast(message: String,length:Int) {
+        Toast.makeText(context, message,length).show()
     }
 }

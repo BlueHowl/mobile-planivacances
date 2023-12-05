@@ -7,5 +7,4 @@ data class Group(val groupName: String,
                  val startDate: Date,
                  val endDate: Date,
                  val place: Place,
-                 val isPublished: Boolean,
-                 val owner: String = "null")
+                 var owner: String = "null")

@@ -18,8 +18,8 @@ import androidx.navigation.fragment.findNavController
 import be.helmo.planivacances.BuildConfig
 import be.helmo.planivacances.databinding.FragmentAuthBinding
 import be.helmo.planivacances.R
-import be.helmo.planivacances.service.dto.LoginUserDTO
-import be.helmo.planivacances.service.dto.RegisterUserDTO
+import be.helmo.planivacances.domain.LoginUser
+import be.helmo.planivacances.domain.RegisterUser
 import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.presenter.interfaces.IAuthView
 import be.helmo.planivacances.view.MainActivity
@@ -65,9 +65,6 @@ class AuthFragment : Fragment(), IAuthView {
 
         sharedPreferences = requireContext().getSharedPreferences("PlanivacancesPreferences", Context.MODE_PRIVATE)
         authPresenter.setSharedPreference(sharedPreferences)
-
-        autoAuth()
-
     }
 
     override fun onCreateView(
@@ -79,6 +76,7 @@ class AuthFragment : Fragment(), IAuthView {
 
         //Chargement du début : autoAuth
         binding.pbAuth.visibility = View.VISIBLE
+        autoAuth()
 
         //background blur
         Glide.with(this)
@@ -105,14 +103,14 @@ class AuthFragment : Fragment(), IAuthView {
         }
 
         binding.btnLogin.setOnClickListener {
-            val loginUser = LoginUserDTO(
+            val loginUser = LoginUser(
                 binding.etLoginMail.text.toString(),
                 binding.etLoginPassword.text.toString())
             login(loginUser)
         }
 
         binding.btnRegister.setOnClickListener {
-            val registerUser = RegisterUserDTO(
+            val registerUser = RegisterUser(
                 binding.etRegisterName.text.toString(),
                 binding.etRegisterMail.text.toString(),
                 binding.etRegisterPassword.text.toString())
@@ -153,7 +151,7 @@ class AuthFragment : Fragment(), IAuthView {
                         }
 
                 } catch (e: ApiException) {
-                    Log.w(TAG, "Google Auth Failure " + e.getStatusCode() + " : " + e.getStatusMessage())
+                    Log.w(TAG, "Google Auth Failure " + e.statusCode + " : " + e.message)
                 }
             } else {
                 Log.w(TAG, "Failed to auth with google")
@@ -181,7 +179,7 @@ class AuthFragment : Fragment(), IAuthView {
      * Change le panneau d'authentification (login ou register)
      */
     fun switchAuthPanel() {
-        panelId = ++panelId % 2;
+        panelId = ++panelId % 2
 
         if(panelId == 0) {
             binding.registerPanel.visibility = View.GONE
@@ -196,11 +194,11 @@ class AuthFragment : Fragment(), IAuthView {
      * Appel la fonction d'enregistrement asynchrone
      * @param registerUser (RegisterUserDTO)
      */
-    fun register(registerUser: RegisterUserDTO) {
+    fun register(registerUser: RegisterUser) {
         hideKeyboard()
         binding.pbAuth.visibility = View.VISIBLE
 
-        lifecycleScope.launch(Dispatchers.Default) {
+        lifecycleScope.launch(Dispatchers.Main) {
             authPresenter.register(registerUser)
         }
 
@@ -210,11 +208,11 @@ class AuthFragment : Fragment(), IAuthView {
      * Appel la fonction de connexion asynchrone
      * @param loginUser (LoginUserDTO)
      */
-    fun login(loginUser: LoginUserDTO) {
+    fun login(loginUser: LoginUser) {
         hideKeyboard()
         binding.pbAuth.visibility = View.VISIBLE
 
-        lifecycleScope.launch(Dispatchers.Default) {
+        lifecycleScope.launch(Dispatchers.Main) {
             authPresenter.login(loginUser, binding.cbKeepConnected.isChecked)
         }
 
@@ -224,7 +222,7 @@ class AuthFragment : Fragment(), IAuthView {
      * Appel la fonction d'authentification automatique asynchrone
      */
     fun autoAuth() {
-        lifecycleScope.launch(Dispatchers.Default) {
+        lifecycleScope.launch(Dispatchers.Main) {
             authPresenter.autoAuth()
         }
     }
@@ -233,16 +231,20 @@ class AuthFragment : Fragment(), IAuthView {
      * navigue vers le fragment home
      */
     override fun goToHome() {
-        findNavController().navigate(R.id.action_authFragment_to_homeFragment)
+        MainScope().launch {
+            findNavController().navigate(R.id.action_authFragment_to_homeFragment)
+        }
     }
 
     /**
      * Affiche un message à l'écran
+     * @param message (String)
+     * @param length (Int) 0 = short, 1 = long
      */
-    override fun showToast(message: String) {
+    override fun showToast(message: String, length: Int) {
         MainScope().launch {
             binding.pbAuth.visibility = View.GONE
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            Toast.makeText(context, message, length).show()
         }
     }
 

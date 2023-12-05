@@ -46,7 +46,7 @@
             android:layout_marginEnd="12dp"
             android:adjustViewBounds="true"
             android:background="@color/transparent"
-            android:contentDescription="add group"
+            android:contentDescription="export calendar"
             android:padding="4dp"
             android:scaleType="fitCenter"
             android:src="@drawable/export_share"

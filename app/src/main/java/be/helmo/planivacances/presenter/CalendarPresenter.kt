@@ -21,7 +21,7 @@ class CalendarPresenter(private val groupPresenter: IGroupPresenter) : ICalendar
                 calendarView?.downloadCalendar(response.body()!!,"Calendrier-${currentGroup.groupName}")
             }
         } catch(e:Exception) {
-            calendarView?.showToast("Erreur lors du téléchargement du calendrier")
+            calendarView?.showToast("Erreur lors du téléchargement du calendrier",1)
         }
     }
 

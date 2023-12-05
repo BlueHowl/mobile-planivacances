@@ -1,8 +1,8 @@
-package be.helmo.planivacances.service.dto
+package be.helmo.planivacances.domain
 
 /**
  * Utilisateur de connexion
  */
-data class LoginUserDTO(
+data class LoginUser(
     val mail: String? = null,
     val password: String? = null)

@@ -1,21 +1,22 @@
 package be.helmo.planivacances.presenter
 
 import android.util.Log
+import be.helmo.planivacances.domain.Group
+import be.helmo.planivacances.domain.GroupListItem
 import be.helmo.planivacances.domain.Place
 import be.helmo.planivacances.presenter.interfaces.ICreateGroupView
 import be.helmo.planivacances.presenter.interfaces.IGroupView
 import be.helmo.planivacances.presenter.interfaces.IHomeView
 import be.helmo.planivacances.service.ApiClient
-import be.helmo.planivacances.service.dto.GroupDTO
+import be.helmo.planivacances.util.DTOMapper
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 
 class GroupPresenter : IGroupPresenter {
     lateinit var groupView: IGroupView
     lateinit var createGroupView: ICreateGroupView
     lateinit var homeView: IHomeView
-    var groups : HashMap<String, GroupDTO> = HashMap()
+    var groups : HashMap<String, Group> = HashMap()
 
     lateinit var currentGid : String
 
@@ -23,17 +24,17 @@ class GroupPresenter : IGroupPresenter {
      * Crée un groupe
      * @param group (GroupDTO)
      */
-    override suspend fun createGroup(group: GroupDTO) {
+    override suspend fun createGroup(group: Group) {
+        val groupDto = DTOMapper.groupToGroupDTO(group)
 
         try {
-            val response = ApiClient.groupService.create(group)
+            val response = ApiClient.groupService.create(groupDto)
 
             if (response.isSuccessful && response.body() != null) {
                 val gid = response.body()!!
 
                 currentGid = gid
 
-                group.gid = gid
                 group.owner = FirebaseAuth.getInstance().uid!!
                 groups[gid] = group
 
@@ -41,11 +42,11 @@ class GroupPresenter : IGroupPresenter {
                 createGroupView.onGroupCreated()
             } else {
                 Log.d("CreateGroupFragment", "${response.message()}, ${response.isSuccessful}")
-                createGroupView.showToast("Erreur lors de la création du groupe ${response.message()}")
+                createGroupView.showToast("Erreur lors de la création du groupe ${response.message()}", 1)
             }
 
         } catch (e: Exception) {
-            createGroupView.showToast("Erreur durant la création du groupe")
+            createGroupView.showToast("Erreur durant la création du groupe", 1)
         }
 
     }
@@ -61,18 +62,18 @@ class GroupPresenter : IGroupPresenter {
                 val groupsDto = response.body()!!
 
                 for(groupDto in groupsDto) {
-                    groups[groupDto.gid!!] = groupDto
+                    groups[groupDto.gid!!] = DTOMapper.groupDtoToGroup(groupDto)
                 }
 
                 Log.d("GroupFragment", "Groups retrieved : ${groups.size}")
                 homeView.onGroupsLoaded()
             } else {
                 Log.d("GroupFragment", "${response.message()}, ${response.isSuccessful}")
-                homeView.showToast("Erreur lors de la récupération des groupes ${response.message()}")
+                homeView.showToast("Erreur lors de la récupération des groupes ${response.message()}", 1)
             }
 
         } catch (e: Exception) {
-            homeView.showToast("Erreur durant la récupération des groupes")
+            homeView.showToast("Erreur durant la récupération des groupes", 1)
         }
 
     }
@@ -81,15 +82,17 @@ class GroupPresenter : IGroupPresenter {
      * Récupère la liste des groupes
      * @return (List<GroupDTO>)
      */
-    override fun getGroups(): List<GroupDTO> {
-        return groups.values.toList()
+    override fun getGroupListItems(): List<GroupListItem> {
+        return groups.entries.map { (gid, group) ->
+            DTOMapper.groupToGroupListItem(gid, group)
+        }
     }
 
     /**
      * Récupère le groupe courant
      * @return (GroupDTO)
      */
-    override fun getCurrentGroup(): GroupDTO? {
+    override fun getCurrentGroup(): Group? {
         return groups[currentGid]
     }
 
@@ -98,13 +101,7 @@ class GroupPresenter : IGroupPresenter {
      * @return (Place)
      */
     override fun getCurrentGroupPlace(): Place {
-        val pDto = groups[currentGid]?.place!!
-        return Place(pDto.country,
-            pDto.city,
-            pDto.street,
-            pDto.number,
-            pDto.postalCode,
-            LatLng(pDto.lat, pDto.lon))
+        return groups[currentGid]?.place!!
     }
 
     /**
@@ -128,8 +125,8 @@ class GroupPresenter : IGroupPresenter {
      */
     override fun loadItinerary() {
         val place = groups[currentGid]?.place
-        val latitude = place?.lat?.toString()
-        val longitude = place?.lon?.toString()
+        val latitude = place?.latLng?.latitude.toString()
+        val longitude = place?.latLng?.longitude.toString()
 
         if(latitude != null && longitude != null) {
             groupView.buildItinerary(latitude,longitude)

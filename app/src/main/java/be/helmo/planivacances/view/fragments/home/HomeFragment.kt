@@ -12,9 +12,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import be.helmo.planivacances.R
 import be.helmo.planivacances.databinding.FragmentHomeBinding
+import be.helmo.planivacances.domain.GroupListItem
 import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.presenter.interfaces.IHomeView
-import be.helmo.planivacances.service.dto.GroupDTO
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -64,7 +64,7 @@ class HomeFragment : Fragment(), IHomeView {
 
         binding.pbGroupList.visibility = View.VISIBLE
         lifecycleScope.launch(Dispatchers.Default) {
-            val groups = groupPresenter.getGroups()
+            val groups = groupPresenter.getGroupListItems()
 
             //charge une seule fois
             if(groups.isEmpty()) {
@@ -80,14 +80,16 @@ class HomeFragment : Fragment(), IHomeView {
     }
 
     override fun onGroupsLoaded() {
-        val groups = groupPresenter.getGroups()
+        MainScope().launch {
+            val groups = groupPresenter.getGroupListItems()
 
-        setGroupsAdapter(groups)
+            setGroupsAdapter(groups)
 
-        binding.pbGroupList.visibility = View.GONE
+            binding.pbGroupList.visibility = View.GONE
+        }
     }
 
-    fun setGroupsAdapter(groups : List<GroupDTO>) {
+    fun setGroupsAdapter(groups : List<GroupListItem>) {
         binding.rvGroups.layoutManager = LinearLayoutManager(requireContext())
         groupAdapter = GroupAdapter(requireContext(), groups) { selectedGroupId ->
             //selectionne le groupe
@@ -99,10 +101,12 @@ class HomeFragment : Fragment(), IHomeView {
 
     /**
      * Affiche un message à l'écran
+     * @param message (String)
+     * @param length (Int) 0 = short, 1 = long
      */
-    override fun showToast(message: String) {
+    override fun showToast(message: String, length: Int) {
         MainScope().launch {
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            Toast.makeText(context, message, length).show()
         }
     }
 

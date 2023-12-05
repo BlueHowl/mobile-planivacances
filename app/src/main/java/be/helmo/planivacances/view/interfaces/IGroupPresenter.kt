@@ -1,21 +1,21 @@
 package be.helmo.planivacances.view.interfaces
 
+import be.helmo.planivacances.domain.Group
+import be.helmo.planivacances.domain.GroupListItem
 import be.helmo.planivacances.domain.Place
 import be.helmo.planivacances.presenter.interfaces.ICreateGroupView
 import be.helmo.planivacances.presenter.interfaces.IGroupView
 import be.helmo.planivacances.presenter.interfaces.IHomeView
-import be.helmo.planivacances.service.dto.GroupDTO
-import be.helmo.planivacances.util.ResultMessage
 
 interface IGroupPresenter {
 
-    suspend fun createGroup(group: GroupDTO)
+    suspend fun createGroup(group: Group)
 
     suspend fun loadUserGroups()
 
-    fun getGroups(): List<GroupDTO>
+    fun getGroupListItems(): List<GroupListItem>
 
-    fun getCurrentGroup(): GroupDTO?
+    fun getCurrentGroup(): Group?
 
     fun getCurrentGroupPlace(): Place?
 
