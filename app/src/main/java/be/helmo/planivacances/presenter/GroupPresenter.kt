@@ -60,8 +60,9 @@ class GroupPresenter : IGroupPresenter {
 
             if (response.isSuccessful && response.body() != null) {
                 val groupsDto = response.body()!!
-
+                Log.d("ag", response.body().toString())
                 for(groupDto in groupsDto) {
+                    Log.d("gg", groupDto.place.city)
                     groups[groupDto.gid!!] = DTOMapper.groupDtoToGroup(groupDto)
                 }
 
@@ -73,6 +74,7 @@ class GroupPresenter : IGroupPresenter {
             }
 
         } catch (e: Exception) {
+            Log.d("GroupFragment", "Erreur durant la récupération des groupes : ${e.message}")
             homeView.showToast("Erreur durant la récupération des groupes", 1)
         }
 

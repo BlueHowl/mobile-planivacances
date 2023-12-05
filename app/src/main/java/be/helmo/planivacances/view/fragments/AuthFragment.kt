@@ -212,7 +212,7 @@ class AuthFragment : Fragment(), IAuthView {
         hideKeyboard()
         binding.pbAuth.visibility = View.VISIBLE
 
-        lifecycleScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Default) {
             authPresenter.login(loginUser, binding.cbKeepConnected.isChecked)
         }
 
@@ -222,7 +222,7 @@ class AuthFragment : Fragment(), IAuthView {
      * Appel la fonction d'authentification automatique asynchrone
      */
     fun autoAuth() {
-        lifecycleScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Default) {
             authPresenter.autoAuth()
         }
     }
