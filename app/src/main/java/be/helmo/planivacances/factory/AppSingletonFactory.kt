@@ -1,14 +1,8 @@
 package be.helmo.planivacances.factory
 
-import be.helmo.planivacances.presenter.AuthPresenter
-import be.helmo.planivacances.presenter.GroupPresenter
-import be.helmo.planivacances.presenter.TchatPresenter
-import be.helmo.planivacances.presenter.WeatherPresenter
+import be.helmo.planivacances.presenter.*
 import be.helmo.planivacances.presenter.interfaces.*
-import be.helmo.planivacances.view.interfaces.IAuthPresenter
-import be.helmo.planivacances.view.interfaces.IGroupPresenter
-import be.helmo.planivacances.view.interfaces.ITchatPresenter
-import be.helmo.planivacances.view.interfaces.IWeatherPresenter
+import be.helmo.planivacances.view.interfaces.*
 
 /**
  * Factory de singleton + stockage du token
@@ -22,6 +16,8 @@ class AppSingletonFactory() {
     val weatherPresenter: WeatherPresenter = WeatherPresenter(groupPresenter)
 
     val tchatPresenter : TchatPresenter = TchatPresenter(groupPresenter, authPresenter)
+
+    val calendarPresenter : CalendarPresenter = CalendarPresenter(groupPresenter)
 
     fun getAuthPresenter(authView: IAuthView): IAuthPresenter {
         authPresenter.setIAuthView(authView)
@@ -53,6 +49,10 @@ class AppSingletonFactory() {
     fun getTchatPresenter(tchatView : ITchatView) : ITchatPresenter {
         tchatPresenter.setTchatView(tchatView)
         return tchatPresenter
+    }
+    fun getCalendarPresenter(calendarView: ICalendarView) : ICalendarPresenter {
+        calendarPresenter.setCalendarView(calendarView)
+        return calendarPresenter
     }
 
     companion object {

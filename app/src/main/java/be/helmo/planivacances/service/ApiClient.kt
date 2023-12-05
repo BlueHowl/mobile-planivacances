@@ -90,6 +90,10 @@ object ApiClient {
         retrofit.create(ITchatService::class.java)
     }
 
+    val calendarService : ICalendarService by lazy {
+        retrofit.create(ICalendarService::class.java)
+    }
+
     fun getTchatInstance(): Pusher {
         val headers = HashMap<String,String>()
         TokenAuthenticator!!.instance!!.idToken?.let { headers.put("Authorization", it) }

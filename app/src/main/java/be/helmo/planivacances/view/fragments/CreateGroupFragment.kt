@@ -160,6 +160,13 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
             val formatter = SimpleDateFormat(getString(R.string.date_format))
             val startDate = formatter.parse(binding.tvGroupStartDate.text.toString())!!
             val endDate = formatter.parse(binding.tvGroupEndDate.text.toString())!!
+            val currentDate = Calendar.getInstance().time
+
+            if(startDate.before(currentDate) || endDate.before(currentDate)) {
+                showToast("La date de début et de fin doivent être supérieures ou égales à la date du jour")
+                Log.w(TAG, "La date de début et de fin doivent être supérieures ou égales à la date du jour")
+                return
+            }
 
             if(startDate.after(endDate)) {
                 showToast("La date de fin ne peut pas être antérieur à la date de début")

@@ -17,6 +17,7 @@ import be.helmo.planivacances.presenter.interfaces.IHomeView
 import be.helmo.planivacances.service.dto.GroupDTO
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 /**
@@ -100,7 +101,9 @@ class HomeFragment : Fragment(), IHomeView {
      * Affiche un message à l'écran
      */
     override fun showToast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        MainScope().launch {
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        }
     }
 
     companion object {

@@ -34,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 
@@ -239,8 +240,10 @@ class AuthFragment : Fragment(), IAuthView {
      * Affiche un message à l'écran
      */
     override fun showToast(message: String) {
-        binding.pbAuth.visibility = View.GONE
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        MainScope().launch {
+            binding.pbAuth.visibility = View.GONE
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        }
     }
 
     /**
