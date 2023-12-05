@@ -2,8 +2,8 @@ package be.helmo.planivacances.view.interfaces
 
 import android.content.SharedPreferences
 import be.helmo.planivacances.presenter.interfaces.IAuthView
-import be.helmo.planivacances.service.dto.LoginUserDTO
-import be.helmo.planivacances.service.dto.RegisterUserDTO
+import be.helmo.planivacances.domain.LoginUser
+import be.helmo.planivacances.domain.RegisterUser
 
 interface IAuthPresenter {
 
@@ -15,9 +15,9 @@ interface IAuthPresenter {
 
     suspend fun loadIdToken(): Boolean
 
-    suspend fun register(registerUser: RegisterUserDTO)
+    suspend fun register(registerUser: RegisterUser)
 
-    suspend fun login(loginUser: LoginUserDTO, keepConnected: Boolean)
+    suspend fun login(loginUser: LoginUser, keepConnected: Boolean)
 
     suspend fun autoAuth()
 

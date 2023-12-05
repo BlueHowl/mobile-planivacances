@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import be.helmo.planivacances.R
-import be.helmo.planivacances.service.dto.GroupDTO
+import be.helmo.planivacances.domain.GroupListItem
 import java.text.SimpleDateFormat
 
 class GroupAdapter(val context: Context,
-                   val groups: List<GroupDTO>,
+                   val groups: List<GroupListItem>,
                    val clickListener: (String) -> Unit) :
     RecyclerView.Adapter<GroupAdapter.GroupViewHolder>() {
 

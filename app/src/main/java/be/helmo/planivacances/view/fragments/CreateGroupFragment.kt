@@ -20,10 +20,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import be.helmo.planivacances.R
 import be.helmo.planivacances.databinding.FragmentCreateGroupBinding
+import be.helmo.planivacances.domain.Group
+import be.helmo.planivacances.domain.Place
 import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.presenter.interfaces.ICreateGroupView
-import be.helmo.planivacances.service.dto.GroupDTO
-import be.helmo.planivacances.service.dto.PlaceDTO
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
 import com.adevinta.leku.*
 import com.google.android.gms.maps.model.LatLng
@@ -172,16 +172,16 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
                 return
             }
 
-            val place = PlaceDTO(country!!,
+            val place = Place(
+                country!!,
                 city!!,
                 street!!,
                 number!!,
                 postalCode!!,
-                location!!.latitude,
-                location!!.longitude)
+                location!!
+            )
 
-            val group = GroupDTO(
-                null,
+            val group = Group(
                 binding.etGroupName.text.toString(),
                 binding.etGroupDescription.text.toString(),
                 startDate,
