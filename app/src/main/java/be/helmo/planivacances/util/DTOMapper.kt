@@ -57,8 +57,8 @@ object DTOMapper {
         return Place(
             placeDTO.country,
             placeDTO.city,
-            placeDTO.street,
-            placeDTO.number,
+            if (placeDTO.street != null) placeDTO.street else "",
+            if (placeDTO.number != null) placeDTO.number else "",
             placeDTO.postalCode,
             LatLng(placeDTO.lat, placeDTO.lon)
         )
