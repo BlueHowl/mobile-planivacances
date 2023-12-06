@@ -10,6 +10,7 @@ import com.pusher.client.util.HttpChannelAuthorizer
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.security.SecureRandom
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
@@ -74,6 +75,14 @@ object ApiClient {
             .build()
     }
 
+    private val retrofitForStringResult : Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(BASE_API_URL)
+            .client(httpClient)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .build()
+    }
+
     val authService : IAuthService by lazy{
         retrofit.create(IAuthService::class.java)
     }
@@ -91,7 +100,7 @@ object ApiClient {
     }
 
     val calendarService : ICalendarService by lazy {
-        retrofit.create(ICalendarService::class.java)
+        retrofitForStringResult.create(ICalendarService::class.java)
     }
 
     fun getTchatInstance(): Pusher {

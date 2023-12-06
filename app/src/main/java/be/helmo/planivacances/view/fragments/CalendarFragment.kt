@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import be.helmo.planivacances.databinding.FragmentCalendarBinding
 import be.helmo.planivacances.factory.AppSingletonFactory
@@ -70,9 +71,16 @@ class CalendarFragment : Fragment(), ICalendarView {
                 outputStream.write(calendarContent.toByteArray())
                 outputStream.close()
 
+                val uri = FileProvider.getUriForFile(
+                    context!!,
+                    "${context!!.packageName}.provider",
+                    file
+                )
+
                 val intent = Intent(Intent.ACTION_VIEW)
-                intent.setDataAndType(Uri.fromFile(file), "text/calendar")
+                intent.setDataAndType(uri, "application/ics")
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 context?.startActivity(intent)
             } catch (e: Exception) {
                 showToast("Erreur durant le téléchargement du calendrier",1)

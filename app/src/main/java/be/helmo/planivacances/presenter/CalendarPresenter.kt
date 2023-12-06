@@ -19,7 +19,7 @@ class CalendarPresenter(private val groupPresenter: IGroupPresenter) : ICalendar
 
             if(response.isSuccessful && response.body() != null) {
                 val currentGroup  = groupPresenter.getCurrentGroup()!!
-                calendarView?.downloadCalendar(response.body()!!,"Calendrier-${currentGroup.groupName}")
+                calendarView?.downloadCalendar(response.body()!!,"Calendrier-${currentGroup.groupName}.ics")
             }
         } catch(e:Exception) {
             e.printStackTrace()

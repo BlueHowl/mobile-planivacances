@@ -48,6 +48,15 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBfwsyV3AdN2YgFE1h5CXv7omHnB9d0BV4" />
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
     </application>
 
     <!--TODO demander perms à un autre endroit/autre moment?-->
