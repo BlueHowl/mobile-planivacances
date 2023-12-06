@@ -96,7 +96,9 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
         }
 
         lekuActivityResultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                result: ActivityResult ->
+
                 if (result.resultCode == Activity.RESULT_OK) {
                     Log.d("Location Picker result", "OK")
                     val data = result.data
@@ -107,7 +109,9 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
                     val postalCode = data?.getStringExtra(ZIPCODE)
                     Log.d("POSTALCODE", postalCode.toString())
 
-                    val addressFormated =  getAddressFromLatLng(requireContext(), latitude!!, longitude!!)
+                    val addressFormated = getAddressFromLatLng(requireContext(),
+                                                               latitude!!,
+                                                               longitude!!)
 
                     val location = LatLng(latitude, longitude)
                     this.location = location
@@ -115,7 +119,10 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
                     binding.tvGroupPlace.text = addressFormated
 
                 } else {
-                    Toast.makeText(context, "Erreur lors de la récupération de la localisation", Toast.LENGTH_LONG).show()
+                    showToast(
+                        "Erreur lors de la récupération de la localisation",
+                        1
+                    )
                 }
             }
 
@@ -126,7 +133,7 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
         val geocoder = Geocoder(context, Locale.getDefault())
 
         try {
-            val addresses: List<Address> = geocoder.getFromLocation(lat, lng, 1) as List<Address>
+            val addresses = geocoder.getFromLocation(lat, lng, 1) as List<Address>
 
             if (addresses.isNotEmpty()) {
                 val address: Address = addresses[0]
@@ -168,8 +175,11 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
             }
 
             if(startDate.after(endDate)) {
-                showToast("La date de fin ne peut pas être antérieur à la date de début", 1)
                 Log.w(TAG, "La date de fin ne peut pas être antérieur à la date de début")
+                showToast(
+                    "La date de fin ne peut pas être antérieur à la date de début",
+                    1
+                )
                 return
             }
 
@@ -225,7 +235,7 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
     fun createDateHourDialog() {
         val calendar: Calendar = Calendar.getInstance()
         val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val month = calendar.get(Calendar.MONTH)
+        val month = calendar.get(Calendar.MONTH) + 1 //+1 month because january is 0
         val year = calendar.get(Calendar.YEAR)
         val datePickerDialog = DatePickerDialog(
             requireView().context,

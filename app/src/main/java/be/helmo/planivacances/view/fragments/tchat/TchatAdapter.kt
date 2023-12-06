@@ -1,6 +1,5 @@
 package be.helmo.planivacances.view.fragments.tchat
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,9 @@ class TchatAdapter() :
         } else {
             R.layout.message_item_receiving
         }
-        val view: View = LayoutInflater.from(parent.context).inflate(layoutResId, parent, false)
+        val view: View = LayoutInflater
+            .from(parent.context)
+            .inflate(layoutResId, parent, false)
         return ViewHolder(view,viewType)
     }
 

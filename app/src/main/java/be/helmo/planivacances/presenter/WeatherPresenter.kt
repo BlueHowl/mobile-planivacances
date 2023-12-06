@@ -18,7 +18,11 @@ class WeatherPresenter(val groupPresenter: IGroupPresenter) : IWeatherPresenter 
         try {
             val latLng = groupPresenter.getCurrentGroupPlace()?.latLngString
             if(latLng == null) {
-                weatherView.showToast("Erreur lors de la récupération du lieu de météo", 1)
+                weatherView.showToast(
+                    "Erreur lors de la récupération du lieu de météo",
+                    1
+                )
+
                 return
             }
 
@@ -33,7 +37,7 @@ class WeatherPresenter(val groupPresenter: IGroupPresenter) : IWeatherPresenter 
 
             val weatherData = response.body()
 
-            val forecastList: List<WeatherForecast> = weatherData?.forecast?.forecastday?.map { it ->
+            val forecastList = weatherData?.forecast?.forecastday?.map { it ->
                 WeatherForecast(
                     "https:${it.day.condition.icon}",
                     "${it.day.avgtemp_c}° C",
@@ -51,7 +55,10 @@ class WeatherPresenter(val groupPresenter: IGroupPresenter) : IWeatherPresenter 
             Log.e("WeatherFragment",
                 "Error while retrieving weather : ${e.message}")
 
-            weatherView.showToast("Erreur durant la récupération des données météo", 1)
+            weatherView.showToast(
+                "Erreur durant la récupération des données météo",
+                1
+            )
         }
     }
 

@@ -1,5 +1,6 @@
 package be.helmo.planivacances.presenter
 
+import android.util.Log
 import be.helmo.planivacances.presenter.interfaces.ICalendarView
 import be.helmo.planivacances.service.ApiClient
 import be.helmo.planivacances.view.interfaces.ICalendarPresenter
@@ -21,6 +22,7 @@ class CalendarPresenter(private val groupPresenter: IGroupPresenter) : ICalendar
                 calendarView?.downloadCalendar(response.body()!!,"Calendrier-${currentGroup.groupName}")
             }
         } catch(e:Exception) {
+            e.printStackTrace()
             calendarView?.showToast("Erreur lors du téléchargement du calendrier",1)
         }
     }

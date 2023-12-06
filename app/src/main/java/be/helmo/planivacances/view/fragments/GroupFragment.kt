@@ -84,7 +84,8 @@ class GroupFragment : Fragment(), IGroupView {
     }
 
     override fun buildItinerary(latitude: String, longitude: String) {
-        val mapsUri: Uri = Uri.parse("https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude")
+        val mapsUri = Uri.parse(
+            "https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude")
 
         val mapIntent = Intent(Intent.ACTION_VIEW,mapsUri)
 

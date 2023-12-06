@@ -9,6 +9,7 @@ import be.helmo.planivacances.domain.LoginUser
 import be.helmo.planivacances.domain.RegisterUser
 import be.helmo.planivacances.view.interfaces.IAuthPresenter
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
 
@@ -35,7 +36,11 @@ class AuthPresenter : IAuthPresenter {
             val response =  ApiClient.authService.register(registerUser)
 
             if (!response.isSuccessful || response.body() == null) {
-                authView.showToast("Erreur lors de l'enregistrement : ${response.message()}", 1)
+                authView.showToast(
+                    "Erreur lors de l'enregistrement : ${response.message()}",
+                    1
+                )
+
                 return
             }
 
@@ -45,7 +50,10 @@ class AuthPresenter : IAuthPresenter {
             auth(customToken!!, false)
         } catch (e: Exception) {
             Log.w("Erreur lors de l'enregistrement", "${e.message}")
-            authView.showToast("Une erreur est survenue lors de l'enregistrement", 1)
+            authView.showToast(
+                "Une erreur est survenue lors de l'enregistrement",
+                1
+            )
         }
     }
 
@@ -98,15 +106,17 @@ class AuthPresenter : IAuthPresenter {
             editor.apply()
         }
 
-        val authResult = mAuth.signInWithCustomToken(customToken).await()
+        try {
+            val authResult = mAuth.signInWithCustomToken(customToken).await()
 
-        if (authResult != null) {
-            initAuthenticator()
+            if (authResult != null) {
+                initAuthenticator()
 
-            authView.goToHome()
+                authView.goToHome()
 
-            return
-        }
+                return
+            }
+        } catch (_: FirebaseAuthInvalidCredentialsException) {}
 
         authView.showToast("Erreur lors de l'authentification", 1)
     }
