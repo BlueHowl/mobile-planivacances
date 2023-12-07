@@ -18,12 +18,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class TchatPresenter(private val groupPresenter: IGroupPresenter,
-                     private val authPresenter: IAuthPresenter) : ITchatPresenter {
-    private var tchatView : ITchatView? = null
-    private var tchatService : Pusher? = null
-    private var channel: PrivateChannel? = null
-    private var previousMessageLoaded : Boolean = false
+class TchatPresenter(val groupPresenter: IGroupPresenter,
+                     val authPresenter: IAuthPresenter) : ITchatPresenter {
+    lateinit var tchatView : ITchatView
+    lateinit var tchatService : Pusher
+    lateinit var channel: PrivateChannel
+    var previousMessageLoaded : Boolean = false
 
 
     fun setTchatView(tchatView: ITchatView) {
@@ -33,7 +33,7 @@ class TchatPresenter(private val groupPresenter: IGroupPresenter,
 
     override suspend fun connectToTchat() {
         tchatService = ApiClient.getTchatInstance()
-        tchatService?.connect(object:com.pusher.client.connection.ConnectionEventListener {
+        tchatService.connect(object:com.pusher.client.connection.ConnectionEventListener {
             override fun onConnectionStateChange(change: ConnectionStateChange?) {
                 if (change != null) {
                     Log.d("Tchat Presenter : ",
@@ -51,7 +51,7 @@ class TchatPresenter(private val groupPresenter: IGroupPresenter,
     }
 
     private fun subscribeToGroupChannel() {
-        channel = tchatService?.subscribePrivate(
+        channel = tchatService.subscribePrivate(
             "private-${groupPresenter.getCurrentGroupId()}",
                         object:PrivateChannelEventListener {
 
@@ -72,7 +72,7 @@ class TchatPresenter(private val groupPresenter: IGroupPresenter,
     }
 
     private fun bindToEvents() {
-        channel?.bind("new_messages",object:PrivateChannelEventListener {
+        channel.bind("new_messages",object:PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
                 if(previousMessageLoaded) {
                     Log.d("Tchat presenter : ", "${event?.eventName} => ${event?.data}")
@@ -115,7 +115,7 @@ class TchatPresenter(private val groupPresenter: IGroupPresenter,
         } else {
             message.sender = "other"
         }
-        tchatView?.addMessageToView(message)
+        tchatView.addMessageToView(message)
     }
 
     override fun sendMessage(message: String) {
@@ -136,14 +136,14 @@ class TchatPresenter(private val groupPresenter: IGroupPresenter,
     }
 
     override fun disconnectToTchat() {
-        channel?.unbind("new_messages",object:PrivateChannelEventListener {
+        channel.unbind("new_messages",object:PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {}
 
             override fun onSubscriptionSucceeded(channelName: String?) {}
 
             override fun onAuthenticationFailure(message: String?, e: Exception?) {}
         })
-        tchatService?.unsubscribe("private-${groupPresenter.getCurrentGroupId()}")
-        tchatService?.disconnect()
+        tchatService.unsubscribe("private-${groupPresenter.getCurrentGroupId()}")
+        tchatService.disconnect()
     }
 }

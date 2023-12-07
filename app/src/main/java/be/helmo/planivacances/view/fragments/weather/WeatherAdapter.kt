@@ -16,8 +16,8 @@ import com.bumptech.glide.request.RequestOptions
 
 class WeatherAdapter(weatherList: List<WeatherForecast>, context: Context) :
     RecyclerView.Adapter<WeatherAdapter.ViewHolder>() {
-    private val weatherList: List<WeatherForecast>
-    private val context: Context
+    val weatherList: List<WeatherForecast>
+    val context: Context
 
     init {
         this.weatherList = weatherList

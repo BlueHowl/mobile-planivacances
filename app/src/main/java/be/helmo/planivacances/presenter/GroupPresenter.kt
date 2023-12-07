@@ -2,15 +2,17 @@ package be.helmo.planivacances.presenter
 
 import android.util.Log
 import be.helmo.planivacances.domain.Group
-import be.helmo.planivacances.domain.GroupListItem
+import be.helmo.planivacances.presenter.viewmodel.GroupListItemVM
 import be.helmo.planivacances.domain.Place
 import be.helmo.planivacances.presenter.interfaces.ICreateGroupView
 import be.helmo.planivacances.presenter.interfaces.IGroupView
 import be.helmo.planivacances.presenter.interfaces.IHomeView
+import be.helmo.planivacances.presenter.viewmodel.GroupDetailVM
 import be.helmo.planivacances.service.ApiClient
 import be.helmo.planivacances.util.DTOMapper
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
 import com.google.firebase.auth.FirebaseAuth
+import java.text.SimpleDateFormat
 
 class GroupPresenter : IGroupPresenter {
     lateinit var groupView: IGroupView
@@ -58,7 +60,7 @@ class GroupPresenter : IGroupPresenter {
     /**
      * Charge les groupes de l'utilisateur
      */
-    override suspend fun loadUserGroups() {
+    suspend fun loadUserGroups() {
         try {
             val response = ApiClient.groupService.getList()
 
@@ -71,7 +73,7 @@ class GroupPresenter : IGroupPresenter {
                 }
 
                 Log.d("GroupFragment", "Groups retrieved : ${groups.size}")
-                homeView.onGroupsLoaded()
+                homeView.setGroupList(getGroupListItems())
             } else {
                 Log.d("GroupFragment", "${response.message()}, ${response.isSuccessful}")
                 homeView.showToast(
@@ -89,10 +91,46 @@ class GroupPresenter : IGroupPresenter {
     }
 
     /**
+     * Charge les données nécessaires à l'affichage de l'itinéraire
+     */
+    override fun loadItinerary() {
+        val place = groups[currentGid]?.place
+        val latitude = place?.latLng?.latitude.toString()
+        val longitude = place?.latLng?.longitude.toString()
+
+        groupView.buildItinerary(latitude,longitude)
+    }
+
+    override fun showGroupInfos() {
+        val group = getCurrentGroup()!!
+        val formatter = SimpleDateFormat("dd/MM/yyyy")
+        val startDate = formatter.format(group.startDate)
+        val endDate = formatter.format(group.endDate)
+
+        val groupDetailVM = GroupDetailVM(group.groupName,
+            group.description,
+            "Du $startDate au $endDate",
+            getCurrentGroupPlace().address)
+
+        groupView.setGroupInfos(groupDetailVM)
+    }
+
+    override suspend fun showGroupList() {
+        val groups = getGroupListItems()
+
+        //charge une seule fois
+        if(groups.isEmpty()) {
+            loadUserGroups()
+        } else {
+            homeView.setGroupList(groups)
+        }
+    }
+
+    /**
      * Récupère la liste des groupes
      * @return (List<GroupDTO>)
      */
-    override fun getGroupListItems(): List<GroupListItem> {
+    fun getGroupListItems(): List<GroupListItemVM> {
         return groups.entries.map { (gid, group) ->
             DTOMapper.groupToGroupListItem(gid, group)
         }
@@ -128,19 +166,6 @@ class GroupPresenter : IGroupPresenter {
      */
     override fun setCurrentGroupId(gid: String) {
         currentGid = gid
-    }
-
-    /**
-     * Charge les données nécessaires à l'affichage de l'itinéraire
-     */
-    override fun loadItinerary() {
-        val place = groups[currentGid]?.place
-        val latitude = place?.latLng?.latitude.toString()
-        val longitude = place?.latLng?.longitude.toString()
-
-        if(latitude != null && longitude != null) {
-            groupView.buildItinerary(latitude,longitude)
-        }
     }
 
     /**

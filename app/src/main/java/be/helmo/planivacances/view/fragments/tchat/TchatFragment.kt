@@ -63,6 +63,9 @@ class TchatFragment : Fragment(), ITchatView {
             findNavController().navigate(R.id.action_tchatFragment_to_groupFragment)
         }
 
+        //chargement tchat
+        binding.pbTchat.visibility = View.VISIBLE
+
         lifecycleScope.launch(Dispatchers.Main) {
             initTchatComponents()
             tchatPresenter.connectToTchat()
@@ -74,7 +77,7 @@ class TchatFragment : Fragment(), ITchatView {
     fun initTchatComponents() {
         MainScope().launch {
             tchatAdapter = TchatAdapter()
-            val layoutManager : LinearLayoutManager = LinearLayoutManager(requireContext())
+            val layoutManager = LinearLayoutManager(requireContext())
             layoutManager.isSmoothScrollbarEnabled = true
             binding.rvTchatContainer.layoutManager = layoutManager
             binding.rvTchatContainer.adapter = tchatAdapter
@@ -92,7 +95,9 @@ class TchatFragment : Fragment(), ITchatView {
 
     override fun addMessageToView(message: MessageDTO) {
        MainScope().launch {
-           tchatAdapter?.addMessage(message)
+           binding.pbTchat.visibility = View.GONE
+
+           tchatAdapter.addMessage(message)
            scrollToBottom()
        }
     }

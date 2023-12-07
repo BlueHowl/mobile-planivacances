@@ -252,6 +252,12 @@ class AuthFragment : Fragment(), IAuthView {
         }
     }
 
+    override fun stopLoading() {
+        MainScope().launch {
+            binding.pbAuth.visibility = View.GONE
+        }
+    }
+
     /**
      * Appel la fonction qui cache le clavier
      */

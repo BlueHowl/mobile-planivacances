@@ -1,8 +1,8 @@
-package be.helmo.planivacances.domain
+package be.helmo.planivacances.presenter.viewmodel
 
 import java.util.*
 
-data class GroupListItem(
+data class GroupListItemVM(
     var gid: String? = null,
     val groupName: String,
     val description: String,

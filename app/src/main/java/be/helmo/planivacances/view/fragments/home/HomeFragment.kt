@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import be.helmo.planivacances.R
 import be.helmo.planivacances.databinding.FragmentHomeBinding
-import be.helmo.planivacances.domain.GroupListItem
+import be.helmo.planivacances.presenter.viewmodel.GroupListItemVM
 import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.presenter.interfaces.IHomeView
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
@@ -64,32 +64,21 @@ class HomeFragment : Fragment(), IHomeView {
 
         binding.pbGroupList.visibility = View.VISIBLE
         lifecycleScope.launch(Dispatchers.Default) {
-            val groups = groupPresenter.getGroupListItems()
-
-            //charge une seule fois
-            if(groups.isEmpty()) {
-                groupPresenter.loadUserGroups()
-            } else {
-                setGroupsAdapter(groups)
-                binding.pbGroupList.visibility = View.GONE
-            }
-
+            groupPresenter.showGroupList()
         }
 
         return binding.root
     }
 
-    override fun onGroupsLoaded() {
+    override fun setGroupList(groups: List<GroupListItemVM>) {
         MainScope().launch {
-            val groups = groupPresenter.getGroupListItems()
-
             setGroupsAdapter(groups)
 
             binding.pbGroupList.visibility = View.GONE
         }
     }
 
-    fun setGroupsAdapter(groups : List<GroupListItem>) {
+    fun setGroupsAdapter(groups : List<GroupListItemVM>) {
         binding.rvGroups.layoutManager = LinearLayoutManager(requireContext())
         groupAdapter = GroupAdapter(requireContext(), groups) { selectedGroupId ->
             //selectionne le groupe

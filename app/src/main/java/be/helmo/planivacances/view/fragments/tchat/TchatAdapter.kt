@@ -11,7 +11,7 @@ import be.helmo.planivacances.util.DateFormatter
 
 class TchatAdapter() :
     RecyclerView.Adapter<TchatAdapter.ViewHolder>() {
-    private val messagesList: MutableList<MessageDTO> = mutableListOf()
+    val messagesList: MutableList<MessageDTO> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutResId = if (viewType == VIEW_TYPE_ME) {
@@ -52,9 +52,9 @@ class TchatAdapter() :
     }
 
     class ViewHolder(itemView: View,viewType: Int) : RecyclerView.ViewHolder(itemView) {
-        private var displayName: TextView? = null
-        private var messageText: TextView
-        private var messageTime: TextView
+        var displayName: TextView? = null
+        var messageText: TextView
+        var messageTime: TextView
 
         init {
             if (viewType == VIEW_TYPE_ME) {
@@ -71,8 +71,8 @@ class TchatAdapter() :
             if (viewType == VIEW_TYPE_OTHER) {
                 displayName?.text = message.displayName
             }
-                messageText?.text = message.content
-                messageTime?.text = DateFormatter.formatTimestampForDisplay(message.time)
+                messageText.text = message.content
+                messageTime.text = DateFormatter.formatTimestampForDisplay(message.time)
             }
         }
 }

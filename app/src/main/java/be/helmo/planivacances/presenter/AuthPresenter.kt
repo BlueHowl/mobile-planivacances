@@ -87,7 +87,7 @@ class AuthPresenter : IAuthPresenter {
     override suspend fun autoAuth() {
         val customToken = sharedPreferences.getString("CustomToken", null)
         if(customToken == null) {
-            authView.showToast("Authentification automatique impossible", 0)
+            authView.stopLoading()
             return
         }
         auth(customToken, true)

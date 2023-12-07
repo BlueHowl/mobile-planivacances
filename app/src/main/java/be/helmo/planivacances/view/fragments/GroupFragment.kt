@@ -13,8 +13,8 @@ import be.helmo.planivacances.R
 import be.helmo.planivacances.databinding.FragmentGroupBinding
 import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.presenter.interfaces.IGroupView
+import be.helmo.planivacances.presenter.viewmodel.GroupDetailVM
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
-import java.text.SimpleDateFormat
 
 /**
  * A simple [Fragment] subclass.
@@ -40,17 +40,7 @@ class GroupFragment : Fragment(), IGroupView {
         // Inflate the layout for this fragment
         binding = FragmentGroupBinding.inflate(inflater, container,false)
 
-        val group = groupPresenter.getCurrentGroup()!!
-
-        val formatter = SimpleDateFormat(getString(R.string.date_format))
-        val startDate = formatter.format(group.startDate)
-        val endDate = formatter.format(group.endDate)
-
-        binding.tvGroupName.text = group.groupName
-        binding.tvGroupDescription.text = group.description
-        binding.tvGroupPeriod.text = "Du $startDate au $endDate"
-        binding.tvGroupPlace.text = groupPresenter.getCurrentGroupPlace()?.address
-
+        groupPresenter.showGroupInfos()
 
         binding.ibWeather.setOnClickListener {
             findNavController().navigate(R.id.action_groupFragment_to_weatherFragment)
@@ -97,6 +87,13 @@ class GroupFragment : Fragment(), IGroupView {
         } else {
             showToast("L'application Google Maps doit être installée pour pouvoir utiliser cette fonctionnalité !",1)
         }
+    }
+
+    override fun setGroupInfos(group: GroupDetailVM) {
+        binding.tvGroupName.text = group.groupName
+        binding.tvGroupDescription.text = group.description
+        binding.tvGroupPeriod.text = group.period
+        binding.tvGroupPlace.text = group.address
     }
 
     override fun showToast(message: String,length:Int) {

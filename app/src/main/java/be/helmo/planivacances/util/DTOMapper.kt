@@ -1,7 +1,7 @@
 package be.helmo.planivacances.util
 
 import be.helmo.planivacances.domain.Group
-import be.helmo.planivacances.domain.GroupListItem
+import be.helmo.planivacances.presenter.viewmodel.GroupListItemVM
 import be.helmo.planivacances.domain.Place
 import be.helmo.planivacances.service.dto.GroupDTO
 import be.helmo.planivacances.service.dto.PlaceDTO
@@ -31,8 +31,8 @@ object DTOMapper {
         )
     }
 
-    fun groupToGroupListItem(gid: String, group: Group) : GroupListItem {
-        return GroupListItem(
+    fun groupToGroupListItem(gid: String, group: Group) : GroupListItemVM {
+        return GroupListItemVM(
             gid,
             group.groupName,
             group.description,
