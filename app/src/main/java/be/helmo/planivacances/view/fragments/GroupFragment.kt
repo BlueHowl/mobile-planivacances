@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import be.helmo.planivacances.R
 import be.helmo.planivacances.databinding.FragmentGroupBinding
@@ -15,6 +16,9 @@ import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.presenter.interfaces.IGroupView
 import be.helmo.planivacances.presenter.viewmodel.GroupDetailVM
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.
@@ -40,7 +44,9 @@ class GroupFragment : Fragment(), IGroupView {
         // Inflate the layout for this fragment
         binding = FragmentGroupBinding.inflate(inflater, container,false)
 
-        groupPresenter.showGroupInfos()
+        lifecycleScope.launch(Dispatchers.Default) {
+            groupPresenter.showGroupInfos()
+        }
 
         binding.ibWeather.setOnClickListener {
             findNavController().navigate(R.id.action_groupFragment_to_weatherFragment)
@@ -51,7 +57,9 @@ class GroupFragment : Fragment(), IGroupView {
         }
 
         binding.ibItinerary.setOnClickListener {
-            groupPresenter.loadItinerary()
+            lifecycleScope.launch(Dispatchers.Default) {
+                groupPresenter.loadItinerary()
+            }
         }
 
         binding.ibTchat.setOnClickListener {
@@ -90,13 +98,17 @@ class GroupFragment : Fragment(), IGroupView {
     }
 
     override fun setGroupInfos(group: GroupDetailVM) {
-        binding.tvGroupName.text = group.groupName
-        binding.tvGroupDescription.text = group.description
-        binding.tvGroupPeriod.text = group.period
-        binding.tvGroupPlace.text = group.address
+        MainScope().launch {
+            binding.tvGroupName.text = group.groupName
+            binding.tvGroupDescription.text = group.description
+            binding.tvGroupPeriod.text = group.period
+            binding.tvGroupPlace.text = group.address
+        }
     }
 
     override fun showToast(message: String,length:Int) {
-        Toast.makeText(context, message,length).show()
+        MainScope().launch {
+            Toast.makeText(context, message, length).show()
+        }
     }
 }

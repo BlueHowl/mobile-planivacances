@@ -50,7 +50,7 @@ class TchatPresenter(val groupPresenter: IGroupPresenter,
         })
     }
 
-    private fun subscribeToGroupChannel() {
+    fun subscribeToGroupChannel() {
         channel = tchatService.subscribePrivate(
             "private-${groupPresenter.getCurrentGroupId()}",
                         object:PrivateChannelEventListener {
@@ -71,7 +71,7 @@ class TchatPresenter(val groupPresenter: IGroupPresenter,
         })
     }
 
-    private fun bindToEvents() {
+    fun bindToEvents() {
         channel.bind("new_messages",object:PrivateChannelEventListener {
             override fun onEvent(event: PusherEvent?) {
                 if(previousMessageLoaded) {
@@ -94,7 +94,7 @@ class TchatPresenter(val groupPresenter: IGroupPresenter,
         })
     }
 
-    private suspend fun loadPreviousMessages() {
+    suspend fun loadPreviousMessages() {
         val response = ApiClient
             .tchatService
             .getPreviousMessages(groupPresenter.getCurrentGroupId())
@@ -109,7 +109,7 @@ class TchatPresenter(val groupPresenter: IGroupPresenter,
         }
     }
 
-    private fun sendMessageToView(message: MessageDTO) {
+    fun sendMessageToView(message: MessageDTO) {
         if(message.sender == authPresenter.getUid()) {
             message.sender = "me"
         } else {
@@ -129,7 +129,7 @@ class TchatPresenter(val groupPresenter: IGroupPresenter,
                 System.currentTimeMillis()
             )
 
-            CoroutineScope(Dispatchers.Main).launch {
+            CoroutineScope(Dispatchers.Default).launch {
                 ApiClient.tchatService.sendMessage(messageDTO)
             }
         }
