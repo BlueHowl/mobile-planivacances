@@ -67,12 +67,24 @@
     </fragment>
     <fragment
         android:id="@+id/CalendarFragment"
-        android:name="be.helmo.planivacances.view.fragments.CalendarFragment"
+        android:name="be.helmo.planivacances.view.fragments.activity.CalendarFragment"
         android:label="fragment_calendar"
         tools:layout="@layout/fragment_calendar">
         <action
             android:id="@+id/action_CalendarFragment_to_groupFragment"
             app:destination="@id/groupFragment" />
+        <action
+            android:id="@+id/action_CalendarFragment_to_ActivityFragment"
+            app:destination="@id/ActivityFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/ActivityFragment"
+        android:name="be.helmo.planivacances.view.fragments.activity.ActivityFragment"
+        android:label="fragment_activity"
+        tools:layout="@layout/fragment_activity">
+        <action
+            android:id="@+id/action_ActivityFragment_to_CalendarFragment"
+            app:destination="@id/CalendarFragment" />
     </fragment>
     <fragment
         android:id="@+id/TchatFragment"

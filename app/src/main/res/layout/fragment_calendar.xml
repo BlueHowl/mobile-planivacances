@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.fragments.CalendarFragment">
+    tools:context=".view.fragments.activity.CalendarFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clHeader"
@@ -56,15 +56,18 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <CalendarView
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calendarView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/clHeader" />
+        app:layout_constraintTop_toBottomOf="@+id/clHeader"
+        app:mcv_showOtherDates="all"
+        app:mcv_selectionColor="#00F"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvActivities"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="4dp"

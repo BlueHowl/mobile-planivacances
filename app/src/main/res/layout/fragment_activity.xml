@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".view.fragments.GroupFragment">
+    android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clHeader"
+        android:id="@+id/activityHeader"
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:background="@drawable/rounded_bottom_corners">
 
         <TextView
-            android:id="@+id/tvTitle"
+            android:id="@+id/headerActivityTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Groupe"
+            android:text="Activity"
             android:textColor="@color/black"
             android:textSize="28sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -26,7 +24,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-            android:id="@+id/headerGroupBtn"
+            android:id="@+id/headerActivityBtn"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:orientation="horizontal"
@@ -35,31 +33,31 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageButton
-                android:id="@+id/updateGroupBtn"
+                android:id="@+id/updateActivityBtn"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginEnd="3dp"
                 android:adjustViewBounds="true"
                 android:background="@color/transparent"
-                android:contentDescription="Update group"
+                android:contentDescription="Update activity"
                 android:scaleType="fitCenter"
                 android:src="@drawable/edit_pencil"
                 app:tint="@color/white" />
 
             <ImageButton
-                android:id="@+id/deleteGroupBtn"
+                android:id="@+id/deleteActivityBtn"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:adjustViewBounds="true"
                 android:background="@color/transparent"
-                android:contentDescription="Delete group"
+                android:contentDescription="Delete activity"
                 android:scaleType="fitCenter"
                 android:src="@drawable/delete_trash"
                 app:tint="@color/white" />
         </LinearLayout>
 
         <TextView
-            android:id="@+id/tvBack"
+            android:id="@+id/tvBackToCalendar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
@@ -78,7 +76,7 @@
         android:padding="18dp">
 
         <LinearLayout
-            android:id="@+id/linearLayout"
+            android:id="@+id/lyActivityDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -87,25 +85,25 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/tvGroupName"
+                android:id="@+id/tvActivityName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="8dp"
-                android:text="&quot;Group_Name&quot;"
+                android:text="&quot;Activity_Name&quot;"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/tvGroupPeriod"
+                android:id="@+id/tvActivityPeriod"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:paddingBottom="8dp"
-                android:text="Du 13/10/2023 au 24/10/2023"
+                android:text="Le 13/10/2023 à 13h00 - Durée : 1h30"
                 android:textColor="@color/black" />
 
             <TextView
-                android:id="@+id/tvGroupPlace"
+                android:id="@+id/tvActivityPlace"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
@@ -114,7 +112,7 @@
                 android:textColor="@color/black" />
 
             <TextView
-                android:id="@+id/tvGroupDescription"
+                android:id="@+id/tvActivityDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Description Fugiat do aliqua laboris cillum sint dolor officia adipisicing excepteur fugiat officia. Cupidatat ut elit consequat ea laborum occaecat laborum aute consectetur Lorem exercitation. Lorem anim minim officia aliquip commodo deserunt mollit. Duis deserunt quis cillum voluptate duis ipsum quis incididunt elit excepteur excepteur labore duis cillum. Voluptate sint nulla minim eiusmod in nulla. Ea id ad duis esse adipisicing culpa ex esse ea dolore consequat. Reprehenderit eu minim veniam aliquip do ipsum duis do qui adipisicing aliquip ad occaecat."
@@ -123,7 +121,7 @@
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/edit_text_style"
             android:backgroundTint="@color/grey2"
@@ -132,35 +130,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <ImageButton
-                android:id="@+id/ibCalendar"
-                android:layout_width="wrap_content"
-                android:layout_height="96dp"
-                android:adjustViewBounds="true"
-                android:background="@drawable/edit_text_style"
-                android:backgroundTint="@color/main_blue_40"
-                android:contentDescription="Calendar"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/calendar"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageButton
-                android:id="@+id/ibTchat"
-                android:layout_width="96dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:adjustViewBounds="true"
-                android:background="@drawable/edit_text_style"
-                android:backgroundTint="@color/main_blue_40"
-                android:contentDescription="Chat"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/tchat"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ibCalendar" />
 
             <ImageButton
                 android:id="@+id/ibItinerary"
@@ -173,39 +142,9 @@
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/itinerary"
-                app:layout_constraintEnd_toStartOf="@+id/ibWeather"
-                app:layout_constraintStart_toEndOf="@+id/ibCalendar"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
 
-            <ImageButton
-                android:id="@+id/ibAddMemberToGroup"
-                android:layout_width="96dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:adjustViewBounds="true"
-                android:background="@drawable/edit_text_style"
-                android:backgroundTint="@color/main_blue_40"
-                android:contentDescription="Add member to group"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/add_cross"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@id/ibItinerary"
-                app:layout_constraintTop_toBottomOf="@+id/ibItinerary" />
-
-            <ImageButton
-                android:id="@+id/ibWeather"
-                android:layout_width="wrap_content"
-                android:layout_height="96dp"
-                android:adjustViewBounds="true"
-                android:background="@drawable/edit_text_style"
-                android:backgroundTint="@color/main_blue_40"
-                android:contentDescription="Weather"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/weather"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

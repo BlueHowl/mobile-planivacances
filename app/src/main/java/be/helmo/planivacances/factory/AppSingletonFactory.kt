@@ -17,7 +17,7 @@ class AppSingletonFactory() {
 
     val tchatPresenter : TchatPresenter = TchatPresenter(groupPresenter, authPresenter)
 
-    val calendarPresenter : CalendarPresenter = CalendarPresenter(groupPresenter)
+    val activityPresenter : ActivityPresenter = ActivityPresenter(groupPresenter)
 
     fun getAuthPresenter(authView: IAuthView): IAuthPresenter {
         authPresenter.setIAuthView(authView)
@@ -47,12 +47,17 @@ class AppSingletonFactory() {
     }
 
     fun getTchatPresenter(tchatView : ITchatView) : ITchatPresenter {
-        tchatPresenter.setTchatView(tchatView)
+        tchatPresenter.setITchatView(tchatView)
         return tchatPresenter
     }
-    fun getCalendarPresenter(calendarView: ICalendarView) : ICalendarPresenter {
-        calendarPresenter.setCalendarView(calendarView)
-        return calendarPresenter
+    fun getCalendarPresenter(calendarView: ICalendarView) : IActivityPresenter {
+        activityPresenter.setICalendarView(calendarView)
+        return activityPresenter
+    }
+
+    fun getActivityPresenter(activityView: IActivityView) : IActivityPresenter {
+        activityPresenter.setIActivityView(activityView)
+        return activityPresenter
     }
 
     companion object {

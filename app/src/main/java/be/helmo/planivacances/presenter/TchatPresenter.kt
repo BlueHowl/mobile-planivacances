@@ -26,7 +26,7 @@ class TchatPresenter(val groupPresenter: IGroupPresenter,
     var previousMessageLoaded : Boolean = false
 
 
-    fun setTchatView(tchatView: ITchatView) {
+    override fun setITchatView(tchatView: ITchatView) {
         this.tchatView = tchatView
     }
 
