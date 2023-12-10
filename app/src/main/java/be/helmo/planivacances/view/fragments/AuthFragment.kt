@@ -202,7 +202,7 @@ class AuthFragment : Fragment(), IAuthView {
         hideKeyboard()
         binding.pbAuth.visibility = View.VISIBLE
 
-        lifecycleScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Default) {
             authPresenter.register(registerUser)
         }
 

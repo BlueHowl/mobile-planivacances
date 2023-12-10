@@ -66,7 +66,7 @@ class TchatFragment : Fragment(), ITchatView {
         //chargement tchat
         binding.pbTchat.visibility = View.VISIBLE
 
-        lifecycleScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Default) {
             initTchatComponents()
             tchatPresenter.connectToTchat()
         }
@@ -87,7 +87,9 @@ class TchatFragment : Fragment(), ITchatView {
 
                 if (message.isNotEmpty()) {
                     binding.etTchatSendText.text.clear()
-                    tchatPresenter.sendMessage(message)
+                    lifecycleScope.launch(Dispatchers.Default) {
+                        tchatPresenter.sendMessage(message)
+                    }
                 }
             }
         }
@@ -112,13 +114,17 @@ class TchatFragment : Fragment(), ITchatView {
     override fun onDestroyView() {
         super.onDestroyView()
         Log.d("TchatFragment","onDestroy called")
-        tchatPresenter.disconnectToTchat()
+        lifecycleScope.launch(Dispatchers.Default) {
+            tchatPresenter.disconnectToTchat()
+        }
     }
 
     override fun onDetach() {
         super.onDetach()
         Log.d("TchatFragment","onDetach called")
-        tchatPresenter.disconnectToTchat()
+        lifecycleScope.launch(Dispatchers.Default) {
+            tchatPresenter.disconnectToTchat()
+        }
     }
 
     companion object {
