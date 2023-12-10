@@ -9,6 +9,10 @@ interface IActivityPresenter {
     fun setCurrentActivity(activityId:String)
     suspend fun getCalendarFile()
     suspend fun loadActivities()
+
+    suspend fun deleteCurrentActivity()
     fun loadCurrentActivity()
+
+    fun loadItinerary()
     fun onActivityDateChanged(dayOfMonth: Int,month: Int,year: Int)
 }

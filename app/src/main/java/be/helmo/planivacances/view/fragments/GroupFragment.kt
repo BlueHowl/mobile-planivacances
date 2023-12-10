@@ -82,18 +82,23 @@ class GroupFragment : Fragment(), IGroupView {
     }
 
     override fun buildItinerary(latitude: String, longitude: String) {
-        val mapsUri = Uri.parse(
-            "https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude")
+        MainScope().launch {
+            val mapsUri = Uri.parse(
+                "https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude"
+            )
 
-        val mapIntent = Intent(Intent.ACTION_VIEW,mapsUri)
+            val mapIntent = Intent(Intent.ACTION_VIEW, mapsUri)
 
-        mapIntent.setPackage("com.google.android.apps.maps")
+            mapIntent.setPackage("com.google.android.apps.maps")
 
-        if(mapIntent.resolveActivity(requireActivity().packageManager) != null)
-        {
-            startActivity(mapIntent)
-        } else {
-            showToast("L'application Google Maps doit être installée pour pouvoir utiliser cette fonctionnalité !",1)
+            if (mapIntent.resolveActivity(requireActivity().packageManager) != null) {
+                startActivity(mapIntent)
+            } else {
+                showToast(
+                    "L'application Google Maps doit être installée pour pouvoir utiliser cette fonctionnalité !",
+                    1
+                )
+            }
         }
     }
 

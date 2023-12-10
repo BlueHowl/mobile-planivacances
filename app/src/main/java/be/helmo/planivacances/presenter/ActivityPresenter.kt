@@ -19,7 +19,7 @@ class ActivityPresenter(private val groupPresenter: IGroupPresenter) : IActivity
     lateinit var calendarView : ICalendarView
     lateinit var activityView: IActivityView
     var activitiesDTO: ActivitiesDTO = ActivitiesDTO(HashMap())
-    lateinit var currentActivityDTO : ActivityDTO
+    lateinit var currentActivityDTO : Pair<String,ActivityDTO>
 
     override fun setICalendarView(calendarView: ICalendarView) {
         this.calendarView = calendarView
@@ -31,7 +31,7 @@ class ActivityPresenter(private val groupPresenter: IGroupPresenter) : IActivity
 
     override fun setCurrentActivity(activityId: String) {
         if(activitiesDTO.activitiesMap.contains(activityId)) {
-            currentActivityDTO = activitiesDTO.activitiesMap[activityId]!!
+            currentActivityDTO = Pair(activityId,activitiesDTO.activitiesMap[activityId]!!)
         }
     }
 
@@ -64,8 +64,24 @@ class ActivityPresenter(private val groupPresenter: IGroupPresenter) : IActivity
         }
     }
 
+    override suspend fun deleteCurrentActivity() {
+        val response = ApiClient.activityService.deleteActivity(groupPresenter.getCurrentGroupId(),currentActivityDTO.first)
+
+        if(response.isSuccessful) {
+            activityView.onActivityDeleted()
+        } else {
+            activityView.showToast("Erreur durant la suppression de l'activité",1)
+        }
+    }
+
     override fun loadCurrentActivity() {
-        activityView.loadActivity(ActivityDetailVM(currentActivityDTO.title,formatPeriod(currentActivityDTO.startDate,currentActivityDTO.duration),formatPlace(currentActivityDTO.place),currentActivityDTO.description))
+        val currentActivity = currentActivityDTO.second
+        activityView.loadActivity(ActivityDetailVM(currentActivity.title,formatPeriod(currentActivity.startDate,currentActivity.duration),formatPlace(currentActivity.place),currentActivity.description))
+    }
+
+    override fun loadItinerary() {
+        val currentActivity = currentActivityDTO.second
+        activityView.buildItinerary(currentActivity.place.lat.toString(),currentActivity.place.lon.toString())
     }
 
     fun onActivitiesLoaded() {
