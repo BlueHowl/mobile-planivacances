@@ -64,7 +64,7 @@ class HomeFragment : Fragment(), IHomeView {
 
         binding.pbGroupList.visibility = View.VISIBLE
         lifecycleScope.launch(Dispatchers.Default) {
-            groupPresenter.showGroupList()
+            groupPresenter.loadUserGroups()
         }
 
         return binding.root

@@ -44,6 +44,12 @@ class GroupFragment : Fragment(), IGroupView {
         // Inflate the layout for this fragment
         binding = FragmentGroupBinding.inflate(inflater, container,false)
 
+        binding.deleteGroupBtn.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.Default) {
+                groupPresenter.deleteCurrentGroup()
+            }
+        }
+
         lifecycleScope.launch(Dispatchers.Default) {
             groupPresenter.showGroupInfos()
         }
@@ -108,6 +114,13 @@ class GroupFragment : Fragment(), IGroupView {
             binding.tvGroupDescription.text = group.description
             binding.tvGroupPeriod.text = group.period
             binding.tvGroupPlace.text = group.address
+        }
+    }
+
+    override fun onGroupDeleted() {
+        MainScope().launch {
+            showToast("Le groupe a bien été supprimé", 1)
+            findNavController().navigate(R.id.action_groupFragment_to_homeFragment)
         }
     }
 

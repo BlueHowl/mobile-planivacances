@@ -15,7 +15,7 @@ interface IGroupPresenter {
 
     fun showGroupInfos()
 
-    suspend fun showGroupList()
+    suspend fun loadUserGroups()
 
     fun getCurrentGroup(): Group?
 
@@ -30,4 +30,6 @@ interface IGroupPresenter {
     fun setICreateGroupView(createGroupView: ICreateGroupView)
 
     fun setIHomeView(homeView: IHomeView)
+
+    suspend fun deleteCurrentGroup()
 }

@@ -60,8 +60,10 @@ class GroupPresenter : IGroupPresenter {
     /**
      * Charge les groupes de l'utilisateur
      */
-    suspend fun loadUserGroups() {
+    override suspend fun loadUserGroups() {
         try {
+            groups.clear()
+            currentGid = ""
             val response = ApiClient.groupService.getList()
 
             if (response.isSuccessful && response.body() != null) {
@@ -113,17 +115,6 @@ class GroupPresenter : IGroupPresenter {
             getCurrentGroupPlace().address)
 
         groupView.setGroupInfos(groupDetailVM)
-    }
-
-    override suspend fun showGroupList() {
-        val groups = getGroupListItems()
-
-        //charge une seule fois
-        if(groups.isEmpty()) {
-            loadUserGroups()
-        } else {
-            homeView.setGroupList(groups)
-        }
     }
 
     /**
@@ -187,5 +178,15 @@ class GroupPresenter : IGroupPresenter {
      */
     override fun setIHomeView(homeView: IHomeView) {
         this.homeView = homeView
+    }
+
+    override suspend fun deleteCurrentGroup() {
+        val response = ApiClient.groupService.delete(currentGid)
+
+        if(response.isSuccessful) {
+            groupView.onGroupDeleted()
+        } else {
+            groupView.showToast("Erreur durant la suppression du groupe",1)
+        }
     }
 }
