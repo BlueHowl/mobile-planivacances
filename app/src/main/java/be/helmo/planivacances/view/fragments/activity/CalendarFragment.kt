@@ -58,8 +58,8 @@ class CalendarFragment : Fragment(), ICalendarView {
         binding.rvActivities.layoutManager = layoutManager
         binding.rvActivities.adapter = calendarAdapter
 
-        binding.exportBtn.isEnabled = false
-        binding.exportBtn.isClickable = false
+        binding.exportCalendarBtn.isEnabled = false
+        binding.exportCalendarBtn.isClickable = false
 
         val currentDate = Date()
 
@@ -80,7 +80,11 @@ class CalendarFragment : Fragment(), ICalendarView {
             activityPresenter.loadActivities()
         }
 
-        binding.exportBtn.setOnClickListener {
+        binding.createActivityBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_CalendarFragment_to_CreateActivityFragment)
+        }
+
+        binding.exportCalendarBtn.setOnClickListener {
             lifecycleScope.launch(Dispatchers.Default) {
                 activityPresenter.getCalendarFile()
             }
@@ -126,8 +130,8 @@ class CalendarFragment : Fragment(), ICalendarView {
 
     override fun onActivitiesLoaded(activityDates: List<Date>) {
         MainScope().launch {
-            binding.exportBtn.isEnabled = true
-            binding.exportBtn.isClickable = true
+            binding.exportCalendarBtn.isEnabled = true
+            binding.exportCalendarBtn.isClickable = true
             lifecycleScope.launch(Dispatchers.Default) {
                 val currentDate : CalendarDay = binding.calendarView.selectedDate
                 activityPresenter.onActivityDateChanged(currentDate.day,currentDate.month,currentDate.year)

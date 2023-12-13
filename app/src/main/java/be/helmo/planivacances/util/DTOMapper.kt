@@ -3,6 +3,9 @@ package be.helmo.planivacances.util
 import be.helmo.planivacances.domain.Group
 import be.helmo.planivacances.presenter.viewmodel.GroupListItemVM
 import be.helmo.planivacances.domain.Place
+import be.helmo.planivacances.presenter.viewmodel.ActivityVM
+import be.helmo.planivacances.presenter.viewmodel.PlaceVM
+import be.helmo.planivacances.service.dto.ActivityDTO
 import be.helmo.planivacances.service.dto.GroupDTO
 import be.helmo.planivacances.service.dto.PlaceDTO
 import com.google.android.gms.maps.model.LatLng
@@ -62,5 +65,14 @@ object DTOMapper {
             placeDTO.postalCode,
             LatLng(placeDTO.lat, placeDTO.lon)
         )
+    }
+
+    fun placeVMToPlaceDTO(placeVM: PlaceVM) : PlaceDTO {
+        return PlaceDTO(placeVM.country,placeVM.city,placeVM.street,placeVM.number,placeVM.postalCode,placeVM.latLng.latitude,placeVM.latLng.longitude)
+    }
+
+    fun activityVMToActivityDTO(activityVM: ActivityVM) : ActivityDTO {
+        val placeDTO : PlaceDTO = placeVMToPlaceDTO(activityVM.place)
+        return ActivityDTO(activityVM.title,activityVM.description,activityVM.startDate,activityVM.duration,placeDTO)
     }
 }

@@ -55,7 +55,6 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
     var location: LatLng? = null
 
     var dateField: Int = 0
-    var tempDate: String? = null
     var startDate: String? = null
     var endDate: String? = null
 
@@ -100,22 +99,16 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
                 result: ActivityResult ->
 
                 if (result.resultCode == Activity.RESULT_OK) {
-                    Log.d("Location Picker result", "OK")
                     val data = result.data
                     val latitude = data?.getDoubleExtra(LATITUDE, 0.0)
-                    Log.d("LATITUDE", latitude.toString())
                     val longitude = data?.getDoubleExtra(LONGITUDE, 0.0)
-                    Log.d("LONGITUDE", longitude.toString())
-                    val postalCode = data?.getStringExtra(ZIPCODE)
-                    Log.d("POSTALCODE", postalCode.toString())
+                    postalCode = data?.getStringExtra(ZIPCODE)
 
                     val addressFormated = getAddressFromLatLng(requireContext(),
                                                                latitude!!,
                                                                longitude!!)
 
-                    val location = LatLng(latitude, longitude)
-                    this.location = location
-                    this.postalCode = postalCode
+                    this.location = LatLng(latitude, longitude)
                     binding.tvGroupPlace.text = addressFormated
 
                 } else {
@@ -146,7 +139,7 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
                 return "$street, $number $city $country"
             }
         } catch (e: IOException) {
-            Log.e("Geocoder", "Error getting address from location", e)
+            showToast("Erreur durant la récupération de l'adresse provenant de l'emplacement",1)
         }
 
         return null
@@ -156,9 +149,8 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
      * Prépare et vérifie les inputs et appel la création de groupe
      */
     fun addGroup() {
-        if(binding.etGroupName.text.isEmpty()) {
-            showToast("Le titre n'a pas été remplis", 1)
-            Log.w(TAG, "Le titre n'a pas été remplis")
+        if(binding.etGroupName.text.isBlank()) {
+            showToast("Le titre n'a pas été rempli", 1)
             return
         }
 
@@ -170,22 +162,19 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
 
             if(startDate.before(currentDate) || endDate.before(currentDate)) {
                 showToast("La date de début et de fin doivent être supérieures ou égales à la date du jour",1)
-                Log.w(TAG, "La date de début et de fin doivent être supérieures ou égales à la date du jour")
                 return
             }
 
             if(startDate.after(endDate)) {
-                Log.w(TAG, "La date de fin ne peut pas être antérieur à la date de début")
                 showToast(
-                    "La date de fin ne peut pas être antérieur à la date de début",
+                    "La date de fin ne peut pas être antérieure à la date de début",
                     1
                 )
                 return
             }
 
             if(country == null || city == null || street == null || postalCode == null) {
-                showToast("Addresse invalide", 1)
-                Log.w(TAG, "Addresse invalide")
+                showToast("Adresse invalide", 1)
                 return
             }
 
@@ -214,7 +203,6 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
         }
         catch (e: ParseException) {
             showToast("Une des dates est mal encodée", 1)
-            Log.e(TAG, "Parse error : " + e.message)
         }
     }
 
@@ -235,7 +223,7 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
     fun createDateHourDialog() {
         val calendar: Calendar = Calendar.getInstance()
         val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val month = calendar.get(Calendar.MONTH) + 1 //+1 month because january is 0
+        val month = calendar.get(Calendar.MONTH)
         val year = calendar.get(Calendar.YEAR)
         val datePickerDialog = DatePickerDialog(
             requireView().context,
@@ -248,35 +236,16 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
     }
 
     fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        tempDate = String.format("%02d/%02d/%d", dayOfMonth, month, year)
+        val formattedDate = String.format("%02d/%02d/%d", dayOfMonth, month+1, year)
 
         if(dateField == 0) {
-            startDate = tempDate
+            startDate = formattedDate
             binding.tvGroupStartDate.text = startDate
-            Log.d("startDate", startDate!!)
         } else if (dateField == 1) {
-            endDate = tempDate
+            endDate = formattedDate
             binding.tvGroupEndDate.text = endDate
-            Log.d("endDate", endDate!!)
         }
-
-        /*val timePickerDialog = TimePickerDialog(
-            requireView().context, TimePickerDialog.OnTimeSetListener(::onTimeSet), hour, minute,
-            DateFormat.is24HourFormat(requireView().context)
-        )
-        timePickerDialog.show()*/
     }
-    /*fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        if(dateField == 0) {
-            startDateHour = String.format("%s %02d:%02d", tempDate, hourOfDay, minute)
-            binding.tvGroupStartDate.text = startDateHour
-            Log.d("startDateHour", startDateHour!!)
-        } else if (dateField == 1) {
-            endDateHour = String.format("%s %02d:%02d", tempDate, hourOfDay, minute)
-            binding.tvGroupEndDate.text = endDateHour
-            Log.d("startDateHour", endDateHour!!)
-        }
-    }*/
 
     override fun onGroupCreated() {
         MainScope().launch {

@@ -76,6 +76,9 @@
         <action
             android:id="@+id/action_CalendarFragment_to_ActivityFragment"
             app:destination="@id/ActivityFragment" />
+        <action
+            android:id="@+id/action_CalendarFragment_to_CreateActivityFragment"
+            app:destination="@id/CreateActivityFragment" />
     </fragment>
     <fragment
         android:id="@+id/ActivityFragment"
@@ -94,5 +97,14 @@
         <action
             android:id="@+id/action_tchatFragment_to_groupFragment"
             app:destination="@id/groupFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/CreateActivityFragment"
+        android:name="be.helmo.planivacances.view.fragments.activity.CreateActivityFragment"
+        android:label="fragment_create_activity"
+        tools:layout="@layout/fragment_create_activity">
+        <action
+            android:id="@+id/action_CreateActivityFragment_to_CalendarFragment"
+            app:destination="@id/CalendarFragment" />
     </fragment>
 </navigation>

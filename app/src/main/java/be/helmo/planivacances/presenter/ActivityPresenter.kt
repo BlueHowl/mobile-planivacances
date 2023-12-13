@@ -1,13 +1,18 @@
 package be.helmo.planivacances.presenter
 
+import be.helmo.planivacances.domain.Place
 import be.helmo.planivacances.presenter.interfaces.IActivityView
 import be.helmo.planivacances.presenter.interfaces.ICalendarView
+import be.helmo.planivacances.presenter.interfaces.ICreateActivityView
 import be.helmo.planivacances.presenter.viewmodel.ActivityDetailVM
 import be.helmo.planivacances.presenter.viewmodel.ActivityListItemVM
+import be.helmo.planivacances.presenter.viewmodel.ActivityVM
+import be.helmo.planivacances.presenter.viewmodel.PlaceVM
 import be.helmo.planivacances.service.ApiClient
 import be.helmo.planivacances.service.dto.ActivitiesDTO
 import be.helmo.planivacances.service.dto.ActivityDTO
 import be.helmo.planivacances.service.dto.PlaceDTO
+import be.helmo.planivacances.util.DTOMapper
 import be.helmo.planivacances.view.interfaces.IActivityPresenter
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
 import java.text.SimpleDateFormat
@@ -18,6 +23,7 @@ import kotlin.collections.HashMap
 class ActivityPresenter(private val groupPresenter: IGroupPresenter) : IActivityPresenter {
     lateinit var calendarView : ICalendarView
     lateinit var activityView: IActivityView
+    lateinit var createActivityView: ICreateActivityView
     var activitiesDTO: ActivitiesDTO = ActivitiesDTO(HashMap())
     lateinit var currentActivityDTO : Pair<String,ActivityDTO>
 
@@ -27,6 +33,10 @@ class ActivityPresenter(private val groupPresenter: IGroupPresenter) : IActivity
 
     override fun setIActivityView(activityView: IActivityView) {
         this.activityView = activityView
+    }
+
+    override fun setICreateActivityView(createIActivityView: ICreateActivityView) {
+        this.createActivityView = createIActivityView
     }
 
     override fun setCurrentActivity(activityId: String) {
@@ -84,6 +94,19 @@ class ActivityPresenter(private val groupPresenter: IGroupPresenter) : IActivity
         activityView.buildItinerary(currentActivity.place.lat.toString(),currentActivity.place.lon.toString())
     }
 
+    override suspend fun createActivity(activityVM: ActivityVM) {
+        val activityDTO : ActivityDTO = DTOMapper.activityVMToActivityDTO(activityVM)
+
+        val response = ApiClient.activityService.createActivity(groupPresenter.getCurrentGroupId(),activityDTO)
+
+        if(response.isSuccessful) {
+
+            createActivityView.onActivityCreated()
+        } else {
+            createActivityView.showToast("Erreur durant la création de l'activité",1)
+        }
+    }
+
     fun onActivitiesLoaded() {
         val activityDates : ArrayList<Date> = ArrayList()
         activitiesDTO.activitiesMap.forEach {
@@ -130,4 +153,6 @@ class ActivityPresenter(private val groupPresenter: IGroupPresenter) : IActivity
         val minutes = (duration % 3600) / 60
         return String.format("%dh%02d",hours,minutes)
     }
+
+
 }

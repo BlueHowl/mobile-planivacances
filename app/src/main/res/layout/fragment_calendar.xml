@@ -39,20 +39,38 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/exportBtn"
-            android:layout_width="48dp"
+        <LinearLayout
+            android:id="@+id/headerCalendarBtn"
+            android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_marginEnd="12dp"
-            android:adjustViewBounds="true"
-            android:background="@color/transparent"
-            android:contentDescription="export calendar"
-            android:padding="4dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/export_share"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/createActivityBtn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="3dp"
+                android:adjustViewBounds="true"
+                android:background="@color/transparent"
+                android:contentDescription="Create activity"
+                android:scaleType="fitCenter"
+                android:src="@drawable/add_cross"
+                app:tint="@color/black" />
+
+            <ImageButton
+                android:id="@+id/exportCalendarBtn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:adjustViewBounds="true"
+                android:background="@color/transparent"
+                android:contentDescription="Export calendar"
+                android:scaleType="fitCenter"
+                android:src="@drawable/export_share"
+                app:tint="@color/black" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
