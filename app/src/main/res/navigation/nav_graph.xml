@@ -55,6 +55,9 @@
         <action
             android:id="@+id/action_groupFragment_to_tchatFragment"
             app:destination="@id/TchatFragment" />
+        <action
+            android:id="@+id/action_groupFragment_to_UpdateGroupFragment"
+            app:destination="@id/UpdateGroupFragment" />
     </fragment>
     <fragment
         android:id="@+id/weatherFragment"
@@ -121,5 +124,17 @@
         <action
             android:id="@+id/action_UpdateActivityFragment_to_ActivityFragment"
             app:destination="@id/ActivityFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/UpdateGroupFragment"
+        android:name="be.helmo.planivacances.view.fragments.UpdateGroupFragment"
+        android:label="fragment_update_group"
+        tools:layout="@layout/fragment_update_group">
+        <action
+            android:id="@+id/action_UpdateGroupFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_UpdateGroupFragment_to_groupFragment"
+            app:destination="@id/groupFragment" />
     </fragment>
 </navigation>

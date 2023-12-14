@@ -4,6 +4,7 @@ import be.helmo.planivacances.domain.Group
 import be.helmo.planivacances.presenter.viewmodel.GroupListItemVM
 import be.helmo.planivacances.domain.Place
 import be.helmo.planivacances.presenter.viewmodel.ActivityVM
+import be.helmo.planivacances.presenter.viewmodel.GroupVM
 import be.helmo.planivacances.presenter.viewmodel.PlaceVM
 import be.helmo.planivacances.service.dto.ActivityDTO
 import be.helmo.planivacances.service.dto.GroupDTO
@@ -44,6 +45,16 @@ object DTOMapper {
         )
     }
 
+    fun groupToGroupVM(group: Group) : GroupVM {
+        val placeVM : PlaceVM = placeToPlaceVM(group.place)
+        return GroupVM(group.groupName,group.description,group.startDate,group.endDate,placeVM)
+    }
+
+    fun groupVMToGroupDTO(groupVM: GroupVM,owner: String,gid:String) : GroupDTO {
+        val placeDTO = placeVMToPlaceDTO(groupVM.place)
+        return GroupDTO(gid,groupVM.name,groupVM.description,groupVM.startDate,groupVM.endDate,placeDTO,owner)
+    }
+
     fun placeToPlaceDTO(place: Place) : PlaceDTO {
          return PlaceDTO(
             place.country,
@@ -64,6 +75,12 @@ object DTOMapper {
             if (placeDTO.number != null) placeDTO.number else "",
             placeDTO.postalCode,
             LatLng(placeDTO.lat, placeDTO.lon)
+        )
+    }
+
+    fun placeToPlaceVM(place: Place) : PlaceVM {
+        return PlaceVM(place.street,place.number,place.postalCode,place.city,place.country,
+            LatLng(place.latLng.latitude,place.latLng.longitude)
         )
     }
 

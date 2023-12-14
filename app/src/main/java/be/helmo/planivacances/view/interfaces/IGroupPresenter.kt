@@ -6,6 +6,8 @@ import be.helmo.planivacances.domain.Place
 import be.helmo.planivacances.presenter.interfaces.ICreateGroupView
 import be.helmo.planivacances.presenter.interfaces.IGroupView
 import be.helmo.planivacances.presenter.interfaces.IHomeView
+import be.helmo.planivacances.presenter.interfaces.IUpdateGroupView
+import be.helmo.planivacances.presenter.viewmodel.GroupVM
 
 interface IGroupPresenter {
 
@@ -29,7 +31,13 @@ interface IGroupPresenter {
 
     fun setICreateGroupView(createGroupView: ICreateGroupView)
 
+    fun setIUpdateGroupView(updateGroupView: IUpdateGroupView)
+
     fun setIHomeView(homeView: IHomeView)
+
+    fun loadCurrentGroup()
+
+    suspend fun updateCurrentGroup(groupVM:GroupVM)
 
     suspend fun deleteCurrentGroup()
 }

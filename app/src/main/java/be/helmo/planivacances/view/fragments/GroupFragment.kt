@@ -44,6 +44,10 @@ class GroupFragment : Fragment(), IGroupView {
         // Inflate the layout for this fragment
         binding = FragmentGroupBinding.inflate(inflater, container,false)
 
+        binding.updateGroupBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_groupFragment_to_UpdateGroupFragment)
+        }
+
         binding.deleteGroupBtn.setOnClickListener {
             lifecycleScope.launch(Dispatchers.Default) {
                 groupPresenter.deleteCurrentGroup()

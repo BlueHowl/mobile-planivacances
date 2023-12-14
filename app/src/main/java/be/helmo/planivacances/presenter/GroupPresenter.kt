@@ -7,8 +7,11 @@ import be.helmo.planivacances.domain.Place
 import be.helmo.planivacances.presenter.interfaces.ICreateGroupView
 import be.helmo.planivacances.presenter.interfaces.IGroupView
 import be.helmo.planivacances.presenter.interfaces.IHomeView
+import be.helmo.planivacances.presenter.interfaces.IUpdateGroupView
 import be.helmo.planivacances.presenter.viewmodel.GroupDetailVM
+import be.helmo.planivacances.presenter.viewmodel.GroupVM
 import be.helmo.planivacances.service.ApiClient
+import be.helmo.planivacances.service.dto.GroupDTO
 import be.helmo.planivacances.util.DTOMapper
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
 import com.google.firebase.auth.FirebaseAuth
@@ -17,6 +20,7 @@ import java.text.SimpleDateFormat
 class GroupPresenter : IGroupPresenter {
     lateinit var groupView: IGroupView
     lateinit var createGroupView: ICreateGroupView
+    lateinit var updateGroupView: IUpdateGroupView
     lateinit var homeView: IHomeView
     var groups : HashMap<String, Group> = HashMap()
 
@@ -173,11 +177,33 @@ class GroupPresenter : IGroupPresenter {
         this.createGroupView = createGroupView
     }
 
+    override fun setIUpdateGroupView(updateGroupView: IUpdateGroupView) {
+        this.updateGroupView = updateGroupView
+    }
+
     /**
      * Assigne la HomeView Interface
      */
     override fun setIHomeView(homeView: IHomeView) {
         this.homeView = homeView
+    }
+
+    override fun loadCurrentGroup() {
+        val currentGroupVM : GroupVM = DTOMapper.groupToGroupVM(getCurrentGroup()!!)
+        updateGroupView.setCurrentGroup(currentGroupVM)
+    }
+
+    override suspend fun updateCurrentGroup(groupVM: GroupVM) {
+        val group = getCurrentGroup()
+        val groupDTO : GroupDTO = DTOMapper.groupVMToGroupDTO(groupVM,group?.owner!!,currentGid)
+
+        val response = ApiClient.groupService.update(currentGid,groupDTO)
+
+        if(response.isSuccessful) {
+            updateGroupView.onGroupUpdated()
+        } else {
+            updateGroupView.showToast("Erreur lors de la mise à jour du groupe",1)
+        }
     }
 
     override suspend fun deleteCurrentGroup() {

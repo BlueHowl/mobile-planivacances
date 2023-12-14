@@ -40,6 +40,11 @@ class AppSingletonFactory() {
         return groupPresenter
     }
 
+    fun getGroupPresenter(updateGroupView: IUpdateGroupView) : IGroupPresenter {
+        groupPresenter.setIUpdateGroupView(updateGroupView)
+        return groupPresenter
+    }
+
     //weather presenter
     fun getWeatherPresenter(weatherView: IWeatherView): IWeatherPresenter {
         weatherPresenter.setIWeatherView(weatherView)

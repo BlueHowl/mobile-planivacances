@@ -79,7 +79,7 @@ class UpdateActivityFragment : Fragment(), IUpdateActivityView {
             createLocationPickerDialog()
         }
 
-        binding.tvBackToActivity.setOnClickListener {
+        binding.tvBackToCalendar.setOnClickListener {
             findNavController().navigate(R.id.action_UpdateActivityFragment_to_ActivityFragment)
         }
 
@@ -265,30 +265,32 @@ class UpdateActivityFragment : Fragment(), IUpdateActivityView {
     }
 
     override fun setCurrentActivity(activityVM: ActivityVM) {
-        binding.etUpdateActivityTitle.setText(activityVM.title)
+        MainScope().launch {
+            binding.etUpdateActivityTitle.setText(activityVM.title)
 
-        startDate = SimpleDateFormat("dd/MM/yyyy").format(activityVM.startDate)
-        startTime = SimpleDateFormat("HH:mm").format(activityVM.startDate)
-        binding.tvUpdateActivityStartDate.setText("$startDate $startTime")
+            startDate = SimpleDateFormat("dd/MM/yyyy").format(activityVM.startDate)
+            startTime = SimpleDateFormat("HH:mm").format(activityVM.startDate)
+            binding.tvUpdateActivityStartDate.setText("$startDate $startTime")
 
-        val calendar = Calendar.getInstance()
-        calendar.time = activityVM.startDate
-        calendar.add(Calendar.SECOND,activityVM.duration)
-        val currentEndDate = calendar.time
-        endDate = SimpleDateFormat("dd/MM/yyyy").format(currentEndDate)
-        endTime = SimpleDateFormat("HH:mm").format(currentEndDate)
-        binding.tvUpdateActivityEndDate.setText("$endDate $endTime")
+            val calendar = Calendar.getInstance()
+            calendar.time = activityVM.startDate
+            calendar.add(Calendar.SECOND, activityVM.duration)
+            val currentEndDate = calendar.time
+            endDate = SimpleDateFormat("dd/MM/yyyy").format(currentEndDate)
+            endTime = SimpleDateFormat("HH:mm").format(currentEndDate)
+            binding.tvUpdateActivityEndDate.setText("$endDate $endTime")
 
-        val placeVM: PlaceVM = activityVM.place
-        country = placeVM.country
-        city = placeVM.city
-        street = placeVM.street
-        number = placeVM.number
-        postalCode = placeVM.postalCode
-        location = LatLng(placeVM.latLng.latitude,placeVM.latLng.longitude)
-        binding.tvUpdateActivityPlace.setText("$street, $number $city $country")
+            val placeVM: PlaceVM = activityVM.place
+            country = placeVM.country
+            city = placeVM.city
+            street = placeVM.street
+            number = placeVM.number
+            postalCode = placeVM.postalCode
+            location = LatLng(placeVM.latLng.latitude, placeVM.latLng.longitude)
+            binding.tvUpdateActivityPlace.setText("$street, $number $city $country")
 
-        binding.etUpdateActivityDescription.setText(activityVM.description)
+            binding.etUpdateActivityDescription.setText(activityVM.description)
+        }
     }
 
     override fun onActivityUpdated() {
