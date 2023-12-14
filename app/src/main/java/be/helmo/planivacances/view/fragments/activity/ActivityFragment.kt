@@ -54,6 +54,10 @@ class ActivityFragment : Fragment(), IActivityView {
         lifecycleScope.launch(Dispatchers.Default) {
             activityPresenter.loadCurrentActivity()
         }
+
+        binding.updateActivityBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_ActivityFragment_to_UpdateActivityFragment)
+        }
         return binding.root
     }
 

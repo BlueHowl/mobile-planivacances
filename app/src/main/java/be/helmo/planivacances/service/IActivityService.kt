@@ -12,6 +12,9 @@ interface IActivityService {
     @POST("activity/{gid}")
     suspend fun createActivity(@Path("gid") gid:String, @Body activityDTO: ActivityDTO): Response<String>
 
+    @PUT("activity/{gid}/{aid}")
+    suspend fun updateActivity(@Path("gid") gid:String, @Path("aid") aid:String, @Body activityDTO: ActivityDTO) : Response<Boolean>
+
     @DELETE("activity/{gid}/{aid}")
     suspend fun deleteActivity(@Path("gid") gid: String,@Path("aid") aid:String) : Response<String>
 }

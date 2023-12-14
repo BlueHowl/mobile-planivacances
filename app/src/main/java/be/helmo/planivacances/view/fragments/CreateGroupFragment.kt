@@ -215,13 +215,21 @@ class CreateGroupFragment : Fragment(), ICreateGroupView {
             .shouldReturnOkOnBackPressed()
             .withZipCodeHidden()
             .withVoiceSearchHidden()
-            .build(requireContext())
 
-        lekuActivityResultLauncher.launch(locationPickerIntent)
+        if(location != null) {
+            locationPickerIntent.withLocation(location)
+        }
+
+        lekuActivityResultLauncher.launch(locationPickerIntent.build(requireContext()))
     }
 
     fun createDateHourDialog() {
         val calendar: Calendar = Calendar.getInstance()
+        if(dateField == 0 && startDate != null) {
+            calendar.time = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(startDate)
+        } else if(dateField == 1 && endDate != null) {
+            calendar.time = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(endDate)
+        }
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         val month = calendar.get(Calendar.MONTH)
         val year = calendar.get(Calendar.YEAR)

@@ -19,9 +19,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import be.helmo.planivacances.R
-import be.helmo.planivacances.databinding.FragmentCreateActivityBinding
+import be.helmo.planivacances.databinding.FragmentUpdateActivityBinding
 import be.helmo.planivacances.factory.AppSingletonFactory
-import be.helmo.planivacances.presenter.interfaces.ICreateActivityView
+import be.helmo.planivacances.presenter.interfaces.IUpdateActivityView
 import be.helmo.planivacances.presenter.viewmodel.ActivityVM
 import be.helmo.planivacances.presenter.viewmodel.PlaceVM
 import be.helmo.planivacances.view.interfaces.IActivityPresenter
@@ -36,12 +36,11 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.time.Duration
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class CreateActivityFragment : Fragment(), ICreateActivityView {
-    lateinit var binding : FragmentCreateActivityBinding
+class UpdateActivityFragment : Fragment(), IUpdateActivityView {
+    lateinit var binding : FragmentUpdateActivityBinding
     lateinit var activityPresenter: IActivityPresenter
     lateinit var lekuActivityResultLauncher: ActivityResultLauncher<Intent>
 
@@ -70,32 +69,36 @@ class CreateActivityFragment : Fragment(), ICreateActivityView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentCreateActivityBinding.inflate(inflater,container,false)
+        binding = FragmentUpdateActivityBinding.inflate(inflater,container,false)
 
-        binding.tvCreateActivityPlace.setOnClickListener {
+        lifecycleScope.launch(Dispatchers.Default) {
+            activityPresenter.getCurrentActivity()
+        }
+
+        binding.tvUpdateActivityPlace.setOnClickListener {
             createLocationPickerDialog()
         }
 
-        binding.tvBackToCalendar.setOnClickListener {
-            findNavController().navigate(R.id.action_CreateActivityFragment_to_CalendarFragment)
+        binding.tvBackToActivity.setOnClickListener {
+            findNavController().navigate(R.id.action_UpdateActivityFragment_to_ActivityFragment)
         }
 
-        binding.tvCreateActivityStartDate.setOnClickListener {
+        binding.tvUpdateActivityStartDate.setOnClickListener {
             dateField = 0
             createDateHourDialog()
         }
 
-        binding.tvCreateActivityEndDate.setOnClickListener {
+        binding.tvUpdateActivityEndDate.setOnClickListener {
             dateField = 1
             createDateHourDialog()
         }
 
-        binding.createActivityBtn.setOnClickListener {
-            addActivity()
+        binding.updateActivityBtn.setOnClickListener {
+            updateActivity()
         }
 
         lekuActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            result: ActivityResult ->
+                result: ActivityResult ->
 
             if(result.resultCode == Activity.RESULT_OK) {
                 val data = result.data
@@ -107,24 +110,26 @@ class CreateActivityFragment : Fragment(), ICreateActivityView {
 
                 location =  LatLng(latitude,longitude)
 
-                binding.tvCreateActivityPlace.text = addressFormatted
+                binding.tvUpdateActivityPlace.text = addressFormatted
             } else {
                 showToast("Erreur lors de la récupération de la localisation",1)
             }
         }
 
+
+
         return binding.root
     }
 
-    fun addActivity() {
-        if(binding.etCreateActivityTitle.text.isBlank()) {
+    fun updateActivity() {
+        if(binding.etUpdateActivityTitle.text.isBlank()) {
             showToast("Le titre doit être défini",1)
             return
         }
         try {
             val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm")
-            val startDate = formatter.parse(binding.tvCreateActivityStartDate.text.toString())!!
-            val endDate = formatter.parse(binding.tvCreateActivityEndDate.text.toString())!!
+            val startDate = formatter.parse(binding.tvUpdateActivityStartDate.text.toString())!!
+            val endDate = formatter.parse(binding.tvUpdateActivityEndDate.text.toString())!!
             val currentDate = Calendar.getInstance().time
 
             if(startDate.before(currentDate) || endDate.before(currentDate)) {
@@ -146,10 +151,10 @@ class CreateActivityFragment : Fragment(), ICreateActivityView {
 
             val place = PlaceVM(street!!,number!!,postalCode!!,city!!,country!!,location!!)
 
-            val activity : ActivityVM = ActivityVM(binding.etCreateActivityTitle.text.toString(),binding.etCreateActivityDescription.text.toString(),startDate,duration,place)
+            val activity : ActivityVM = ActivityVM(binding.etUpdateActivityTitle.text.toString(),binding.etUpdateActivityDescription.text.toString(),startDate,duration,place)
 
             lifecycleScope.launch(Dispatchers.Default) {
-                activityPresenter.createActivity(activity)
+                activityPresenter.updateCurrentActivity(activity)
             }
         } catch(e : ParseException) {
             showToast("Une des dates est mal encodée",1)
@@ -195,7 +200,6 @@ class CreateActivityFragment : Fragment(), ICreateActivityView {
 
     fun onDateSet(year: Int, month: Int, dayOfMonth: Int) {
         val formattedDate = String.format("%02d/%02d/%d", dayOfMonth, month+1, year)
-
         if (dateField == 0) {
             startDate = formattedDate
         } else if (dateField == 1) {
@@ -231,15 +235,15 @@ class CreateActivityFragment : Fragment(), ICreateActivityView {
 
         if(dateField == 0) {
             startTime = formattedTime
-            binding.tvCreateActivityStartDate.text = "$startDate $startTime"
+            binding.tvUpdateActivityStartDate.text = "$startDate $startTime"
         } else if(dateField == 1) {
             endTime = formattedTime
-            binding.tvCreateActivityEndDate.text = "$endDate $endTime"
+            binding.tvUpdateActivityEndDate.text = "$endDate $endTime"
         }
     }
 
     fun getAddressFromLatLng(context: Context, lat:Double, lng:Double) : String? {
-        val geocoder = Geocoder(context,Locale.getDefault())
+        val geocoder = Geocoder(context, Locale.getDefault())
 
         try {
             val addresses = geocoder.getFromLocation(lat,lng,1) as List<Address>
@@ -260,10 +264,37 @@ class CreateActivityFragment : Fragment(), ICreateActivityView {
         return null
     }
 
-    override fun onActivityCreated() {
+    override fun setCurrentActivity(activityVM: ActivityVM) {
+        binding.etUpdateActivityTitle.setText(activityVM.title)
+
+        startDate = SimpleDateFormat("dd/MM/yyyy").format(activityVM.startDate)
+        startTime = SimpleDateFormat("HH:mm").format(activityVM.startDate)
+        binding.tvUpdateActivityStartDate.setText("$startDate $startTime")
+
+        val calendar = Calendar.getInstance()
+        calendar.time = activityVM.startDate
+        calendar.add(Calendar.SECOND,activityVM.duration)
+        val currentEndDate = calendar.time
+        endDate = SimpleDateFormat("dd/MM/yyyy").format(currentEndDate)
+        endTime = SimpleDateFormat("HH:mm").format(currentEndDate)
+        binding.tvUpdateActivityEndDate.setText("$endDate $endTime")
+
+        val placeVM: PlaceVM = activityVM.place
+        country = placeVM.country
+        city = placeVM.city
+        street = placeVM.street
+        number = placeVM.number
+        postalCode = placeVM.postalCode
+        location = LatLng(placeVM.latLng.latitude,placeVM.latLng.longitude)
+        binding.tvUpdateActivityPlace.setText("$street, $number $city $country")
+
+        binding.etUpdateActivityDescription.setText(activityVM.description)
+    }
+
+    override fun onActivityUpdated() {
         MainScope().launch {
-            showToast("Activité créée avec succès",1)
-            findNavController().navigate(R.id.action_CreateActivityFragment_to_CalendarFragment)
+            showToast("Activité mise à jour avec succès",1)
+            findNavController().navigate(R.id.action_UpdateActivityFragment_to_CalendarFragment)
         }
     }
 
@@ -274,10 +305,10 @@ class CreateActivityFragment : Fragment(), ICreateActivityView {
     }
 
     companion object {
-        const val TAG = "CreateActivityFragment"
+        const val TAG = "UpdateActivityFragment"
 
-        fun newInstance(): CreateActivityFragment {
-            return CreateActivityFragment()
+        fun newInstance(): UpdateActivityFragment {
+            return UpdateActivityFragment()
         }
     }
 }

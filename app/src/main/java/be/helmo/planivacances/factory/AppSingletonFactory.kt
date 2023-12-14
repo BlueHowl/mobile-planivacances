@@ -65,6 +65,11 @@ class AppSingletonFactory() {
         return activityPresenter
     }
 
+    fun getActivityPresenter(updateActivityView: IUpdateActivityView) : IActivityPresenter {
+        activityPresenter.setIUpdateActivityView(updateActivityView)
+        return activityPresenter
+    }
+
     companion object {
         var instance: AppSingletonFactory? = null
             get() {

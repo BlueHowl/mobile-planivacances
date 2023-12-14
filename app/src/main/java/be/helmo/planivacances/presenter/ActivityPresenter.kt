@@ -4,6 +4,7 @@ import be.helmo.planivacances.domain.Place
 import be.helmo.planivacances.presenter.interfaces.IActivityView
 import be.helmo.planivacances.presenter.interfaces.ICalendarView
 import be.helmo.planivacances.presenter.interfaces.ICreateActivityView
+import be.helmo.planivacances.presenter.interfaces.IUpdateActivityView
 import be.helmo.planivacances.presenter.viewmodel.ActivityDetailVM
 import be.helmo.planivacances.presenter.viewmodel.ActivityListItemVM
 import be.helmo.planivacances.presenter.viewmodel.ActivityVM
@@ -24,6 +25,7 @@ class ActivityPresenter(private val groupPresenter: IGroupPresenter) : IActivity
     lateinit var calendarView : ICalendarView
     lateinit var activityView: IActivityView
     lateinit var createActivityView: ICreateActivityView
+    lateinit var updateActivityView: IUpdateActivityView
     var activitiesDTO: ActivitiesDTO = ActivitiesDTO(HashMap())
     lateinit var currentActivityDTO : Pair<String,ActivityDTO>
 
@@ -37,6 +39,10 @@ class ActivityPresenter(private val groupPresenter: IGroupPresenter) : IActivity
 
     override fun setICreateActivityView(createIActivityView: ICreateActivityView) {
         this.createActivityView = createIActivityView
+    }
+
+    override fun setIUpdateActivityView(updateActivityView: IUpdateActivityView) {
+        this.updateActivityView = updateActivityView
     }
 
     override fun setCurrentActivity(activityId: String) {
@@ -84,6 +90,11 @@ class ActivityPresenter(private val groupPresenter: IGroupPresenter) : IActivity
         }
     }
 
+    override fun getCurrentActivity() {
+        val currentActivityVM : ActivityVM = DTOMapper.activityDTOToActivityVM(currentActivityDTO.second)
+        updateActivityView.setCurrentActivity(currentActivityVM)
+    }
+
     override fun loadCurrentActivity() {
         val currentActivity = currentActivityDTO.second
         activityView.loadActivity(ActivityDetailVM(currentActivity.title,formatPeriod(currentActivity.startDate,currentActivity.duration),formatPlace(currentActivity.place),currentActivity.description))
@@ -100,10 +111,21 @@ class ActivityPresenter(private val groupPresenter: IGroupPresenter) : IActivity
         val response = ApiClient.activityService.createActivity(groupPresenter.getCurrentGroupId(),activityDTO)
 
         if(response.isSuccessful) {
-
             createActivityView.onActivityCreated()
         } else {
             createActivityView.showToast("Erreur durant la création de l'activité",1)
+        }
+    }
+
+    override suspend fun updateCurrentActivity(activityVM: ActivityVM) {
+        val activityDTO : ActivityDTO = DTOMapper.activityVMToActivityDTO(activityVM)
+
+        val response = ApiClient.activityService.updateActivity(groupPresenter.getCurrentGroupId(),currentActivityDTO.first,activityDTO)
+
+        if(response.isSuccessful) {
+            updateActivityView.onActivityUpdated()
+        } else {
+            updateActivityView.showToast("Erreur lors de la mise à jour de l'activité",1)
         }
     }
 

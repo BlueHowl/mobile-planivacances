@@ -71,8 +71,18 @@ object DTOMapper {
         return PlaceDTO(placeVM.country,placeVM.city,placeVM.street,placeVM.number,placeVM.postalCode,placeVM.latLng.latitude,placeVM.latLng.longitude)
     }
 
+    fun placeDTOToPlaceVM(placeDTO: PlaceDTO) : PlaceVM {
+        return PlaceVM(placeDTO.street,placeDTO.number,placeDTO.postalCode,placeDTO.city,placeDTO.country,
+            LatLng(placeDTO.lat,placeDTO.lon)
+        )
+    }
     fun activityVMToActivityDTO(activityVM: ActivityVM) : ActivityDTO {
         val placeDTO : PlaceDTO = placeVMToPlaceDTO(activityVM.place)
         return ActivityDTO(activityVM.title,activityVM.description,activityVM.startDate,activityVM.duration,placeDTO)
+    }
+
+    fun activityDTOToActivityVM(activityDTO: ActivityDTO) : ActivityVM {
+        val placeVM : PlaceVM = placeDTOToPlaceVM(activityDTO.place)
+        return ActivityVM(activityDTO.title,activityDTO.description,activityDTO.startDate,activityDTO.duration,placeVM)
     }
 }
