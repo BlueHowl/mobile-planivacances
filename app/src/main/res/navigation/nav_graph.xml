@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/createGroupFragment"
-        android:name="be.helmo.planivacances.view.fragments.CreateGroupFragment"
+        android:name="be.helmo.planivacances.view.fragments.group.CreateGroupFragment"
         android:label="fragment_create_group"
         tools:layout="@layout/fragment_create_group">
         <action
@@ -40,7 +40,7 @@
     </fragment>
     <fragment
         android:id="@+id/groupFragment"
-        android:name="be.helmo.planivacances.view.fragments.GroupFragment"
+        android:name="be.helmo.planivacances.view.fragments.group.GroupFragment"
         android:label="fragment_group"
         tools:layout="@layout/fragment_group">
         <action
@@ -127,7 +127,7 @@
     </fragment>
     <fragment
         android:id="@+id/UpdateGroupFragment"
-        android:name="be.helmo.planivacances.view.fragments.UpdateGroupFragment"
+        android:name="be.helmo.planivacances.view.fragments.group.UpdateGroupFragment"
         android:label="fragment_update_group"
         tools:layout="@layout/fragment_update_group">
         <action

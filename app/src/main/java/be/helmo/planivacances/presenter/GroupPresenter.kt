@@ -28,10 +28,11 @@ class GroupPresenter : IGroupPresenter {
 
     /**
      * Crée un groupe
-     * @param group (GroupDTO)
+     * @param groupVM (GroupVM)
      */
-    override suspend fun createGroup(group: Group) {
-        val groupDto = DTOMapper.groupToGroupDTO(group)
+    override suspend fun createGroup(groupVM: GroupVM) {
+        val groupDto = DTOMapper.groupVMToGroupDTO(groupVM, "null", "null")
+        val group = DTOMapper.groupDtoToGroup(groupDto)
 
         try {
             val response = ApiClient.groupService.create(groupDto)

@@ -1,4 +1,4 @@
-package be.helmo.planivacances.view.fragments
+package be.helmo.planivacances.view.fragments.group
 
 import android.content.Intent
 import android.net.Uri

@@ -1,4 +1,4 @@
-package be.helmo.planivacances.view.fragments
+package be.helmo.planivacances.view.fragments.group
 
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -10,8 +10,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.DatePicker
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,16 +18,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import be.helmo.planivacances.R
-import be.helmo.planivacances.databinding.FragmentUpdateGroupBinding
+import be.helmo.planivacances.databinding.FragmentCreateGroupBinding
 import be.helmo.planivacances.factory.AppSingletonFactory
-import be.helmo.planivacances.presenter.interfaces.IUpdateGroupView
+import be.helmo.planivacances.presenter.interfaces.ICreateGroupView
 import be.helmo.planivacances.presenter.viewmodel.GroupVM
 import be.helmo.planivacances.presenter.viewmodel.PlaceVM
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
-import com.adevinta.leku.LATITUDE
-import com.adevinta.leku.LONGITUDE
-import com.adevinta.leku.LocationPickerActivity
-import com.adevinta.leku.ZIPCODE
+import com.adevinta.leku.*
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -38,11 +34,17 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class UpdateGroupFragment : Fragment(), IUpdateGroupView {
 
-    lateinit var binding : FragmentUpdateGroupBinding
-    lateinit var groupPresesenter : IGroupPresenter
-    lateinit var lekuActivityResultLauncher : ActivityResultLauncher<Intent>
+/**
+ * Fragment de création de groupe
+ */
+class CreateGroupFragment : Fragment(), ICreateGroupView {
+
+    lateinit var binding : FragmentCreateGroupBinding
+
+    lateinit var groupPresenter : IGroupPresenter
+
+    lateinit var lekuActivityResultLauncher: ActivityResultLauncher<Intent>
 
     var country: String? = null
     var city: String? = null
@@ -58,45 +60,42 @@ class UpdateGroupFragment : Fragment(), IUpdateGroupView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        groupPresesenter = AppSingletonFactory.instance!!.getGroupPresenter(this)
+        groupPresenter = AppSingletonFactory.instance!!.getGroupPresenter(this)
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentUpdateGroupBinding.inflate(inflater,container,false)
+    ): View {
+        // Inflate the layout for this fragment
+        binding = FragmentCreateGroupBinding.inflate(inflater, container,false)
 
-        lifecycleScope.launch(Dispatchers.Default) {
-            groupPresesenter.loadCurrentGroup()
+        binding.addGroupBtn.setOnClickListener {
+            addGroup()
         }
 
-        binding.tvBackToHome.setOnClickListener {
-            findNavController().navigate(R.id.action_UpdateGroupFragment_to_groupFragment)
+        //back when backText is Clicked
+        binding.tvBack.setOnClickListener {
+            findNavController().navigate(R.id.action_createGroupFragment_to_homeFragment)
         }
 
-        binding.tvUpdateGroupPlace.setOnClickListener {
+        binding.tvGroupPlace.setOnClickListener {
             createLocationPickerDialog()
         }
 
-        binding.tvUpdateGroupStartDate.setOnClickListener {
+        binding.tvGroupStartDate.setOnClickListener {
             dateField = 0
             createDateHourDialog()
         }
 
-        binding.tvUpdateGroupEndDate.setOnClickListener {
+        binding.tvGroupEndDate.setOnClickListener {
             dateField = 1
             createDateHourDialog()
         }
 
-        binding.updateGroupBtn.setOnClickListener {
-            updateGroup()
-        }
-
         lekuActivityResultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                    result: ActivityResult ->
+                result: ActivityResult ->
 
                 if (result.resultCode == Activity.RESULT_OK) {
                     val data = result.data
@@ -105,11 +104,11 @@ class UpdateGroupFragment : Fragment(), IUpdateGroupView {
                     postalCode = data?.getStringExtra(ZIPCODE)
 
                     val addressFormated = getAddressFromLatLng(requireContext(),
-                        latitude!!,
-                        longitude!!)
+                                                               latitude!!,
+                                                               longitude!!)
 
                     this.location = LatLng(latitude, longitude)
-                    binding.tvUpdateGroupPlace.text = addressFormated
+                    binding.tvGroupPlace.text = addressFormated
 
                 } else {
                     showToast(
@@ -145,27 +144,27 @@ class UpdateGroupFragment : Fragment(), IUpdateGroupView {
         return null
     }
 
-    fun updateGroup() {
-        if(binding.etUpdateGroupName.text.isBlank()) {
-            showToast("Le titre doit être défini",1)
+    /**
+     * Prépare et vérifie les inputs et appel la création de groupe
+     */
+    fun addGroup() {
+        if(binding.etGroupName.text.isBlank()) {
+            showToast("Le titre n'a pas été rempli", 1)
             return
         }
 
         try {
             val formatter = SimpleDateFormat(getString(R.string.date_format))
-            val startDate = formatter.parse(binding.tvUpdateGroupStartDate.text.toString())!!
-            val endDate = formatter.parse(binding.tvUpdateGroupEndDate.text.toString())!!
+            val startDate = formatter.parse(binding.tvGroupStartDate.text.toString())!!
+            val endDate = formatter.parse(binding.tvGroupEndDate.text.toString())!!
             val currentDate = Calendar.getInstance().time
 
-            if (startDate.before(currentDate) || endDate.before(currentDate)) {
-                showToast(
-                    "La date de début et de fin doivent être supérieures ou égales à la date du jour",
-                    1
-                )
+            if(startDate.before(currentDate) || endDate.before(currentDate)) {
+                showToast("La date de début et de fin doivent être supérieures ou égales à la date du jour",1)
                 return
             }
 
-            if (startDate.after(endDate)) {
+            if(startDate.after(endDate)) {
                 showToast(
                     "La date de fin ne peut pas être antérieure à la date de début",
                     1
@@ -173,24 +172,42 @@ class UpdateGroupFragment : Fragment(), IUpdateGroupView {
                 return
             }
 
-            if (country == null || city == null || street == null || postalCode == null) {
+            if(country == null || city == null || street == null || postalCode == null) {
                 showToast("Adresse invalide", 1)
                 return
             }
 
-            val place = PlaceVM(street!!,number!!,postalCode!!,city!!,country!!,location!!)
+            val place = PlaceVM(
+                country!!,
+                city!!,
+                street!!,
+                number!!,
+                postalCode!!,
+                location!!
+            )
 
-            val groupVM = GroupVM(binding.etUpdateGroupName.text.toString(),binding.etUpdateGroupDescription.text.toString(),startDate,endDate,place)
+            val group = GroupVM(
+                binding.etGroupName.text.toString(),
+                binding.etGroupDescription.text.toString(),
+                startDate,
+                endDate,
+                place
+            )
 
             lifecycleScope.launch(Dispatchers.Default) {
-                groupPresesenter.updateCurrentGroup(groupVM)
+                groupPresenter.createGroup(group)
             }
 
-        } catch (e: ParseException) {
-            showToast("Une des dates est mal encodée",1)
-        }
-     }
 
+        }
+        catch (e: ParseException) {
+            showToast("Une des dates est mal encodée", 1)
+        }
+    }
+
+    /**
+     * Crée un dialog de récupération de lieu
+     */
     fun createLocationPickerDialog() {
         val locationPickerIntent = LocationPickerActivity.Builder()
             .withDefaultLocaleSearchZone()
@@ -208,9 +225,9 @@ class UpdateGroupFragment : Fragment(), IUpdateGroupView {
     fun createDateHourDialog() {
         val calendar: Calendar = Calendar.getInstance()
         if(dateField == 0 && startDate != null) {
-            calendar.time = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(startDate)
+            calendar.time = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(startDate!!)!!
         } else if(dateField == 1 && endDate != null) {
-            calendar.time = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(endDate)
+            calendar.time = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(endDate!!)!!
         }
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         val month = calendar.get(Calendar.MONTH)
@@ -230,54 +247,37 @@ class UpdateGroupFragment : Fragment(), IUpdateGroupView {
 
         if(dateField == 0) {
             startDate = formattedDate
-            binding.tvUpdateGroupStartDate.text = startDate
+            binding.tvGroupStartDate.text = startDate
         } else if (dateField == 1) {
             endDate = formattedDate
-            binding.tvUpdateGroupEndDate.text = endDate
+            binding.tvGroupEndDate.text = endDate
         }
     }
 
-    override fun onGroupUpdated() {
+    override fun onGroupCreated() {
         MainScope().launch {
-            showToast("Groupe mis à jour !", 0)
-            findNavController().navigate(R.id.action_UpdateGroupFragment_to_homeFragment)
+            showToast("Groupe créé !", 0)
+            findNavController().navigate(R.id.action_createGroupFragment_to_groupFragment)
         }
     }
 
-    override fun setCurrentGroup(groupVM: GroupVM) {
-        MainScope().launch {
-            binding.etUpdateGroupName.setText(groupVM.name)
-
-            startDate = SimpleDateFormat("dd/MM/yyyy").format(groupVM.startDate)
-            binding.tvUpdateGroupStartDate.setText(startDate)
-
-            endDate = SimpleDateFormat("dd/MM/yyyy").format(groupVM.endDate)
-            binding.tvUpdateGroupEndDate.setText(endDate)
-
-            val placeVM: PlaceVM = groupVM.place
-            country = placeVM.country
-            city = placeVM.city
-            street = placeVM.street
-            number = placeVM.number
-            postalCode = placeVM.postalCode
-            location = LatLng(placeVM.latLng.latitude,placeVM.latLng.longitude)
-            binding.tvUpdateGroupPlace.setText("$street, $number $city $country")
-
-            binding.etUpdateGroupDescription.setText(groupVM.description)
-        }
-    }
-
+    /**
+     * Affiche un message à l'écran
+     * @param message (String)
+     * @param length (Int) 0 = short, 1 = long
+     */
     override fun showToast(message: String, length: Int) {
         MainScope().launch {
-            Toast.makeText(context,message,length).show()
+            binding.pbCreateGroup.visibility = View.GONE
+            Toast.makeText(context, message, length).show()
         }
     }
 
     companion object {
-        const val TAG = "UpdateGroupFragment"
+        const val TAG = "CreateGroupFragment"
 
-        fun newInstance(): UpdateGroupFragment {
-            return UpdateGroupFragment()
+        fun newInstance(): CreateGroupFragment {
+            return CreateGroupFragment()
         }
     }
 }

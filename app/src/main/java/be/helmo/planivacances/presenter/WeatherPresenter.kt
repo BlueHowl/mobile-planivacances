@@ -1,7 +1,7 @@
 package be.helmo.planivacances.presenter
 
 import android.util.Log
-import be.helmo.planivacances.domain.WeatherForecast
+import be.helmo.planivacances.presenter.viewmodel.WeatherForecastVM
 import be.helmo.planivacances.presenter.interfaces.IWeatherView
 import be.helmo.planivacances.service.ApiClient
 import be.helmo.planivacances.view.interfaces.IGroupPresenter
@@ -38,7 +38,7 @@ class WeatherPresenter(val groupPresenter: IGroupPresenter) : IWeatherPresenter 
             val weatherData = response.body()
 
             val forecastList = weatherData?.forecast?.forecastday?.map { it ->
-                WeatherForecast(
+                WeatherForecastVM(
                     "https:${it.day.condition.icon}",
                     "${it.day.avgtemp_c}° C",
                     it.date,

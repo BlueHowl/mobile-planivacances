@@ -18,8 +18,6 @@ import androidx.navigation.fragment.findNavController
 import be.helmo.planivacances.BuildConfig
 import be.helmo.planivacances.databinding.FragmentAuthBinding
 import be.helmo.planivacances.R
-import be.helmo.planivacances.domain.LoginUser
-import be.helmo.planivacances.domain.RegisterUser
 import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.presenter.interfaces.IAuthView
 import be.helmo.planivacances.view.MainActivity
@@ -106,18 +104,11 @@ class AuthFragment : Fragment(), IAuthView {
         }
 
         binding.btnLogin.setOnClickListener {
-            val loginUser = LoginUser(
-                binding.etLoginMail.text.toString(),
-                binding.etLoginPassword.text.toString())
-            login(loginUser)
+            login()
         }
 
         binding.btnRegister.setOnClickListener {
-            val registerUser = RegisterUser(
-                binding.etRegisterName.text.toString(),
-                binding.etRegisterMail.text.toString(),
-                binding.etRegisterPassword.text.toString())
-            register(registerUser)
+            register()
         }
 
 
@@ -196,28 +187,32 @@ class AuthFragment : Fragment(), IAuthView {
 
     /**
      * Appel la fonction d'enregistrement asynchrone
-     * @param registerUser (RegisterUserDTO)
      */
-    fun register(registerUser: RegisterUser) {
+    fun register() {
         hideKeyboard()
         binding.pbAuth.visibility = View.VISIBLE
 
         lifecycleScope.launch(Dispatchers.Default) {
-            authPresenter.register(registerUser)
+            authPresenter.register(
+                binding.etRegisterName.text.toString(),
+                binding.etRegisterMail.text.toString(),
+                binding.etRegisterPassword.text.toString())
         }
 
     }
 
     /**
      * Appel la fonction de connexion asynchrone
-     * @param loginUser (LoginUserDTO)
      */
-    fun login(loginUser: LoginUser) {
+    fun login() {
         hideKeyboard()
         binding.pbAuth.visibility = View.VISIBLE
 
         lifecycleScope.launch(Dispatchers.Default) {
-            authPresenter.login(loginUser, binding.cbKeepConnected.isChecked)
+            authPresenter.login(
+                binding.etLoginMail.text.toString(),
+                binding.etLoginPassword.text.toString(),
+                binding.cbKeepConnected.isChecked)
         }
 
     }

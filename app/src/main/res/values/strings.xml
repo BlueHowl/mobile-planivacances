@@ -7,4 +7,32 @@
     <string name="date_format">dd/MM/yyyy</string>
     <string name="date_short_format">dd/MM/yy</string>
 
+    <string name="back_button">Retour</string>
+
+    <string name="group_title">Groupe</string>
+    <string name="dummy_group_name">&quot;Groupe Erreur&quot;</string>
+    <string name="dummy_group_date">Du 04/04/2404 au 04/04/2404</string>
+    <string name="dummy_group_address">Rue de l\'erreur, 400, Internet</string>
+    <string name="lorem_ipsum_desc">Description Fugiat do aliqua laboris cillum sint dolor officia adipisicing excepteur fugiat officia. Cupidatat ut elit consequat ea laborum occaecat laborum aute consectetur Lorem exercitation. Lorem anim minim officia aliquip commodo deserunt mollit. Duis deserunt quis cillum voluptate duis ipsum quis incididunt elit excepteur labore duis cillum. Voluptate sint nulla minim eiusmod in nulla. Ea id ad duis esse adipisicing culpa ex esse ea dolore consequat. Reprehenderit eu minim veniam aliquip do ipsum duis do qui adipisicing aliquip ad occaecat.</string>
+
+    <string name="create_group_title">Créer un groupe</string>
+    <string name="group_name_hint">Nom du groupe</string>
+    <string name="start_date_text">Sélectionner une date de départ</string>
+    <string name="end_date_text">Sélectionner une date de fin</string>
+    <string name="place_text">Sélectionner un lieu</string>
+    <string name="desc_hint">Description</string>
+    <string name="add_group">Ajouter le groupe</string>
+
+    <string name="modify_group_title">Modifier un groupe</string>
+    <string name="update_group">Modifier le groupe</string>
+
+    <string name="delete_group">Supprimer le groupe</string>
+
+
+    <string name="calendar">Calendrier</string>
+    <string name="itinerary">Itinéraire</string>
+    <string name="weather">Météo</string>
+    <string name="chat">Tchat</string>
+    <string name="add_member">Ajouter un membre au groupe</string>
+
 </resources>

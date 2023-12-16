@@ -5,12 +5,11 @@ import android.util.Log
 import be.helmo.planivacances.presenter.interfaces.IAuthView
 import be.helmo.planivacances.service.ApiClient
 import be.helmo.planivacances.service.TokenAuthenticator
-import be.helmo.planivacances.domain.LoginUser
-import be.helmo.planivacances.domain.RegisterUser
+import be.helmo.planivacances.service.dto.LoginUserDTO
+import be.helmo.planivacances.service.dto.RegisterUserDTO
 import be.helmo.planivacances.view.interfaces.IAuthPresenter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
 
 /**
@@ -28,12 +27,14 @@ class AuthPresenter : IAuthPresenter {
 
     /**
      * Enregistrement asycnhrone d'un profil utilisateur
-     * @param registerUser (RegisterUserDTO) Objet contenant le nom,
+     * @param username (String) nom
+     * @param mail (String) email
+     * @param password (String) mot de passe
      * mail et mot de passe utilisateur
      */
-    override suspend fun register(registerUser: RegisterUser) {
+    override suspend fun register(username: String, mail: String, password: String) {
         try {
-            val response =  ApiClient.authService.register(registerUser)
+            val response =  ApiClient.authService.register(RegisterUserDTO(username, mail, password))
 
             if (!response.isSuccessful || response.body() == null) {
                 authView.showToast(
@@ -59,12 +60,13 @@ class AuthPresenter : IAuthPresenter {
 
     /**
      * Connexion asycnhrone à un profil utilisateur
-     * @param loginUser (LoginUserDTO) Objet contenant le mail et mot de passe utilisateur
+     * @param mail (String) email
+     * @param password (String) mot de passe
      * @param keepConnected (Boolean) stocker le token en local ?
      */
-    override suspend fun login(loginUser: LoginUser, keepConnected: Boolean) {
+    override suspend fun login(mail: String, password: String, keepConnected: Boolean) {
         try {
-            val response = ApiClient.authService.login(loginUser)
+            val response = ApiClient.authService.login(LoginUserDTO(mail, password))
 
             if (!response.isSuccessful || response.body() == null) {
                 authView.showToast("Erreur lors de la connexion\n&${response.message()}", 1)
@@ -96,7 +98,7 @@ class AuthPresenter : IAuthPresenter {
 
     /**
      * Sauvegarde le resfresh token si demandé et précise le token au TokenAuthenticator
-     * @param token (String) refreshToken
+     * @param customToken (String) customToken
      * @param keepConnected (Boolean) stocker le token en local ?
      */
     suspend fun auth(customToken: String, keepConnected: Boolean) {
@@ -163,7 +165,7 @@ class AuthPresenter : IAuthPresenter {
      * @return (String)
      */
     override fun getDisplayName(): String {
-        return mAuth.currentUser!!.displayName!!;
+        return mAuth.currentUser!!.displayName!!
     }
 
 

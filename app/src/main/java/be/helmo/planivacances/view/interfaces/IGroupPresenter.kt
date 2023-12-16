@@ -1,7 +1,6 @@
 package be.helmo.planivacances.view.interfaces
 
 import be.helmo.planivacances.domain.Group
-import be.helmo.planivacances.presenter.viewmodel.GroupListItemVM
 import be.helmo.planivacances.domain.Place
 import be.helmo.planivacances.presenter.interfaces.ICreateGroupView
 import be.helmo.planivacances.presenter.interfaces.IGroupView
@@ -11,7 +10,7 @@ import be.helmo.planivacances.presenter.viewmodel.GroupVM
 
 interface IGroupPresenter {
 
-    suspend fun createGroup(group: Group)
+    suspend fun createGroup(groupVM: GroupVM)
 
     fun loadItinerary()
 

@@ -8,15 +8,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import be.helmo.planivacances.R
-import be.helmo.planivacances.domain.WeatherForecast
+import be.helmo.planivacances.presenter.viewmodel.WeatherForecastVM
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 
 
-class WeatherAdapter(weatherList: List<WeatherForecast>, context: Context) :
+class WeatherAdapter(weatherList: List<WeatherForecastVM>, context: Context) :
     RecyclerView.Adapter<WeatherAdapter.ViewHolder>() {
-    val weatherList: List<WeatherForecast>
+    val weatherList: List<WeatherForecastVM>
     val context: Context
 
     init {
@@ -33,7 +33,7 @@ class WeatherAdapter(weatherList: List<WeatherForecast>, context: Context) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val weather: WeatherForecast = weatherList[position]
+        val weather: WeatherForecastVM = weatherList[position]
         holder.tvWeatherTemperature.text = weather.temperature
         holder.tvWeatherDate.text = weather.date
         holder.tvWeatherInfos.text = weather.infos

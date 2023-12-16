@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import be.helmo.planivacances.R
 import be.helmo.planivacances.databinding.FragmentWeatherBinding
-import be.helmo.planivacances.domain.WeatherForecast
+import be.helmo.planivacances.presenter.viewmodel.WeatherForecastVM
 import be.helmo.planivacances.factory.AppSingletonFactory
 import be.helmo.planivacances.presenter.interfaces.IWeatherView
 import be.helmo.planivacances.view.interfaces.IWeatherPresenter
@@ -73,7 +73,7 @@ class WeatherFragment : Fragment(), IWeatherView {
         return binding.root
     }
 
-    override fun onForecastLoaded(weatherList: List<WeatherForecast>) {
+    override fun onForecastLoaded(weatherList: List<WeatherForecastVM>) {
         MainScope().launch {
             val adapter = WeatherAdapter(weatherList, requireContext())
 

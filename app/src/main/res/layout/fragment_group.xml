@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".view.fragments.GroupFragment">
+    tools:context=".view.fragments.group.GroupFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clHeader"
@@ -17,7 +17,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Groupe"
+            android:text="@string/group_title"
             android:textColor="@color/black"
             android:textSize="28sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -41,7 +41,7 @@
                 android:layout_marginEnd="3dp"
                 android:adjustViewBounds="true"
                 android:background="@color/transparent"
-                android:contentDescription="Update group"
+                android:contentDescription="@string/update_group"
                 android:scaleType="fitCenter"
                 android:src="@drawable/edit_pencil"
                 app:tint="@color/white" />
@@ -52,7 +52,7 @@
                 android:layout_height="48dp"
                 android:adjustViewBounds="true"
                 android:background="@color/transparent"
-                android:contentDescription="Delete group"
+                android:contentDescription="@string/delete_group"
                 android:scaleType="fitCenter"
                 android:src="@drawable/delete_trash"
                 app:tint="@color/white" />
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:fontFamily="sans-serif-medium"
-            android:text="Retour"
+            android:text="@string/back_button"
             android:textColor="@color/secondary_blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -91,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="8dp"
-                android:text="&quot;Group_Name&quot;"
+                android:text="@string/dummy_group_name"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
@@ -101,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:paddingBottom="8dp"
-                android:text="Du 13/10/2023 au 24/10/2023"
+                android:text="@string/dummy_group_date"
                 android:textColor="@color/black" />
 
             <TextView
@@ -110,14 +110,14 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:paddingBottom="8dp"
-                android:text="Rue des coins 12, 4000, Liège-Les-Bains"
+                android:text="@string/dummy_group_address"
                 android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/tvGroupDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Description Fugiat do aliqua laboris cillum sint dolor officia adipisicing excepteur fugiat officia. Cupidatat ut elit consequat ea laborum occaecat laborum aute consectetur Lorem exercitation. Lorem anim minim officia aliquip commodo deserunt mollit. Duis deserunt quis cillum voluptate duis ipsum quis incididunt elit excepteur excepteur labore duis cillum. Voluptate sint nulla minim eiusmod in nulla. Ea id ad duis esse adipisicing culpa ex esse ea dolore consequat. Reprehenderit eu minim veniam aliquip do ipsum duis do qui adipisicing aliquip ad occaecat."
+                android:text="@string/lorem_ipsum_desc"
                 android:textColor="@color/grey4" />
 
         </LinearLayout>
@@ -139,7 +139,7 @@
                 android:adjustViewBounds="true"
                 android:background="@drawable/edit_text_style"
                 android:backgroundTint="@color/main_blue_40"
-                android:contentDescription="Calendar"
+                android:contentDescription="@string/calendar"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/calendar"
@@ -154,7 +154,7 @@
                 android:adjustViewBounds="true"
                 android:background="@drawable/edit_text_style"
                 android:backgroundTint="@color/main_blue_40"
-                android:contentDescription="Chat"
+                android:contentDescription="@string/chat"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/tchat"
@@ -169,7 +169,7 @@
                 android:adjustViewBounds="true"
                 android:background="@drawable/edit_text_style"
                 android:backgroundTint="@color/main_blue_40"
-                android:contentDescription="Itinerary"
+                android:contentDescription="@string/itinerary"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/itinerary"
@@ -185,10 +185,10 @@
                 android:adjustViewBounds="true"
                 android:background="@drawable/edit_text_style"
                 android:backgroundTint="@color/main_blue_40"
-                android:contentDescription="Add member to group"
-                android:padding="8dp"
+                android:contentDescription="@string/add_member"
+                android:padding="12dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/add_cross"
+                android:src="@drawable/person_add"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@id/ibItinerary"
                 app:layout_constraintTop_toBottomOf="@+id/ibItinerary" />
@@ -200,7 +200,7 @@
                 android:adjustViewBounds="true"
                 android:background="@drawable/edit_text_style"
                 android:backgroundTint="@color/main_blue_40"
-                android:contentDescription="Weather"
+                android:contentDescription="@string/weather"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/weather"
