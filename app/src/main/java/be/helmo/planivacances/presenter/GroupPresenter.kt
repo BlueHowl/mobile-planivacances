@@ -9,6 +9,7 @@ import be.helmo.planivacances.presenter.interfaces.IGroupView
 import be.helmo.planivacances.presenter.interfaces.IHomeView
 import be.helmo.planivacances.presenter.interfaces.IUpdateGroupView
 import be.helmo.planivacances.presenter.viewmodel.GroupDetailVM
+import be.helmo.planivacances.presenter.viewmodel.GroupInvitationVM
 import be.helmo.planivacances.presenter.viewmodel.GroupVM
 import be.helmo.planivacances.service.ApiClient
 import be.helmo.planivacances.service.dto.GroupDTO
@@ -214,6 +215,58 @@ class GroupPresenter : IGroupPresenter {
             groupView.onGroupDeleted()
         } else {
             groupView.showToast("Erreur durant la suppression du groupe",1)
+        }
+    }
+
+    override suspend fun loadUserGroupInvites() {
+        val response = ApiClient.groupService.getUserGroupInvites()
+
+        if(response.isSuccessful && response.body() != null) {
+            val groupInvitationsList : ArrayList<GroupInvitationVM> = ArrayList()
+
+            for(invitation in response.body()!!) {
+                groupInvitationsList.add(DTOMapper.groupInviteDTOToGroupInvitationVM(invitation))
+            }
+
+            homeView.onGroupInvitationsLoaded(groupInvitationsList)
+        } else {
+            homeView.showToast("Erreur durant le chargement des invitations",1)
+        }
+    }
+
+    override suspend fun sendGroupInvite(email:String) {
+        val currentUserMail = FirebaseAuth.getInstance().currentUser?.email
+
+        if(currentUserMail != null && currentUserMail != email) {
+            val response = ApiClient.groupService.inviteUser(currentGid!!,email)
+
+            if(response.isSuccessful && response.body() == true) {
+                groupView.showToast("Invitation envoyée avec succès",1)
+            } else {
+                groupView.showToast("Erreur lors de l'envoi de l'invitation",1)
+            }
+        } else {
+            groupView.showToast("Impossible de s'inviter soi-même à rejoindre un groupe",1)
+        }
+    }
+
+    override suspend fun acceptGroupInvite(gid: String) {
+        val response = ApiClient.groupService.acceptGroupInvite(gid)
+
+        if(response.isSuccessful && response.body() == true) {
+            homeView.onGroupInvitationAccepted()
+        } else {
+            homeView.showToast("Erreur durant l'acceptation de l'invitation",1)
+        }
+    }
+
+    override suspend fun declineGroupInvite(gid: String) {
+        val response = ApiClient.groupService.declineGroupInvite(gid)
+
+        if(response.isSuccessful && response.body() != null) {
+            homeView.onGroupInvitationDeclined()
+        } else {
+            homeView.showToast("Erreur durant le refus de l'invitation",1)
         }
     }
 }

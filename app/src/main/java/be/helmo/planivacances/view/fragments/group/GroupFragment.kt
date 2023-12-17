@@ -1,5 +1,6 @@
 package be.helmo.planivacances.view.fragments.group
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -7,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -80,6 +82,10 @@ class GroupFragment : Fragment(), IGroupView {
             findNavController().navigate(R.id.action_groupFragment_to_homeFragment)
         }
 
+        binding.ibAddMemberToGroup.setOnClickListener {
+            displayAddMemberPrompt()
+        }
+
         return binding.root
     }
 
@@ -88,6 +94,40 @@ class GroupFragment : Fragment(), IGroupView {
 
         fun newInstance(): GroupFragment {
             return GroupFragment()
+        }
+    }
+
+    fun displayAddMemberPrompt() {
+        val builder : AlertDialog.Builder = AlertDialog.Builder(requireContext())
+
+        val addMemberLayout = LayoutInflater.from(requireContext()).inflate(R.layout.add_group_user_popup,null)
+        builder.setView(addMemberLayout)
+
+        builder.setPositiveButton("Ajouter") {
+            _,_ ->
+            val etAddGroupUserMail: EditText = addMemberLayout.findViewById<EditText>(R.id.etAddGroupUserMail)
+            val email : String = etAddGroupUserMail.text.toString()
+            addMemberInGroup(email)
+        }
+
+        builder.setNegativeButton("Annuler") {
+            dialog,_ -> dialog.cancel()
+        }
+
+        var addMemberDialog: AlertDialog = builder.create()
+
+        addMemberDialog.show()
+    }
+
+    fun addMemberInGroup(email:String) {
+        val emailRegex = Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
+
+        if(emailRegex.matches(email)) {
+            lifecycleScope.launch(Dispatchers.Default) {
+                groupPresenter.sendGroupInvite(email)
+            }
+        } else {
+            showToast("Adresse e-mail invalide",1)
         }
     }
 

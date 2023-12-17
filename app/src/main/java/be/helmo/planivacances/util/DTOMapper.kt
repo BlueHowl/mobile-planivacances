@@ -1,13 +1,11 @@
 package be.helmo.planivacances.util
 
 import be.helmo.planivacances.domain.Group
-import be.helmo.planivacances.presenter.viewmodel.GroupListItemVM
 import be.helmo.planivacances.domain.Place
-import be.helmo.planivacances.presenter.viewmodel.ActivityVM
-import be.helmo.planivacances.presenter.viewmodel.GroupVM
-import be.helmo.planivacances.presenter.viewmodel.PlaceVM
+import be.helmo.planivacances.presenter.viewmodel.*
 import be.helmo.planivacances.service.dto.ActivityDTO
 import be.helmo.planivacances.service.dto.GroupDTO
+import be.helmo.planivacances.service.dto.GroupInviteDTO
 import be.helmo.planivacances.service.dto.PlaceDTO
 import com.google.android.gms.maps.model.LatLng
 
@@ -101,5 +99,9 @@ object DTOMapper {
     fun activityDTOToActivityVM(activityDTO: ActivityDTO) : ActivityVM {
         val placeVM : PlaceVM = placeDTOToPlaceVM(activityDTO.place)
         return ActivityVM(activityDTO.title,activityDTO.description,activityDTO.startDate,activityDTO.duration,placeVM)
+    }
+
+    fun groupInviteDTOToGroupInvitationVM(groupInviteDTO: GroupInviteDTO) : GroupInvitationVM {
+        return GroupInvitationVM(groupInviteDTO.gid,groupInviteDTO.groupName,"Rejoindre le groupe")
     }
 }

@@ -39,4 +39,12 @@ interface IGroupPresenter {
     suspend fun updateCurrentGroup(groupVM:GroupVM)
 
     suspend fun deleteCurrentGroup()
+
+    suspend fun loadUserGroupInvites()
+
+    suspend fun sendGroupInvite(email:String)
+
+    suspend fun acceptGroupInvite(gid:String)
+
+    suspend fun declineGroupInvite(gid: String)
 }
