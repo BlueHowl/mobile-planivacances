@@ -107,6 +107,8 @@ class TchatPresenter(val groupPresenter: IGroupPresenter,
             }
             previousMessageLoaded = true
         }
+
+        tchatView.stopLoading()
     }
 
     fun sendMessageToView(message: MessageDTO) {

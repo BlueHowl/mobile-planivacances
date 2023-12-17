@@ -97,7 +97,7 @@ class TchatFragment : Fragment(), ITchatView {
 
     override fun addMessageToView(message: MessageDTO) {
        MainScope().launch {
-           binding.pbTchat.visibility = View.GONE
+           stopLoading()
 
            tchatAdapter.addMessage(message)
            scrollToBottom()
@@ -109,6 +109,12 @@ class TchatFragment : Fragment(), ITchatView {
         layoutManager.smoothScrollToPosition(binding.rvTchatContainer,
                                        null,
                                      tchatAdapter.itemCount - 1)
+    }
+
+    override fun stopLoading() {
+        MainScope().launch {
+            binding.pbTchat.visibility = View.GONE
+        }
     }
 
     override fun onDestroyView() {
