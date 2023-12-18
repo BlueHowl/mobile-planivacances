@@ -20,9 +20,9 @@ import javax.net.ssl.X509TrustManager
 
 
 object ApiClient {
-    private const val BASE_API_URL: String = "http://192.168.1.11:8080/api/" //"https://studapps.cg.helmo.be:5011/REST_CAO_BART/api/" //addr ipv4 local
+    private const val BASE_API_URL: String = "https://studapps.cg.helmo.be:5011/REST_CAO_BART/api/" //"http://192.168.1.19:8080/api/"//addr ipv4 local
     private const val WEATHER_API_URL: String = "https://api.weatherapi.com/v1/"
-    private const val TCHAT_AUTH_URL: String = "http://192.168.1.11:8080/api/chat/" //"wss://studapps.cg.helmo.be:5011/REST_CAO_BART/websocket-groupMessages"
+    private const val TCHAT_AUTH_URL: String = "https://studapps.cg.helmo.be:5011/REST_CAO_BART/api/chat/" //"http://192.168.1.19:8080/api/chat/"
 
     private val gson : Gson by lazy {
         GsonBuilder()
