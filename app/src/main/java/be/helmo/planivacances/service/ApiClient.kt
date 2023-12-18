@@ -1,5 +1,6 @@
 package be.helmo.planivacances.service
 
+import android.annotation.SuppressLint
 import be.helmo.planivacances.BuildConfig
 import be.helmo.planivacances.service.dto.MessageDTO
 import com.google.gson.Gson
@@ -34,11 +35,14 @@ object ApiClient {
     val httpClient : OkHttpClient by lazy {
         // Create a trust manager that does not validate certificate chains
         val trustAllCerts = arrayOf<TrustManager>(
+            @SuppressLint("CustomX509TrustManager")
             object : X509TrustManager {
+                @SuppressLint("TrustAllX509TrustManager")
                 @Throws(CertificateException::class)
                 override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
                 }
 
+                @SuppressLint("TrustAllX509TrustManager")
                 @Throws(CertificateException::class)
                 override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
                 }
