@@ -20,18 +20,18 @@ import javax.net.ssl.X509TrustManager
 
 
 object ApiClient {
-    private const val BASE_API_URL: String = "https://studapps.cg.helmo.be:5011/REST_CAO_BART/api/" //"http://192.168.1.19:8080/api/"//addr ipv4 local
-    private const val WEATHER_API_URL: String = "https://api.weatherapi.com/v1/"
-    private const val TCHAT_AUTH_URL: String = "https://studapps.cg.helmo.be:5011/REST_CAO_BART/api/chat/" //"http://192.168.1.19:8080/api/chat/"
+    const val BASE_API_URL: String = "https://studapps.cg.helmo.be:5011/REST_CAO_BART/api/" //"http://192.168.1.19:8080/api/"//addr ipv4 local
+    const val WEATHER_API_URL: String = "https://api.weatherapi.com/v1/"
+    const val TCHAT_AUTH_URL: String = "https://studapps.cg.helmo.be:5011/REST_CAO_BART/api/chat/" //"http://192.168.1.19:8080/api/chat/"
 
-    private val gson : Gson by lazy {
+    val gson : Gson by lazy {
         GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
             .setLenient()
             .create()
     }
 
-    private val httpClient : OkHttpClient by lazy {
+    val httpClient : OkHttpClient by lazy {
         // Create a trust manager that does not validate certificate chains
         val trustAllCerts = arrayOf<TrustManager>(
             object : X509TrustManager {
@@ -59,7 +59,7 @@ object ApiClient {
             .build()
     }
 
-    private val retrofit : Retrofit by lazy {
+    val retrofit : Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_API_URL)
             .client(httpClient)
@@ -67,7 +67,7 @@ object ApiClient {
             .build()
     }
 
-    private val weatherRetrofit : Retrofit by lazy {
+    val weatherRetrofit : Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(WEATHER_API_URL)
             .client(httpClient)
@@ -75,7 +75,7 @@ object ApiClient {
             .build()
     }
 
-    private val retrofitForStringResult : Retrofit by lazy {
+    val retrofitForStringResult : Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_API_URL)
             .client(httpClient)
