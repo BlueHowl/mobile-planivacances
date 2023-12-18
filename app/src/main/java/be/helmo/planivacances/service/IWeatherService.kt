@@ -3,7 +3,6 @@ package be.helmo.planivacances.service
 
 import be.helmo.planivacances.BuildConfig
 import be.helmo.planivacances.service.dto.WeatherData
-import com.google.gson.JsonObject
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

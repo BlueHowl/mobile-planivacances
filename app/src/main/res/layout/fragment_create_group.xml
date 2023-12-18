@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".view.fragments.CreateGroupFragment">
+    tools:context=".view.fragments.group.CreateGroupFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clHeader"
@@ -19,7 +19,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Créer un groupe"
+            android:text="@string/create_group_title"
             android:textColor="@color/black"
             android:textSize="28sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -34,7 +34,7 @@
             android:layout_marginEnd="12dp"
             android:adjustViewBounds="true"
             android:background="@color/transparent"
-            android:contentDescription="add group"
+            android:contentDescription="@string/add_group"
             android:scaleType="fitCenter"
             android:src="@drawable/done_check"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:fontFamily="sans-serif-medium"
-            android:text="Retour"
+            android:text="@string/back_button"
             android:textColor="@color/secondary_blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -75,7 +75,8 @@
             android:layout_marginTop="32dp"
             android:background="@drawable/edit_text_style"
             android:ems="10"
-            android:hint="Nom du groupe"
+            android:hint="@string/group_name_hint"
+            android:autofillHints="text,goup name"
             android:inputType="textPersonName" />
 
         <TextView
@@ -84,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:fontFamily="sans-serif-medium"
-            android:text="Sélectionner une date de départ"
+            android:text="@string/start_date_text"
             android:textColor="@color/black" />
 
         <TextView
@@ -94,7 +95,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:fontFamily="sans-serif-medium"
-            android:text="Sélectionner une date de fin"
+            android:text="@string/end_date_text"
             android:textColor="@color/black" />
 
         <TextView
@@ -102,7 +103,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
-            android:text="Sélectionner un lieu"
+            android:text="@string/place_text"
             android:textColor="@color/black" />
 
         <EditText
@@ -111,10 +112,11 @@
             android:layout_height="match_parent"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="28dp"
+            android:autofillHints="text,description"
             android:background="@drawable/edit_text_style"
             android:ems="10"
             android:gravity="start|top"
-            android:hint="Description"
+            android:hint="@string/desc_hint"
             android:inputType="textMultiLine"
             android:minLines="10" />
     </LinearLayout>

@@ -18,9 +18,8 @@ import androidx.navigation.fragment.findNavController
 import be.helmo.planivacances.BuildConfig
 import be.helmo.planivacances.databinding.FragmentAuthBinding
 import be.helmo.planivacances.R
-import be.helmo.planivacances.service.dto.LoginUserDTO
-import be.helmo.planivacances.service.dto.RegisterUserDTO
 import be.helmo.planivacances.factory.AppSingletonFactory
+import be.helmo.planivacances.presenter.interfaces.IAuthView
 import be.helmo.planivacances.view.MainActivity
 import be.helmo.planivacances.view.interfaces.IAuthPresenter
 import com.bumptech.glide.Glide
@@ -33,13 +32,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 
 /**
  * Fragment d'authentification (login et register)
  */
-class AuthFragment : Fragment() {
+class AuthFragment : Fragment(), IAuthView {
 
     lateinit var mAuth: FirebaseAuth
 
@@ -59,13 +59,11 @@ class AuthFragment : Fragment() {
 
         mAuth = FirebaseAuth.getInstance()
 
-        authPresenter = AppSingletonFactory.instance!!.getAuthPresenter()
+        authPresenter = AppSingletonFactory.instance!!.getAuthPresenter(this)
 
-        sharedPreferences = requireContext().getSharedPreferences("PlanivacancesPreferences", Context.MODE_PRIVATE)
+        sharedPreferences = requireContext().getSharedPreferences("PlanivacancesPreferences",
+                                                                  Context.MODE_PRIVATE)
         authPresenter.setSharedPreference(sharedPreferences)
-
-        autoAuth()
-
     }
 
     override fun onCreateView(
@@ -77,16 +75,19 @@ class AuthFragment : Fragment() {
 
         //Chargement du début : autoAuth
         binding.pbAuth.visibility = View.VISIBLE
+        autoAuth()
 
         //background blur
         Glide.with(this)
             .load(R.drawable.sun) // Replace with your image resource
-            .transform(MultiTransformation(RoundedCorners(25), BlurTransformation(20)))
+            .transform(MultiTransformation(RoundedCorners(25),
+                                           BlurTransformation(20)))
             .into(binding.authSun)
 
         Glide.with(this)
             .load(R.drawable.sea) // Replace with your image resource
-            .transform(MultiTransformation(RoundedCorners(30), BlurTransformation(30)))
+            .transform(MultiTransformation(RoundedCorners(30),
+                                           BlurTransformation(30)))
             .into(binding.authSea)
 
         //Click listeners
@@ -103,18 +104,11 @@ class AuthFragment : Fragment() {
         }
 
         binding.btnLogin.setOnClickListener {
-            val loginUser = LoginUserDTO(
-                binding.etLoginMail.text.toString(),
-                binding.etLoginPassword.text.toString())
-            login(loginUser)
+            login()
         }
 
         binding.btnRegister.setOnClickListener {
-            val registerUser = RegisterUserDTO(
-                binding.etRegisterName.text.toString(),
-                binding.etRegisterMail.text.toString(),
-                binding.etRegisterPassword.text.toString())
-            register(registerUser)
+            register()
         }
 
 
@@ -124,25 +118,26 @@ class AuthFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        signInLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 try {
                     val account = task.getResult(ApiException::class.java)
+                    val credential = GoogleAuthProvider.getCredential(account.idToken,null)
 
-                    val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                     mAuth.signInWithCredential(credential)
                         .addOnCompleteListener(requireActivity()) { t ->
                             if (t.isSuccessful) {
                                 // Sign in success
                                 Log.d(TAG, "signInWithCredential:success")
 
-                                lifecycleScope.launch(Dispatchers.Main) {
+                                lifecycleScope.launch(Dispatchers.Default) {
                                     val r = authPresenter.initAuthenticator()
 
                                     if(r) { goToHome() }
                                 }
-                                // Handle the signed-in user, you may navigate to the main activity or perform other actions.
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithCredential:failure", t.exception)
@@ -151,7 +146,7 @@ class AuthFragment : Fragment() {
                         }
 
                 } catch (e: ApiException) {
-                    Log.w(TAG, "Google Auth Failure " + e.getStatusCode() + " : " + e.getStatusMessage())
+                    Log.w(TAG, "Google Auth Failure " + e.statusCode + " : " + e.message)
                 }
             } else {
                 Log.w(TAG, "Failed to auth with google")
@@ -179,7 +174,7 @@ class AuthFragment : Fragment() {
      * Change le panneau d'authentification (login ou register)
      */
     fun switchAuthPanel() {
-        panelId = ++panelId % 2;
+        panelId = ++panelId % 2
 
         if(panelId == 0) {
             binding.registerPanel.visibility = View.GONE
@@ -192,42 +187,32 @@ class AuthFragment : Fragment() {
 
     /**
      * Appel la fonction d'enregistrement asynchrone
-     * @param registerUser (RegisterUserDTO)
      */
-    fun register(registerUser: RegisterUserDTO) {
+    fun register() {
         hideKeyboard()
         binding.pbAuth.visibility = View.VISIBLE
 
-        lifecycleScope.launch(Dispatchers.Main) {
-            val result = authPresenter.register(registerUser)
-
-            if(result.success) {
-                goToHome()
-            } else {
-                binding.pbAuth.visibility = View.GONE
-                showToast(result.message!! as String)
-            }
+        lifecycleScope.launch(Dispatchers.Default) {
+            authPresenter.register(
+                binding.etRegisterName.text.toString(),
+                binding.etRegisterMail.text.toString(),
+                binding.etRegisterPassword.text.toString())
         }
 
     }
 
     /**
      * Appel la fonction de connexion asynchrone
-     * @param loginUser (LoginUserDTO)
      */
-    fun login(loginUser: LoginUserDTO) {
+    fun login() {
         hideKeyboard()
         binding.pbAuth.visibility = View.VISIBLE
 
-        lifecycleScope.launch(Dispatchers.Main) {
-            val result = authPresenter.login(loginUser, binding.cbKeepConnected.isChecked)
-
-            if(result.success) {
-                goToHome()
-            } else {
-                binding.pbAuth.visibility = View.GONE
-                showToast(result.message!! as String)
-            }
+        lifecycleScope.launch(Dispatchers.Default) {
+            authPresenter.login(
+                binding.etLoginMail.text.toString(),
+                binding.etLoginPassword.text.toString(),
+                binding.cbKeepConnected.isChecked)
         }
 
     }
@@ -236,31 +221,36 @@ class AuthFragment : Fragment() {
      * Appel la fonction d'authentification automatique asynchrone
      */
     fun autoAuth() {
-        lifecycleScope.launch(Dispatchers.Main) {
-            val result = authPresenter.autoAuth()
-
-            if(result.success) {
-                goToHome()
-            } else if(result.message != null) {
-                showToast(result.message as String)
-            }
-
-            binding.pbAuth.visibility = View.GONE
+        lifecycleScope.launch(Dispatchers.Default) {
+            authPresenter.autoAuth()
         }
     }
 
     /**
      * navigue vers le fragment home
      */
-    fun goToHome() {
-        findNavController().navigate(R.id.action_authFragment_to_homeFragment)
+    override fun goToHome() {
+        MainScope().launch {
+            findNavController().navigate(R.id.action_authFragment_to_homeFragment)
+        }
     }
 
     /**
      * Affiche un message à l'écran
+     * @param message (String)
+     * @param length (Int) 0 = short, 1 = long
      */
-    fun showToast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    override fun showToast(message: String, length: Int) {
+        MainScope().launch {
+            binding.pbAuth.visibility = View.GONE
+            Toast.makeText(context, message, length).show()
+        }
+    }
+
+    override fun stopLoading() {
+        MainScope().launch {
+            binding.pbAuth.visibility = View.GONE
+        }
     }
 
     /**

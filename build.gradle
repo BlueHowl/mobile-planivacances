@@ -21,6 +21,8 @@ ext {
     glideTransformVersion = '4.3.0'
     retrofitVersion = '2.9.0'
     firebaseBomVersion = '32.3.1'
+    pusherVersion = '2.4.4'
+    materialCalendarViewVersion = '1.4.3'
 
     // testing
     junitVersion = '4.13.2'

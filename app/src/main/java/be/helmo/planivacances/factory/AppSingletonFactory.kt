@@ -1,18 +1,13 @@
 package be.helmo.planivacances.factory
 
-import be.helmo.planivacances.presenter.AuthPresenter
-import be.helmo.planivacances.presenter.GroupPresenter
-import be.helmo.planivacances.presenter.WeatherPresenter
-import be.helmo.planivacances.view.interfaces.IAuthPresenter
-import be.helmo.planivacances.view.interfaces.IGroupPresenter
-import be.helmo.planivacances.view.interfaces.IWeatherPresenter
+import be.helmo.planivacances.presenter.*
+import be.helmo.planivacances.presenter.interfaces.*
+import be.helmo.planivacances.view.interfaces.*
 
 /**
  * Factory de singleton + stockage du token
  */
 class AppSingletonFactory() {
-
-    //var token: String? = null
 
     val authPresenter: AuthPresenter = AuthPresenter()
 
@@ -20,28 +15,64 @@ class AppSingletonFactory() {
 
     val weatherPresenter: WeatherPresenter = WeatherPresenter(groupPresenter)
 
-    //auth token
-    /*fun getAuthToken(): String? {
-        return token
-    }
+    val tchatPresenter : TchatPresenter = TchatPresenter(groupPresenter, authPresenter)
 
-    fun setAuthToken(token: String?) {
-        this.token = token
-    }*/
+    val activityPresenter : ActivityPresenter = ActivityPresenter(groupPresenter)
 
-    //auth presenter
-    fun getAuthPresenter(): IAuthPresenter {
+    fun getAuthPresenter(authView: IAuthView): IAuthPresenter {
+        authPresenter.setIAuthView(authView)
         return authPresenter
     }
 
     //group presenter
-    fun getGroupPresenter(): IGroupPresenter {
+    fun getGroupPresenter(groupView:IGroupView): IGroupPresenter {
+        groupPresenter.setIGroupView(groupView)
+        return groupPresenter
+    }
+
+    fun getGroupPresenter(createGroupView:ICreateGroupView): IGroupPresenter {
+        groupPresenter.setICreateGroupView(createGroupView)
+        return groupPresenter
+    }
+
+    fun getGroupPresenter(homeView:IHomeView): IGroupPresenter {
+        groupPresenter.setIHomeView(homeView)
+        return groupPresenter
+    }
+
+    fun getGroupPresenter(updateGroupView: IUpdateGroupView) : IGroupPresenter {
+        groupPresenter.setIUpdateGroupView(updateGroupView)
         return groupPresenter
     }
 
     //weather presenter
-    fun getWeatherPresenter(): IWeatherPresenter {
-        return weatherPresenter;
+    fun getWeatherPresenter(weatherView: IWeatherView): IWeatherPresenter {
+        weatherPresenter.setIWeatherView(weatherView)
+        return weatherPresenter
+    }
+
+    fun getTchatPresenter(tchatView : ITchatView) : ITchatPresenter {
+        tchatPresenter.setITchatView(tchatView)
+        return tchatPresenter
+    }
+    fun getCalendarPresenter(calendarView: ICalendarView) : IActivityPresenter {
+        activityPresenter.setICalendarView(calendarView)
+        return activityPresenter
+    }
+
+    fun getActivityPresenter(activityView: IActivityView) : IActivityPresenter {
+        activityPresenter.setIActivityView(activityView)
+        return activityPresenter
+    }
+
+    fun getActivityPresenter(createActivityView: ICreateActivityView) : IActivityPresenter {
+        activityPresenter.setICreateActivityView(createActivityView)
+        return activityPresenter
+    }
+
+    fun getActivityPresenter(updateActivityView: IUpdateActivityView) : IActivityPresenter {
+        activityPresenter.setIUpdateActivityView(updateActivityView)
+        return activityPresenter
     }
 
     companion object {

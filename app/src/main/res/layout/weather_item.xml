@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
-    android:background="@drawable/sender_message_background"
+    android:background="@drawable/receiving_message_background"
     android:backgroundTint="@color/transparent_60">
 
     <ImageView

@@ -11,14 +11,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import be.helmo.planivacances.R
 import be.helmo.planivacances.databinding.FragmentWeatherBinding
-import be.helmo.planivacances.domain.WeatherForecast
+import be.helmo.planivacances.presenter.viewmodel.WeatherForecastVM
 import be.helmo.planivacances.factory.AppSingletonFactory
+import be.helmo.planivacances.presenter.interfaces.IWeatherView
 import be.helmo.planivacances.view.interfaces.IWeatherPresenter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 
@@ -27,7 +29,7 @@ import kotlinx.coroutines.launch
  * Use the [WeatherFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class WeatherFragment : Fragment() {
+class WeatherFragment : Fragment(), IWeatherView {
 
     lateinit var binding : FragmentWeatherBinding
 
@@ -36,7 +38,7 @@ class WeatherFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        weatherPresenter = AppSingletonFactory.instance!!.getWeatherPresenter()
+        weatherPresenter = AppSingletonFactory.instance!!.getWeatherPresenter(this)
     }
 
     override fun onCreateView(
@@ -48,12 +50,14 @@ class WeatherFragment : Fragment() {
 
         Glide.with(this)
             .load(R.drawable.sun)
-            .transform(MultiTransformation(RoundedCorners(25), BlurTransformation(20)))
+            .transform(MultiTransformation(RoundedCorners(25),
+                                           BlurTransformation(20)))
             .into(binding.weatherSun)
 
         Glide.with(this)
             .load(R.drawable.palmtree)
-            .transform(MultiTransformation(RoundedCorners(25), BlurTransformation(20)))
+            .transform(MultiTransformation(RoundedCorners(25),
+                                           BlurTransformation(20)))
             .into(binding.weatherPalmTree)
 
         binding.tvBack.setOnClickListener {
@@ -61,30 +65,35 @@ class WeatherFragment : Fragment() {
         }
 
         binding.pbWeatherList.visibility = View.VISIBLE
-        lifecycleScope.launch(Dispatchers.Main) {
-            val result = weatherPresenter.getForecast()
 
-            if (result.success) {
-                val weatherList: List<WeatherForecast> = result.message as List<WeatherForecast>
-                val adapter = WeatherAdapter(weatherList, requireContext())
-
-                binding.rvWeatherContainer.layoutManager = LinearLayoutManager(requireContext())
-                binding.rvWeatherContainer.adapter = adapter
-
-                binding.pbWeatherList.visibility = View.GONE
-            } else {
-                showToast(result.message!! as String)
-            }
+        lifecycleScope.launch(Dispatchers.Default) {
+            weatherPresenter.getForecast()
         }
 
         return binding.root
     }
 
+    override fun onForecastLoaded(weatherList: List<WeatherForecastVM>) {
+        MainScope().launch {
+            val adapter = WeatherAdapter(weatherList, requireContext())
+
+            binding.rvWeatherContainer.layoutManager = LinearLayoutManager(requireContext())
+            binding.rvWeatherContainer.adapter = adapter
+
+            binding.pbWeatherList.visibility = View.GONE
+        }
+    }
+
     /**
      * Affiche un message à l'écran
+     * @param message (String)
+     * @param length (Int) 0 = short, 1 = long
      */
-    fun showToast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    override fun showToast(message: String, length: Int) {
+        MainScope().launch {
+            binding.pbWeatherList.visibility = View.GONE
+            Toast.makeText(context, message, length).show()
+        }
     }
 
     companion object {

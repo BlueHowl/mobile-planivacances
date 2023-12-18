@@ -1,10 +1,7 @@
 package be.helmo.planivacances.view.interfaces
 
 import android.content.SharedPreferences
-import be.helmo.planivacances.service.IdTokenCallback
-import be.helmo.planivacances.service.dto.LoginUserDTO
-import be.helmo.planivacances.service.dto.RegisterUserDTO
-import be.helmo.planivacances.util.ResultMessage
+import be.helmo.planivacances.presenter.interfaces.IAuthView
 
 interface IAuthPresenter {
 
@@ -12,18 +9,18 @@ interface IAuthPresenter {
 
     fun getUid(): String
 
+    fun getDisplayName() : String
+
     suspend fun loadIdToken(): Boolean
 
-    suspend fun signInWithCustomToken(customToken: String): ResultMessage
+    suspend fun register(username: String, mail: String, password: String)
 
-    suspend fun register(registerUser: RegisterUserDTO): ResultMessage
+    suspend fun login(mail: String, password: String, keepConnected: Boolean)
 
-    suspend fun login(loginUser: LoginUserDTO, keepConnected: Boolean): ResultMessage
-
-    suspend fun autoAuth(): ResultMessage
-
-    suspend fun auth(customToken: String?, keepConnected: Boolean): ResultMessage
+    suspend fun autoAuth()
 
     suspend fun initAuthenticator(): Boolean
+
+    fun setIAuthView(authView : IAuthView)
 
 }

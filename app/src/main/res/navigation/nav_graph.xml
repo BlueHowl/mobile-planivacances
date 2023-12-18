@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/createGroupFragment"
-        android:name="be.helmo.planivacances.view.fragments.CreateGroupFragment"
+        android:name="be.helmo.planivacances.view.fragments.group.CreateGroupFragment"
         android:label="fragment_create_group"
         tools:layout="@layout/fragment_create_group">
         <action
@@ -40,7 +40,7 @@
     </fragment>
     <fragment
         android:id="@+id/groupFragment"
-        android:name="be.helmo.planivacances.view.fragments.GroupFragment"
+        android:name="be.helmo.planivacances.view.fragments.group.GroupFragment"
         android:label="fragment_group"
         tools:layout="@layout/fragment_group">
         <action
@@ -55,6 +55,9 @@
         <action
             android:id="@+id/action_groupFragment_to_tchatFragment"
             app:destination="@id/TchatFragment" />
+        <action
+            android:id="@+id/action_groupFragment_to_UpdateGroupFragment"
+            app:destination="@id/UpdateGroupFragment" />
     </fragment>
     <fragment
         android:id="@+id/weatherFragment"
@@ -67,20 +70,71 @@
     </fragment>
     <fragment
         android:id="@+id/CalendarFragment"
-        android:name="be.helmo.planivacances.view.fragments.CalendarFragment"
+        android:name="be.helmo.planivacances.view.fragments.activity.CalendarFragment"
         android:label="fragment_calendar"
         tools:layout="@layout/fragment_calendar">
         <action
             android:id="@+id/action_CalendarFragment_to_groupFragment"
             app:destination="@id/groupFragment" />
+        <action
+            android:id="@+id/action_CalendarFragment_to_ActivityFragment"
+            app:destination="@id/ActivityFragment" />
+        <action
+            android:id="@+id/action_CalendarFragment_to_CreateActivityFragment"
+            app:destination="@id/CreateActivityFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/ActivityFragment"
+        android:name="be.helmo.planivacances.view.fragments.activity.ActivityFragment"
+        android:label="fragment_activity"
+        tools:layout="@layout/fragment_activity">
+        <action
+            android:id="@+id/action_ActivityFragment_to_CalendarFragment"
+            app:destination="@id/CalendarFragment" />
+        <action
+            android:id="@+id/action_ActivityFragment_to_UpdateActivityFragment"
+            app:destination="@id/UpdateActivityFragment" />
     </fragment>
     <fragment
         android:id="@+id/TchatFragment"
-        android:name="be.helmo.planivacances.view.fragments.TchatFragment"
+        android:name="be.helmo.planivacances.view.fragments.tchat.TchatFragment"
         android:label="fragment_tchat"
         tools:layout="@layout/fragment_tchat">
         <action
-            android:id="@+id/action_TchatFragment_to_groupFragment"
+            android:id="@+id/action_tchatFragment_to_groupFragment"
+            app:destination="@id/groupFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/CreateActivityFragment"
+        android:name="be.helmo.planivacances.view.fragments.activity.CreateActivityFragment"
+        android:label="fragment_create_activity"
+        tools:layout="@layout/fragment_create_activity">
+        <action
+            android:id="@+id/action_CreateActivityFragment_to_CalendarFragment"
+            app:destination="@id/CalendarFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/UpdateActivityFragment"
+        android:name="be.helmo.planivacances.view.fragments.activity.UpdateActivityFragment"
+        android:label="fragment_update_activity"
+        tools:layout="@layout/fragment_update_activity">
+        <action
+            android:id="@+id/action_UpdateActivityFragment_to_CalendarFragment"
+            app:destination="@id/CalendarFragment" />
+        <action
+            android:id="@+id/action_UpdateActivityFragment_to_ActivityFragment"
+            app:destination="@id/ActivityFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/UpdateGroupFragment"
+        android:name="be.helmo.planivacances.view.fragments.group.UpdateGroupFragment"
+        android:label="fragment_update_group"
+        tools:layout="@layout/fragment_update_group">
+        <action
+            android:id="@+id/action_UpdateGroupFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_UpdateGroupFragment_to_groupFragment"
             app:destination="@id/groupFragment" />
     </fragment>
 </navigation>

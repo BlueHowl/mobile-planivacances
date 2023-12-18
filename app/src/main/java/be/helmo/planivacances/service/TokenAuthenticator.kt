@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicLong
 
 class TokenAuthenticator : Authenticator {
 
-    //var refreshToken: String? = null
     var idToken: String? = null
 
     lateinit var authPresenter: IAuthPresenter

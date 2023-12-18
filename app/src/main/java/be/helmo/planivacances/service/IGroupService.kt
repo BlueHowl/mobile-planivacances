@@ -1,7 +1,7 @@
 package be.helmo.planivacances.service
 
-import be.helmo.planivacances.domain.Group
 import be.helmo.planivacances.service.dto.GroupDTO
+import be.helmo.planivacances.service.dto.GroupInviteDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -28,4 +28,16 @@ interface IGroupService {
 
     @DELETE("group/{gid}")
     suspend fun delete(@Path("gid") gid: String): Response<String>
+
+    @POST("group/invitation/{gid}/{mail}")
+    suspend fun inviteUser(@Path("gid") gid:String, @Path("mail") mail: String) : Response<Boolean>
+
+    @GET("group/invitation")
+    suspend fun getUserGroupInvites() : Response<List<GroupInviteDTO>>
+
+    @POST("group/invitation/{gid}")
+    suspend fun acceptGroupInvite(@Path("gid") gid:String) : Response<Boolean>
+
+    @DELETE("group/invitation/{gid}")
+    suspend fun declineGroupInvite(@Path("gid") gid: String) : Response<String>
 }

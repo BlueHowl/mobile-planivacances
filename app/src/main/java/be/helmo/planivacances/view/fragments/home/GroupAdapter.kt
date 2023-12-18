@@ -7,23 +7,25 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import be.helmo.planivacances.R
-import be.helmo.planivacances.service.dto.GroupDTO
+import be.helmo.planivacances.presenter.viewmodel.GroupListItemVM
 import java.text.SimpleDateFormat
 
 class GroupAdapter(val context: Context,
-                   val groups: List<GroupDTO>,
+                   val groups: List<GroupListItemVM>,
                    val clickListener: (String) -> Unit) :
     RecyclerView.Adapter<GroupAdapter.GroupViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.group_item, parent, false)
+        val view = LayoutInflater
+            .from(parent.context)
+            .inflate(R.layout.group_item, parent, false)
         return GroupViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: GroupViewHolder, position: Int) {
         val group = groups[position]
 
-        val formatter = SimpleDateFormat(context.getString(R.string.date_format))
+        val formatter = SimpleDateFormat(context.getString(R.string.date_short_format))
         val startDate = formatter.format(group.startDate)
         val endDate = formatter.format(group.endDate)
 
